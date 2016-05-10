@@ -28,7 +28,7 @@ SECTIONS
 		*(.stack)
 		. = ALIGN(4096);
 	}
-	.kernel 0x200000 :
+	.kernel 0x300000 :
 	{
 		kernel = .; _kernel = .; __kernel = .;
 		*(.kernel)

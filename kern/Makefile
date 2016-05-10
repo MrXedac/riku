@@ -1,4 +1,4 @@
-IMAGE=rikuldr.bin
+IMAGE=kern.bin
 SRC_DIR=src
 
 # Toolchain
@@ -15,9 +15,9 @@ COBJ=$(CSOURCES:.c=.o)
 AOBJ=$(ASOURCES:.s=.o)
 
 # Toolchain flags
-CFLAGS=-m32 -Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -g -Wno-unused-variable -fPIC
-LDFLAGS=-melf_i386 -z max-page-size=0x1000
-ASFLAGS=-felf
+CFLAGS=-Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -Wno-unused-variable -mcmodel=large
+LDFLAGS=-z max-page-size=0x1000
+ASFLAGS=-felf64
 
 # Include directories
 CFLAGS+=-Iinclude
@@ -35,4 +35,3 @@ $(IMAGE): $(AOBJ) $(COBJ)
 
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
-
