@@ -12,14 +12,18 @@ ASOURCES=$(wildcard $(SRC_DIR)/*.s)
 
 # Objects
 COBJ=$(CSOURCES:.c=.o)
-AOBJ=$(ASOURCES:.c=.o)
+AOBJ=$(ASOURCES:.s=.o)
 
+# Toolchain flags
 CFLAGS=-m32 -Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -g -Wno-unused-variable
 LDFLAGS=-melf_i386
 ASFLAGS=-felf
 
+# Include directories
+CFLAGS+=-Iinclude
+
 clean:
-	rm -f $(COBJ) $(AOBJ)
+	rm -f $(COBJ) $(AOBJ) $(IMAGE)
 
 all: $(IMAGE)
 
@@ -30,4 +34,4 @@ $(IMAGE): $(AOBJ) $(COBJ)
 	$(CC) $(CFLAGS) $< -o $@
 
 %.o: %.s
-	$(CC) $(CFLAGS) $< -o $@
+	$(AS) $(ASFLAGS) $< -o $@
