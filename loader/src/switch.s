@@ -1,5 +1,4 @@
 [BITS 32]
-
 GDT64:                           ; Global Descriptor Table (64-bit).
 	.Null: equ $ - GDT64         ; The null descriptor.
 	dw 0                         ; Limit (low).
@@ -49,8 +48,7 @@ GDT64:                           ; Global Descriptor Table (64-bit).
 	dw 0
 GDT64Pointer:                  ; The GDT-pointer.
 dw $ - GDT64 - 1
-dq GDT64
-
+dd GDT64
 
 ; Long-mode switch
 [GLOBAL enter_long_mode]
