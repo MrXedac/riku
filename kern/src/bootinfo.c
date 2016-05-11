@@ -1,6 +1,7 @@
 #include "bootinfo.h"
 #include "multiboot.h"
 #include "vga.h"
+#include "vm.h"
 
 /* Parse the multiboot header to find some relevant data */
 void parse_mbi(uintptr_t mbi)
@@ -39,7 +40,9 @@ void parse_mbi(uintptr_t mbi)
 				break;
 			case MULTIBOOT_TAG_TYPE_MMAP:
 			{
+				puts("\tFound memory map, initializing\n");
 				//dump_mmap((struct multiboot_tag_mmap *) tag);
+				mmap_init((struct multiboot_tag_mmap *) tag);
 				break;
 			}
 			default:
