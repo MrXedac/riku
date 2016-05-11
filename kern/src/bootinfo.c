@@ -32,7 +32,7 @@ void parse_mbi(uintptr_t mbi)
 				puts("\n");
 				break;
 			case MULTIBOOT_TAG_TYPE_BASIC_MEMINFO:
-				puts("\t\tLower memory ");
+				puts("\t\tLegacy: lower memory ");
 				putdec(((struct multiboot_tag_basic_meminfo *) tag)->mem_lower);
 				puts("kio, upper memory ");
 				putdec(((struct multiboot_tag_basic_meminfo *) tag)->mem_upper);

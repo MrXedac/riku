@@ -37,6 +37,7 @@ void mmap_init(struct multiboot_tag_mmap *mmap_tag_ptr);
 /* Pagination */
 uintptr_t *first_free_page; //!< First free available page.
 uint64_t max_pages;
+uint64_t allocated_pages;
 
 uintptr_t* alloc_page();
 void free_page(uintptr_t *page);

@@ -3,10 +3,11 @@
 #include "vga.h"
 #include <stdint.h>
 
+/* Initializes the MMU during early-boot */
 void vm_init()
 {
-	uint64_t* pdpt = (uint64_t*)0x3000; // PDPT pointer
-	uint64_t* pdptk = (uint64_t*)0x2000; // Kernel PDPT
+	uint64_t* pdpt = (uint64_t*)EARLY_PDPT_KERN; // PDPT pointer
+	uint64_t* pdptk = (uint64_t*)EARLY_PDPT_PHYS; // Kernel PDPT
 	
 	uint64_t gbOffset = 0x40000000; // Address offset corresponding to one PDPT entry
 	uint64_t i = 0;
@@ -14,14 +15,15 @@ void vm_init()
 	// Fill-in every entry of the PDPT with 1-1 mapping of the address space
 	for(i = 0; i < 512; i++)
 	{
-		*(pdpt) = (i * gbOffset) | 0x83; // Target address + large page flag
-		*(pdptk) = (i * gbOffset) | 0x83;
+		*(pdpt) = (i * gbOffset) | FLAGS_PDPT_LARGE; // Target address + large page flag
+		*(pdptk) = (i * gbOffset) | FLAGS_PDPT_LARGE;
 		pdpt = (uint64_t*)((uint64_t)pdpt + 0x8); // Next entry
 		pdptk = (uint64_t*)((uint64_t)pdptk + 0x8);
 	}
 	
 }
 
+/* Adds a memory range to the pagination list */
 void paging_init(uintptr_t* base, uint64_t length)
 {
 	if(base >= (uintptr_t*)0x100000) /* RikuLdr loading address */
@@ -47,11 +49,12 @@ void paging_init(uintptr_t* base, uint64_t length)
 	}
 }
 
-
+/* Given a multiboot2 memory map, initializes memory space */
 void mmap_init(struct multiboot_tag_mmap *mmap_tag_ptr)
 {
 	max_pages = 0;
 	first_free_page = (uintptr_t*)0x0;
+	allocated_pages = 0;
 	multiboot_memory_map_t* mmap;
 	struct multiboot_tag *tag = (struct multiboot_tag *)mmap_tag_ptr;
 	for (mmap = (mmap_tag_ptr)->entries;
@@ -92,4 +95,25 @@ void mmap_init(struct multiboot_tag_mmap *mmap_tag_ptr)
 	putdec(max_pages * 4);
 	puts("kb total)\n");
 	return;
+}
+
+/* Page allocator and deallocator */
+uintptr_t* alloc_page()
+{
+	uintptr_t* res = first_free_page;
+	first_free_page = (uintptr_t*)(*res);
+	uintptr_t i = 0;
+	for(i = 0; i < 512; i++)
+		*(uintptr_t*)((uintptr_t)res + i * 0x8) = 0x0;
+	
+	allocated_pages++;
+	return res;
+}
+
+void free_page(uintptr_t *page)
+{
+	*page = (uintptr_t)first_free_page;
+	first_free_page = (uintptr_t*)page;
+	
+	allocated_pages--;
 }
