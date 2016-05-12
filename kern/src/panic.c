@@ -2,16 +2,43 @@
 #include "vga.h"
 #include <stdint.h>
 
-void panic(char* message, uintptr_t* regs)
+void panic(char* message, registers_t* regs)
 {
 	puts("Riku panic: ");
 	puts(message);
-	puts(", registers:");
+	puts(", registers:\n");
 	if(regs)
 	{
-		puts("...\n");
+		puts("int_no=");
+		puthex(regs->int_no);
+		puts("\n");
+		puts("rax=");
+		puthex(regs->rax);
+		puts("\trbx=");
+		puthex(regs->rbx);
+		puts("\trcx=");
+		puthex(regs->rcx);
+		puts("\trdx=");
+		puthex(regs->rdx);
+		puts("\nrsi=");
+		puthex(regs->rsi);
+		puts("\trdi=");
+		puthex(regs->rdi);
+		puts("\trsp=");
+		puthex(regs->userrsp);
+		puts("\trbp=");
+		puthex(regs->rbp);
+		puts("\nrip=");
+		puthex(regs->rip);
+		puts("\tss=");
+		puthex(regs->ss);
+		puts("\tcs=");
+		puthex(regs->cs);
+		puts("\tds=");
+		puthex(regs->ds);
+		puts("\n");
 	} else {
-		puts("<no register data found>\n");
+		puts("\t<no register data found>\n");
 	}
 	
 	puts("Halting system.\n");

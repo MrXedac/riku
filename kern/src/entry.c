@@ -73,5 +73,9 @@ void main()
 	puts("gdt init ");
 	gdt_init((uintptr_t)info->gdt_paddr, (uintptr_t)info->gdtptr_paddr);
 	puts("complete\n");
+	puts("idt init ");
+	idt_init();
+	puts("complete\n");
+	__asm volatile("INT $0x12;");
 	panic("early-boot complete", 0x0);
 }
