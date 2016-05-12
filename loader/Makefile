@@ -3,7 +3,7 @@ SRC_DIR=src
 
 # Toolchain
 CC=x86_64-elf-gcc
-AS=nasm
+AS=/opt/local/bin/nasm
 LD=x86_64-elf-ld
 
 # Sources

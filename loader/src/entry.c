@@ -18,8 +18,12 @@ void fill_ldrinfo(uintptr_t* mboot_info)
 	info->mbi_addr = (uint32_t)mboot_info;
 	extern uint32_t __code;
 	extern uint32_t __kernel;
+	extern uint32_t GDT64;
+	extern uint32_t GDT64Pointer;
 	info->ldr_paddr = (uint32_t)&__code;
 	info->krn_paddr = (uint32_t)&__kernel;
+	info->gdt_paddr = (uint32_t)&GDT64;
+	info->gdtptr_paddr = (uint32_t)&GDT64Pointer;
 }
 
 /* Loader entry-point. */
@@ -32,6 +36,10 @@ void main(uintptr_t* mboot_info)
 	puts("Riku Loader - The Riku Operating System\n");
 	puts("MBI at ");
 	puthex((uintptr_t)mboot_info);
+	puts("\n");
+	puts("Kernel at ");
+	extern uintptr_t kernel;
+	puthex((uintptr_t)&kernel);
 	puts("\n");
 	vm_init();
 	fill_ldrinfo(mboot_info);

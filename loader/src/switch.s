@@ -1,5 +1,7 @@
 [BITS 32]
-GDT64:                           ; Global Descriptor Table (64-bit).
+[GLOBAL GDT64]
+[GLOBAL GDT64Pointer]
+GDT64:	                          ; Global Descriptor Table (64-bit).
 	.Null: equ $ - GDT64         ; The null descriptor.
 	dw 0                         ; Limit (low).
 	dw 0                         ; Base (low).

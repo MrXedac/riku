@@ -5,6 +5,8 @@
 #include "version.h"
 #include "bootinfo.h"
 #include "ldrinfo.h"
+#include "gdt64.h"
+#include "idt64.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -46,7 +48,7 @@ void main()
 	/* Show we are alive ! */
 	puts("Welcome to the Riku Operating System\n");
 	displayKernelInfo();
-
+	
 	/* Get the Riku Loader info structure */
 	puts("Parsing RikuLdr info structure.\n");
 	struct rikuldr_info* info = (struct rikuldr_info*)LDRINFO_ADDR;
@@ -56,6 +58,10 @@ void main()
 	puthex((uintptr_t)info->ldr_paddr);
 	puts("\n\tRiku kernel physical address at ");
 	puthex((uintptr_t)info->krn_paddr);
+	puts("\n\tGlobal descriptor table at ");
+	puthex((uintptr_t)info->gdt_paddr);
+	puts("\n\tGlobal descriptor table pointer at ");
+	puthex((uintptr_t)info->gdtptr_paddr);
 	puts("\n");
 	
 	/* Parse the multiboot info */
@@ -63,7 +69,9 @@ void main()
 
 	parse_mbi((uintptr_t)info->mbi_addr | 0xFFFF800000000000);
 	
-	puts("\nOkay, everything is fine. \nThanks RikuLdr, I'm taking care of the remaining stuff...");
-	
-	for(;;);
+	puts("\nOkay, everything is fine. \nThanks RikuLdr, I'm taking care of the remaining stuff...\n");
+	puts("gdt init ");
+	gdt_init((uintptr_t)info->gdt_paddr, (uintptr_t)info->gdtptr_paddr);
+	puts("complete\n");
+	panic("early-boot complete", 0x0);
 }
