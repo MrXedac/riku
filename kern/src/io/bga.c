@@ -82,19 +82,19 @@ void bgaputch_internal(unsigned char c, int x, int y, int fgcolor, int bgcolor)
 
 void bgascroll()
 {
-	if(bgacy >= 48)
+	if(bgacy >= BGA_CYMAX)
 	{
 		uint32_t* lfb = (uint32_t*)(VBE_LFB);
 		int i;
 		for (i = 0; i < BGA_WIDTH * (BGA_HEIGHT - BGA_CYMAX) * sizeof(uint32_t); i++)
 		{
-			*(uint32_t*)(VBE_LFB + i * sizeof(uint32_t)) = *(uint32_t*)(VBE_LFB + i * sizeof(uint32_t) + 1024 * 16 * sizeof(uint32_t));
+			*(uint32_t*)(VBE_LFB + i * sizeof(uint32_t)) = *(uint32_t*)(VBE_LFB + i * sizeof(uint32_t) + BGA_WIDTH * 16 * sizeof(uint32_t));
 		}
 		for (i = BGA_WIDTH * (BGA_HEIGHT - BGA_CYMAX) * sizeof(uint32_t); i < BGA_WIDTH * BGA_HEIGHT * sizeof(uint32_t); i++)
 		{
 			*(uint32_t*)(VBE_LFB + i * sizeof(uint32_t)) = 0xFFFFFFFF;
 		}
-		bgacy = 47;
+		bgacy = BGA_CYMAX - 1;
 	}
 }
 

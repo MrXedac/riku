@@ -2,8 +2,8 @@
 #define __BGA_H__
 
 #include <stdint.h>
-#define BGA_WIDTH	1920
-#define BGA_HEIGHT	1080
+#define BGA_WIDTH	1024
+#define BGA_HEIGHT	768
 #define BGA_CXMAX	(BGA_WIDTH / 8)
 #define BGA_CYMAX	(BGA_HEIGHT / 16)
 
@@ -30,7 +30,8 @@
 #define VBE_DISPI_LFB_ENABLED		0x40
 #define VBE_DISPI_NOCLEARMEM		0x80
 
-#define VBE_LFB						0xFD000000
+/* Put VBE LFB into higher memory */
+#define VBE_LFB						0xFFFF8000FD000000
 
 void BgaWriteRegister(unsigned short IndexValue, unsigned short DataValue);
 

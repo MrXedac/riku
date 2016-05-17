@@ -51,6 +51,8 @@
 
 [EXTERN irq_handler]
 [EXTERN isr_handler]
+[GLOBAL isr_common_stub]
+[GLOBAL irq_common_stub]
 
 irq_common_stub:
 	cli
@@ -159,3 +161,4 @@ IRQ_STUB 12 , 44
 IRQ_STUB 13 , 45
 IRQ_STUB 14 , 46
 IRQ_STUB 15 , 47
+ISR_NOERRCODE 254

@@ -8,12 +8,13 @@
 #include "gdt64.h"
 #include "idt64.h"
 #include "bga.h"
+#include "mmu.h"
 
 /* Early-boot console init */
 void init_terminal()
 {
 	extern uint16_t *video_memory;
-	video_memory = (uint16_t*)0xB8000;
+	video_memory = (uint16_t*)0xFFFF8000000B8000;
 	cls();
 }
 
@@ -33,6 +34,16 @@ void displayKernelInfo()
 	extern uintptr_t __code;
 	puts("\nKernel code at virtual address ");
 	puthex((uintptr_t)&__code);
+	puts("\n");
+}
+
+void showDisclaimer()
+{
+	puts("\n");
+	puts("The Riku Operating System\n");
+	puts("\t(c) Quentin \"MrXedac\" Bergougnoux - 2014-2016\n");
+	puts("\tThis product is open-source, released under the GNU GPL licence.\n");
+	puts("\tThis software is a pre-release software and isn't ready for an everyday usage yet.\n");
 	puts("\n");
 }
 
@@ -87,7 +98,21 @@ void main()
 	puts("idt init ");
 	idt_init();
 	puts("complete\n");
+	//__asm volatile("INT $0x14;");
+	puts("mmu init ");
+	mmu_init();
+	puts("complete\n");
+	puts("WARNING: pure long-mode gdt madness here, looks like gdt HAS to be mapped into MMU for the system to work. this is insanity\n");
 	
-	//__asm volatile("INT $0x12;");
+	puts("kernel pml4t at ");
+	puthex((uintptr_t)kernel_cr3);
+	puts("\nkernel master table/pdpt at ");
+	puthex((uintptr_t)masterTable);
+	puts("\n");
+	puts("early-boot complete, now starting kernel tasks\n");
+	
+	showDisclaimer();
+	
+	//__asm volatile("INT $0x11");
 	panic("threading initialization failed: not implemented", 0x0);
 }

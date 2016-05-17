@@ -95,6 +95,7 @@ extern void irq12(); //!< IRQ 12
 extern void irq13(); //!< IRQ 13
 extern void irq14(); //!< IRQ 14
 extern void irq15(); //!< IRQ 15
+extern void isr254(); //!< ISR 255 : Riku emergency halt/debug panic
 
 typedef void (*isr_t)(registers_t); //!< Definition of interrupt handler
 

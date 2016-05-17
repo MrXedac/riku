@@ -63,7 +63,10 @@ void isr_handler(registers_t* regs)
 		puthex(addr);
 		puts("\n");
 	}
-	panic("unhandled fault in kernel land", regs);
+	if(regs->int_no == 254)
+		panic("riku emergency halt/debug panic", regs);
+	else
+		panic("unhandled fault in kernel land", regs);
 }
 
 
@@ -155,6 +158,7 @@ void bind_isr()
 	idt_set_gate(29, (uint64_t)isr29, 0x08, 0xEE);
 	idt_set_gate(30, (uint64_t)isr30, 0x08, 0xEE);
 	idt_set_gate(31, (uint64_t)isr31, 0x08, 0xEE);
+	idt_set_gate(254, (uint64_t)isr254, 0x08, 0xEE);
 	
 	idt_flush((uint64_t)&idt_ptr);
 }

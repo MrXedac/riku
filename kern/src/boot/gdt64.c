@@ -1,4 +1,6 @@
 #include "gdt64.h"
+#include "vga.h"
+#include "vm.h"
 #include <stdint.h>
 
 /* Our GDT, with 7 entries, and finally our special GDT pointer */
@@ -6,7 +8,7 @@ struct gdt_entry *gdt;
 struct gdt_ptr *gp;
 tss_entry_t tss_entry; //!< Generic TSS entry for userland-to-kernel switch
 
-extern void gdt_flush(uint32_t gdtptr);
+extern void gdt_flush(uintptr_t gdtptr);
 extern void tss_flush(); //!< ASM method to flush the TSS entry
 
 /* Sets up a gate into the Global Descriptor Table */
@@ -32,9 +34,20 @@ void gdt_init(uintptr_t gdt_addr, uintptr_t gptptr_addr)
 	gdt  = (struct gdt_entry*)gdt_addr;
 	gp = (struct gdt_ptr*)gptptr_addr;
 	
-	write_tss(0x5, 0xFFFF800000300000);
-	tss_flush();
+	/* Allright, our GDT is not x64-compliant, we have to build it from scratch here... */
+	/*gdtInstallGate(0, 0x0, 0x0, 0x0, 0x0);
+	gdtInstallGate(1, 0x0, 0x0, 0x9A, 0x20);
+	gdtInstallGate(2, 0x0, 0x0, 0x92, 0x00);
+	gdtInstallGate(3, 0x0, 0x0, 0xFA, 0x20);
+	gdtInstallGate(4, 0x0, 0x0, 0xF2, 0x00);
+	
+	gp->base = (uintptr_t)gdt;
+	gp->limit = sizeof(struct gdt_entry) * 6 - 1;
 
+	gdt_flush((uintptr_t)gp); */
+	write_tss(0x5, 0xFFFF800000500000);
+	tss_flush();
+	
 	/* Our GDT has already been setup by RikuLdr, do nothing */
 	return;
 }

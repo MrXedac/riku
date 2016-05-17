@@ -3,7 +3,8 @@
 #include <ioport.h>
 #include <serial.h>
 #include "bga.h"
-uint16_t *video_memory = (uint16_t *)0xB8000;
+/* Put VGA memory into higher-half */
+uint16_t *video_memory = (uint16_t *)0xFFFF8000000B8000;
 
 uint8_t cursor_x = 0;
 uint8_t cursor_y = 0;
