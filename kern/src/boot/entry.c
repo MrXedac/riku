@@ -45,11 +45,19 @@ void main()
 	init_serial();
 	slputs("Welcome to Riku");
 	init_terminal();
-	BgaSetVideoMode(1024, 768, 32, 1, 1);
+	BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
 	
 	/* Show we are alive ! */
 	puts("Welcome to the Riku Operating System\n");
-	puts("Early console: 1024*768*32 128x48 console\n");
+	puts("Early console: ");
+	putdec(BGA_WIDTH);
+	puts("x");
+	putdec(BGA_HEIGHT);
+	puts(", ");
+	putdec(BGA_CXMAX);
+	puts("x");
+	putdec(BGA_CYMAX);
+	puts(" console\n");
 	displayKernelInfo();
 	
 	/* Get the Riku Loader info structure */
@@ -80,6 +88,6 @@ void main()
 	idt_init();
 	puts("complete\n");
 	
-	__asm volatile("INT $0x12;");
-	panic("early-boot complete", 0x0);
+	//__asm volatile("INT $0x12;");
+	panic("threading initialization failed: not implemented", 0x0);
 }

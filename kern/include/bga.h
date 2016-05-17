@@ -2,6 +2,10 @@
 #define __BGA_H__
 
 #include <stdint.h>
+#define BGA_WIDTH	1920
+#define BGA_HEIGHT	1080
+#define BGA_CXMAX	(BGA_WIDTH / 8)
+#define BGA_CYMAX	(BGA_HEIGHT / 16)
 
 #define VBE_DISPI_IOPORT_INDEX		0x01CE
 #define VBE_DISPI_IOPORT_DATA		0x01CF

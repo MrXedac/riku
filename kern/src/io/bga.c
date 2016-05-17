@@ -50,7 +50,7 @@ uint32_t color2int(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 
 void putpixel(uint32_t color, uint32_t x, uint32_t y)
 {
-	uint32_t* lfb = (uint32_t*)(VBE_LFB + y * 1024 * sizeof(uint32_t) + x * sizeof(uint32_t));
+	uint32_t* lfb = (uint32_t*)(VBE_LFB + y * BGA_WIDTH * sizeof(uint32_t) + x * sizeof(uint32_t));
 	*lfb = color;
 }
 
@@ -86,11 +86,11 @@ void bgascroll()
 	{
 		uint32_t* lfb = (uint32_t*)(VBE_LFB);
 		int i;
-		for (i = 0; i < 1024 * 720 * sizeof(uint32_t); i++)
+		for (i = 0; i < BGA_WIDTH * (BGA_HEIGHT - BGA_CYMAX) * sizeof(uint32_t); i++)
 		{
 			*(uint32_t*)(VBE_LFB + i * sizeof(uint32_t)) = *(uint32_t*)(VBE_LFB + i * sizeof(uint32_t) + 1024 * 16 * sizeof(uint32_t));
 		}
-		for (i = 1024 * 720 * sizeof(uint32_t); i < 1024 * 768 * sizeof(uint32_t); i++)
+		for (i = BGA_WIDTH * (BGA_HEIGHT - BGA_CYMAX) * sizeof(uint32_t); i < BGA_WIDTH * BGA_HEIGHT * sizeof(uint32_t); i++)
 		{
 			*(uint32_t*)(VBE_LFB + i * sizeof(uint32_t)) = 0xFFFFFFFF;
 		}
@@ -105,11 +105,11 @@ void invert()
 	{
 		for(j = 0; j < 16; j++)
 		{
-			uint32_t col =*(uint32_t*)(VBE_LFB + /* Y */ 1024 * ((bgacy - 1) * 16 + j) * sizeof(uint32_t) + /* X */ ((bgacx * 8) + i) * sizeof(uint32_t));
+			uint32_t col =*(uint32_t*)(VBE_LFB + /* Y */ BGA_WIDTH * ((bgacy - 1) * 16 + j) * sizeof(uint32_t) + /* X */ ((bgacx * 8) + i) * sizeof(uint32_t));
 			if(col)
-				*(uint32_t*)(VBE_LFB + /* Y */ 1024 * ((bgacy - 1) * 16 + j) * sizeof(uint32_t) + /* X */ ((bgacx * 8) + i) * sizeof(uint32_t)) = 0x00000000;
+				*(uint32_t*)(VBE_LFB + /* Y */ BGA_WIDTH * ((bgacy - 1) * 16 + j) * sizeof(uint32_t) + /* X */ ((bgacx * 8) + i) * sizeof(uint32_t)) = 0x00000000;
 			else
-				*(uint32_t*)(VBE_LFB + /* Y */ 1024 * ((bgacy - 1) * 16 + j) * sizeof(uint32_t) + /* X */ ((bgacx * 8) + i) * sizeof(uint32_t)) = 0xFFFFFFFF;
+				*(uint32_t*)(VBE_LFB + /* Y */ BGA_WIDTH * ((bgacy - 1) * 16 + j) * sizeof(uint32_t) + /* X */ ((bgacx * 8) + i) * sizeof(uint32_t)) = 0xFFFFFFFF;
 
 		}
 	}
