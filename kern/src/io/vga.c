@@ -2,7 +2,7 @@
 #include <vga.h>
 #include <ioport.h>
 #include <serial.h>
-
+#include "bga.h"
 uint16_t *video_memory = (uint16_t *)0xB8000;
 
 uint8_t cursor_x = 0;
@@ -40,6 +40,11 @@ void scroll()
 
 int vgaputch(char c)
 {
+	if(bga_mode)
+	{
+		bgaputch(c);
+		return 0;
+	}
 	uint8_t backColour = 1;
 	uint8_t foreColour = 15;
 
@@ -108,7 +113,10 @@ void puts(char *c)
 	int i = 0;
 	while (c[i])
 	{
-		vgaputch(c[i++]);
+		if(bga_mode)
+			bgaputch(c[i++]);
+		else
+			vgaputch(c[i++]);
 	}
 }
 

@@ -7,6 +7,7 @@
 #include "ldrinfo.h"
 #include "gdt64.h"
 #include "idt64.h"
+#include "bga.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -44,9 +45,11 @@ void main()
 	init_serial();
 	slputs("Welcome to Riku");
 	init_terminal();
-
+	BgaSetVideoMode(1024, 768, 32, 1, 1);
+	
 	/* Show we are alive ! */
 	puts("Welcome to the Riku Operating System\n");
+	puts("Early console: 1024*768*32 128x48 console\n");
 	displayKernelInfo();
 	
 	/* Get the Riku Loader info structure */
@@ -76,6 +79,7 @@ void main()
 	puts("idt init ");
 	idt_init();
 	puts("complete\n");
+	
 	__asm volatile("INT $0x12;");
 	panic("early-boot complete", 0x0);
 }
