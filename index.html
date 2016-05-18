@@ -36,8 +36,8 @@
 <p>It is divided into two main components :</p>
 
 <ul>
-<li>loader, which is the x86 bootstrap code</li>
-<li>kern, which is the x64 kernel code</li>
+<li>loader, which is the x86 bootstrap code,</li>
+<li>kern, which is the x64 kernel code.</li>
 </ul>
 
 <p>Right now, Riku isn't ready for an everyday use, or even a real-hardware boot. This should happen in the future, or at least I hope it does!</p>
@@ -59,14 +59,40 @@
 <p>Also, I know the Makefile are still a bit crappy, but I'm too lazy to do a clean thing. Feel free to make it cleaner by contributing!</p>
 
 <h1>
-<a id="howto--compile" class="anchor" href="#howto--compile" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HowTo : Compile</h1>
+<a id="what-is-done" class="anchor" href="#what-is-done" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What is done</h1>
 
-<p>Compiling should be as easy as running "make all".</p>
+<p>Right now, Riku can initialize some CPU-related components, as well as a graphical terminal (using QEMU's BGA adapter) :</p>
+
+<ul>
+<li>x86 to x64 switch</li>
+<li>Segment descriptors (GDT)</li>
+<li>Interrupt management (IDT)</li>
+<li>MMU configuration</li>
+</ul>
 
 <h1>
-<a id="howto--run" class="anchor" href="#howto--run" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HowTo : Run</h1>
+<a id="whats-next" class="anchor" href="#whats-next" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What's next</h1>
 
-<p>The compilation toolchain should generate a "riku.iso" file, loadable through QEMU.</p>
+<p>These are a few functionalities which should be added in the few next commits :</p>
+
+<ul>
+<li>Heap management</li>
+<li>Threading (kernel tasks)</li>
+<li>Driver model</li>
+<li>Hardware probe and driver initialization</li>
+<li>Virtual filesystem</li>
+<li>System call interface</li>
+<li>Userland binaries</li>
+<li>Real filesystem</li>
+<li>And a lot more...</li>
+</ul>
+
+<h1>
+<a id="some-words-about-riku" class="anchor" href="#some-words-about-riku" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Some words about Riku</h1>
+
+<p>Keep in mind that Riku is a hobby kernel, which means its development cycle is slow, and that the source code might be buggy as hell. This is a personal project with educational purposes, so even if I hope I'll finish it one day, it will probably never be as stable and usable as a commercial OS. </p>
+
+<p>That being said, don't hesitate to contribute to the project, that would really be helpful!</p>
       </section>
     </div>
 
