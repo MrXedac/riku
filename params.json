@@ -1,0 +1,6 @@
+{
+  "name": "Riku",
+  "tagline": "The Riku Operating System",
+  "body": "# The Riku Operating System \r\nThe Riku Operating System is a home-made, hobby operating system for Intel x64 architectures.\r\n\r\nIt is divided into two main components :\r\n- loader, which is the x86 bootstrap code\r\n- kern, which is the x64 kernel code\r\n\r\nRight now, Riku isn't ready for an everyday use, or even a real-hardware boot. This should happen in the future, or at least I hope it does!\r\n\r\n# Required stuff\r\nIn order to compile and run Riku, some standard development environment is required :\r\n- x86_64-elf-gcc toolchain (mandatory)\r\n- grub2 (grub-mkrescue to be honest, to generate the riku.iso bootable image)\r\n- nasm (my favourite assembler)\r\n- qemu-system-x86_64 (a virtual machine to run the kernel on is always a good thing)\r\n- GNU make (yep)\r\n- Tons of coffee (don't tell me you don't need this, I won't believe you)\r\n\r\nAlso, I know the Makefile are still a bit crappy, but I'm too lazy to do a clean thing. Feel free to make it cleaner by contributing!\r\n\r\n# HowTo : Compile\r\nCompiling should be as easy as running \"make all\".\r\n\r\n# HowTo : Run\r\nThe compilation toolchain should generate a \"riku.iso\" file, loadable through QEMU.\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}

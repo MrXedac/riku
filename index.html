@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>Riku by MrXedac</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Riku</h1>
+        <h2>The Riku Operating System</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/MrXedac/riku/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/MrXedac/riku/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/MrXedac/riku" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a id="the-riku-operating-system" class="anchor" href="#the-riku-operating-system" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The Riku Operating System</h1>
+
+<p>The Riku Operating System is a home-made, hobby operating system for Intel x64 architectures.</p>
+
+<p>It is divided into two main components :</p>
+
+<ul>
+<li>loader, which is the x86 bootstrap code</li>
+<li>kern, which is the x64 kernel code</li>
+</ul>
+
+<p>Right now, Riku isn't ready for an everyday use, or even a real-hardware boot. This should happen in the future, or at least I hope it does!</p>
+
+<h1>
+<a id="required-stuff" class="anchor" href="#required-stuff" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Required stuff</h1>
+
+<p>In order to compile and run Riku, some standard development environment is required :</p>
+
+<ul>
+<li>x86_64-elf-gcc toolchain (mandatory)</li>
+<li>grub2 (grub-mkrescue to be honest, to generate the riku.iso bootable image)</li>
+<li>nasm (my favourite assembler)</li>
+<li>qemu-system-x86_64 (a virtual machine to run the kernel on is always a good thing)</li>
+<li>GNU make (yep)</li>
+<li>Tons of coffee (don't tell me you don't need this, I won't believe you)</li>
+</ul>
+
+<p>Also, I know the Makefile are still a bit crappy, but I'm too lazy to do a clean thing. Feel free to make it cleaner by contributing!</p>
+
+<h1>
+<a id="howto--compile" class="anchor" href="#howto--compile" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HowTo : Compile</h1>
+
+<p>Compiling should be as easy as running "make all".</p>
+
+<h1>
+<a id="howto--run" class="anchor" href="#howto--run" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HowTo : Run</h1>
+
+<p>The compilation toolchain should generate a "riku.iso" file, loadable through QEMU.</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
