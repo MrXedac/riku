@@ -10,3 +10,5 @@ Of course, the OSDev Wiki & Forums are mandatory :
 
 The following people have directly contributed to the Riku Operating System :
 - Quentin "MrXedac" Bergougnoux
+
+The Riku Kernel uses "zevv-peep" font for graphical terminal output, released under MIT Licence at http://zevv.nl/play/code/zevv-peep/.

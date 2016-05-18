@@ -58,7 +58,7 @@ void bgaputch_internal_transp(unsigned char c, int x, int y, int fgcolor)
 {
 	int cx,cy;
 	int mask[8]={1,2,4,8,16,32,64,128};
-	const unsigned char *glyph=bgafont.Bitmap+ c * 16 * sizeof(uint8_t) - 31 * 16;
+	const unsigned char *glyph=bgafont.Bitmap+ c * 16 * sizeof(uint8_t) + 5 * 16;
  
 	for(cy=0;cy<16;cy++){
 		for(cx=7;cx>=0;cx--){
@@ -71,7 +71,7 @@ void bgaputch_internal(unsigned char c, int x, int y, int fgcolor, int bgcolor)
 {
 	int cx,cy;
 	int mask[8]={1,2,4,8,16,32,64,128};
-	const unsigned char *glyph=bgafont.Bitmap+ c * 16 * sizeof(uint8_t) - 31 * 16;
+	const unsigned char *glyph=bgafont.Bitmap+ c * 16 * sizeof(uint8_t) + 5 * 16;
  
 	for(cy=0;cy<16;cy++){
 		for(cx=7;cx>=0;cx--){

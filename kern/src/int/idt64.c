@@ -167,7 +167,7 @@ void idt_init()
 {
 	idt_ptr.limit = sizeof(idt_entry_t) * 256 -1;
 	idt_ptr.base  = (uint64_t)&idt_entries;
-	
+
 	memset(&idt_entries, 0, sizeof(idt_entry_t)*256);
 	bind_isr();
 	remap_irq();

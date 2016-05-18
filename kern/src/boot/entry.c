@@ -102,7 +102,6 @@ void main()
 	puts("mmu init ");
 	mmu_init();
 	puts("complete\n");
-	puts("WARNING: pure long-mode gdt madness here, looks like gdt HAS to be mapped into MMU for the system to work. this is insanity\n");
 	
 	puts("kernel pml4t at ");
 	puthex((uintptr_t)kernel_cr3);
