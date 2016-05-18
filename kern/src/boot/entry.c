@@ -113,6 +113,6 @@ void main()
 	
 	showDisclaimer();
 	
-	//__asm volatile("INT $0x11");
+	__asm volatile("INT $0x11");
 	panic("threading initialization failed: not implemented", 0x0);
 }

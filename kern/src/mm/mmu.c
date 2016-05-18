@@ -95,7 +95,7 @@ void mmu_init()
 	current_cr3 = kernel_cr3;
 	
 	tableWriteWithFlags((uintptr_t)kernel_cr3, PML4T_UPPER, (uintptr_t)masterTable | FLAGS_PML4T);
-	tableWriteWithFlags((uintptr_t)kernel_cr3, 0, (uintptr_t)masterTable | FLAGS_PML4T);
+	// tableWriteWithFlags((uintptr_t)kernel_cr3, 0, (uintptr_t)masterTable | FLAGS_PML4T);
 	/* Kernel PML4T should be ready now. Switch to it. */
 	switch_cr3((uintptr_t)kernel_cr3);
 

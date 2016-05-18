@@ -34,17 +34,13 @@ void gdt_init(uintptr_t gdt_addr, uintptr_t gptptr_addr)
 	gdt  = (struct gdt_entry*)gdt_addr;
 	gp = (struct gdt_ptr*)gptptr_addr;
 	
-	/* Allright, our GDT is not x64-compliant, we have to build it from scratch here... */
-	/*gdtInstallGate(0, 0x0, 0x0, 0x0, 0x0);
-	gdtInstallGate(1, 0x0, 0x0, 0x9A, 0x20);
-	gdtInstallGate(2, 0x0, 0x0, 0x92, 0x00);
-	gdtInstallGate(3, 0x0, 0x0, 0xFA, 0x20);
-	gdtInstallGate(4, 0x0, 0x0, 0xF2, 0x00);
+	/* Update the GDT pointer into higher memory */
+	gp->base = gp->base & 0x00000000FFFFFFFF; /* Get the 32-bits physical address in lower memory, removing potential garbage */
+	gp->base += 0xFFFF800000000000; /* Put it in higher-half kernel memory */
 	
-	gp->base = (uintptr_t)gdt;
-	gp->limit = sizeof(struct gdt_entry) * 6 - 1;
-
-	gdt_flush((uintptr_t)gp); */
+	/* Load the new GDT */
+	gdt_flush((uintptr_t)gp | 0xFFFF800000000000); /* Load the higher-half GDT pointer */
+	
 	write_tss(0x5, 0xFFFF800000500000);
 	tss_flush();
 	
