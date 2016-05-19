@@ -38,7 +38,7 @@ void paging_init(uintptr_t* base, uint64_t length)
 		for(uintptr_t i = (uintptr_t)base; i < ((uintptr_t)base + length); i+=0x1000)
 		{
 			/* Don't overwrite the kernel + Haskell heap stuff, and avoid erasing high-memory kernel space */
-			if(i > ((uintptr_t)&__end & 0x000000FFFFFFFFFF) && i < 0x800000000000) { /* Ignore higher half, we're working on physical address space right now */
+			if(i > (((uintptr_t)&__end & 0x000000FFFFFFFFFF) + 0x400000) && i < 0x800000000000) { /* Ignore higher half, we're working on physical address space right now */
 				*(uintptr_t*)i = (uintptr_t)first_free_page;
 				first_free_page = (uintptr_t*)i;
 				max_pages++;

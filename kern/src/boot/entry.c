@@ -9,6 +9,7 @@
 #include "idt64.h"
 #include "bga.h"
 #include "mmu.h"
+#include "heap.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -108,6 +109,7 @@ void main()
 	puts("\nkernel master table/pdpt at ");
 	puthex((uintptr_t)masterTable);
 	puts("\n");
+	init_kheap();
 	puts("early-boot complete, now starting kernel tasks\n");
 	
 	showDisclaimer();
