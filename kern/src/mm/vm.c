@@ -101,10 +101,10 @@ void mmap_init(struct multiboot_tag_mmap *mmap_tag_ptr)
 uintptr_t* alloc_page()
 {
 	uintptr_t* res = first_free_page;
-	first_free_page = (uintptr_t*)(*res);
+	first_free_page = (uintptr_t*)(*(uintptr_t*)((uintptr_t)res | 0xFFFF800000000000));
 	uintptr_t i = 0;
 	for(i = 0; i < 512; i++)
-		*(uintptr_t*)((uintptr_t)res + i * 0x8) = 0x0;
+		*(uintptr_t*)(((uintptr_t)res + i * 0x8) | 0xFFFF800000000000) = 0x0;
 	
 	allocated_pages++;
 	return res;

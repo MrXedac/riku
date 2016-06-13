@@ -11,11 +11,13 @@ CSOURCES=$(wildcard $(SRC_DIR)/boot/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/int/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/io/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/mm/*.c)
+CSOURCES+=$(wildcard $(SRC_DIR)/task/*.c)
 
 ASOURCES=$(wildcard $(SRC_DIR)/boot/*.s)
 ASOURCES+=$(wildcard $(SRC_DIR)/int/*.s)
 ASOURCES+=$(wildcard $(SRC_DIR)/io/*.s)
 ASOURCES+=$(wildcard $(SRC_DIR)/mm/*.s)
+ASOURCES+=$(wildcard $(SRC_DIR)/task/*.s)
 
 # Objects
 COBJ=$(CSOURCES:.c=.o)

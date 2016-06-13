@@ -10,6 +10,7 @@
 #include "bga.h"
 #include "mmu.h"
 #include "heap.h"
+#include "task.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -46,6 +47,12 @@ void showDisclaimer()
 	puts("\tThis product is open-source, released under the GNU GPL licence.\n");
 	puts("\tThis software is a pre-release software and isn't ready for an everyday usage yet.\n");
 	puts("\n");
+}
+
+void dummy()
+{
+	while(1)
+		puts("I'm a kernel task. Life is cool.\n");
 }
 
 /* Loader entry-point. */
@@ -112,6 +119,20 @@ void main()
 	init_kheap();
 	puts("early-boot complete, now starting kernel tasks\n");
 	
+	/* Some tasking */
+	struct riku_task* dummyTask = (struct riku_task*)kalloc(sizeof(struct riku_task));
+	uintptr_t* usrstack = alloc_page();
+	uintptr_t* krnstack = alloc_page();
+	puts("Riku dummy task at ");
+	puthex((uintptr_t)dummyTask);
+	puts("\n");
+	/* First prepare task */
+	init_task(dummyTask, "Riku Dummy", usrstack, (uintptr_t*)((uintptr_t)krnstack | 0xFFFF800000000000), &dummy);
+	
+	/* Then spawn it in kernel land */
+	run_kernel_task(dummyTask);
+	
+	__asm volatile("sti");
 	showDisclaimer();
 	
 	__asm volatile("INT $0x11");

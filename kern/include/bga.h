@@ -2,8 +2,8 @@
 #define __BGA_H__
 
 #include <stdint.h>
-#define BGA_WIDTH	1280
-#define BGA_HEIGHT	1024
+#define BGA_WIDTH	1024
+#define BGA_HEIGHT	768
 #define BGA_CXMAX	(BGA_WIDTH / 8)
 #define BGA_CYMAX	(BGA_HEIGHT / 16)
 

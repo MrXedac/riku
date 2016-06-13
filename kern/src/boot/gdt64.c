@@ -48,6 +48,12 @@ void gdt_init(uintptr_t gdt_addr, uintptr_t gptptr_addr)
 	return;
 }
 
+void tss_set_kern_stack(uintptr_t rsp)
+{
+	tss_entry.rsp0 = (uint64_t)rsp;
+	return;
+}
+
 void write_tss(int32_t num, uint64_t rsp0)
 {
 	uintptr_t base = (uintptr_t)((uintptr_t)&tss_entry);

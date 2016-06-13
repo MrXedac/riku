@@ -2,6 +2,7 @@
 #include "ioport.h"
 #include "vga.h"
 #include "mem.h"
+#include "task.h"
 #include <stdint.h>
 
 extern void idt_flush(uint64_t idt_ptr);
@@ -19,15 +20,22 @@ void disable_interrupts()
 	__asm volatile("cli");
 }
 
-void irq_handler(registers_t regs)
+void irq_handler(registers_t* regs)
 {
-	if (regs.int_no >= 40)
+	if (regs->int_no >= 40)
 	{
 		outb(0xA0, 0x20);
 	}
 	
 	outb(0x20, 0x20);
 	
+	/* Timer */
+	if(regs->int_no == 32)
+	{
+		puts("Task switch requested.\n");
+		if(current_task)
+			switch_to_task(current_task->next, regs);
+	}
 }
 
 void isr_handler(registers_t* regs)
@@ -157,9 +165,7 @@ void bind_isr()
 	idt_set_gate(28, (uint64_t)isr28, 0x08, 0xEE);
 	idt_set_gate(29, (uint64_t)isr29, 0x08, 0xEE);
 	idt_set_gate(30, (uint64_t)isr30, 0x08, 0xEE);
-	idt_set_gate(31, (uint64_t)isr31, 0x08, 0xEE);
-	idt_set_gate(254, (uint64_t)isr254, 0x08, 0xEE);
-	
+	idt_set_gate(31, (uint64_t)isr31, 0x08, 0xEE);	
 	idt_flush((uint64_t)&idt_ptr);
 }
 

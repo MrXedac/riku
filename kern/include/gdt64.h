@@ -60,5 +60,6 @@ typedef struct tss_entry_struct tss_entry_t; //!< TSS entry for kernel-mode swit
 
 void gdt_init(uintptr_t gdt_addr, uintptr_t gptptr_addr);
 void write_tss(int32_t num, uint64_t rsp0);
+void tss_set_kern_stack(uintptr_t rsp);
 
 #endif

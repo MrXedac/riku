@@ -49,8 +49,8 @@ GDT64:	                          ; Global Descriptor Table (64-bit).
 	dw 0
 	dw 0
 GDT64Pointer:                  ; The GDT-pointer.
-dw $ - GDT64 - 1
-dd GDT64
+	dw $ - GDT64 - 1
+	dd GDT64
 
 ; Long-mode switch
 [GLOBAL enter_long_mode]

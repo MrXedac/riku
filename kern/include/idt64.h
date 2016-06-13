@@ -30,11 +30,19 @@ typedef struct registers
 	uint64_t rdi; //!< General register EDI
 	uint64_t rsi; //!< General register ESI
 	uint64_t rbp; //!< EBP
+	uint64_t rsp; //!< Stack pointer
 	uint64_t rbx; //!< General register EBX
 	uint64_t rdx; //!< General register EDX
 	uint64_t rcx; //!< General register ECX
 	uint64_t rax; //!< General register EAX
-	uint64_t rsp; //!< Stack pointer
+	uint64_t r8;
+	uint64_t r9;
+	uint64_t r10;
+	uint64_t r11;
+	uint64_t r12;
+	uint64_t r13;
+	uint64_t r14;
+	uint64_t r15;
 	uint64_t int_no; //!< Interrupt number
 	uint64_t err_code; //!< Interrupt error code
 	uint64_t rip; //!< Execution pointer
