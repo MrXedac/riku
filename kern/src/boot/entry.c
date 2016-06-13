@@ -49,10 +49,28 @@ void showDisclaimer()
 	puts("\n");
 }
 
+void dummy2()
+{
+	puts("Dummy task started.\n");
+	__asm volatile("STI");
+	while(1)
+		puts("2");
+}
+
 void dummy()
 {
+	puts("Entered Riku main kernel task.\n");
+	
+	showDisclaimer();
+	
+	uintptr_t* usrstack = alloc_page();
+	uintptr_t* krnstack = alloc_page();
+	struct riku_task* dummyTask2 = (struct riku_task*)kalloc(sizeof(struct riku_task));
+	init_task(dummyTask2, "Riku Dummy", (uintptr_t*)((uintptr_t)(usrstack) | 0xFFFF800000000000), (uintptr_t*)((uintptr_t)(krnstack) | 0xFFFF800000000000), &dummy2, (uintptr_t*)kernel_cr3);
+	tasking_ready = 1;
+	__asm volatile("STI");
 	while(1)
-		puts("I'm a kernel task. Life is cool.\n");
+		puts("1");
 }
 
 /* Loader entry-point. */
@@ -121,20 +139,19 @@ void main()
 	
 	/* Some tasking */
 	struct riku_task* dummyTask = (struct riku_task*)kalloc(sizeof(struct riku_task));
+	struct riku_task* dummyTask2 = (struct riku_task*)kalloc(sizeof(struct riku_task));
 	uintptr_t* usrstack = alloc_page();
 	uintptr_t* krnstack = alloc_page();
+	uintptr_t* usrstack2 = alloc_page();
+	uintptr_t* krnstack2 = alloc_page();
 	puts("Riku dummy task at ");
 	puthex((uintptr_t)dummyTask);
 	puts("\n");
 	/* First prepare task */
-	init_task(dummyTask, "Riku Dummy", usrstack, (uintptr_t*)((uintptr_t)krnstack | 0xFFFF800000000000), &dummy);
-	
-	/* Then spawn it in kernel land */
-	run_kernel_task(dummyTask);
-	
-	__asm volatile("sti");
-	showDisclaimer();
-	
+	init_task(dummyTask, "Riku init", (uintptr_t*)((uintptr_t)(usrstack) | 0xFFFF800000000000), (uintptr_t*)((uintptr_t)(krnstack) | 0xFFFF800000000000), &dummy, (uintptr_t*)kernel_cr3);
+	//init_task(dummyTask2, "Riku Dummy", (uintptr_t*)((uintptr_t)(usrstack2 + 0xFFF) | 0xFFFF800000000000), (uintptr_t*)((uintptr_t)(krnstack2 + 0xFFF) | 0xFFFF800000000000), &dummy2, (uintptr_t*)kernel_cr3);
+	switch_to_task(dummyTask);
+
 	__asm volatile("INT $0x11");
 	panic("threading initialization failed: not implemented", 0x0);
 }

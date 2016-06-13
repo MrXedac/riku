@@ -3,6 +3,7 @@
 #include <ioport.h>
 #include <serial.h>
 #include "bga.h"
+#include "task.h"
 /* Put VGA memory into higher-half */
 uint16_t *video_memory = (uint16_t *)0xFFFF8000000B8000;
 
@@ -109,8 +110,10 @@ void cls()
 	move_cursor();
 } 
 
+/* Atomic puts() to avoid graphical glitches */
 void puts(char *c)
 {
+	__asm volatile("CLI");
 	int i = 0;
 	while (c[i])
 	{
@@ -119,6 +122,8 @@ void puts(char *c)
 		else
 			vgaputch(c[i++]);
 	}
+	if(tasking_ready)
+		__asm volatile("STI");
 }
 
 void puthex(uintptr_t n)

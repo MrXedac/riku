@@ -93,7 +93,8 @@ irq_common_stub:
     mov gs, bx
 
     POPA
-    add rsp, 8
+    add rsp, 16
+	sti
     iretq
 
 isr_common_stub:
@@ -119,7 +120,8 @@ isr_common_stub:
     mov gs, bx
 
     POPA
-    add rsp, 8
+    add rsp, 16
+	sti
     iretq
 
 [GLOBAL idt_flush]

@@ -32,9 +32,13 @@ void irq_handler(registers_t* regs)
 	/* Timer */
 	if(regs->int_no == 32)
 	{
-		puts("Task switch requested.\n");
-		if(current_task)
-			switch_to_task(current_task->next, regs);
+		if(current_task) {
+			if(current_task->next) {
+				switch_to_task(current_task->next);
+			} else {
+				switch_to_task(task_list);
+			}
+		}
 	}
 }
 
@@ -178,4 +182,7 @@ void idt_init()
 	bind_isr();
 	remap_irq();
 	bind_irq();
+	current_task = 0;
+	task_list = 0;
+	tasking_ready = 0;
 }
