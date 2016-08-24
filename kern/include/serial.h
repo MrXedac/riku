@@ -3,6 +3,9 @@
 
 #define PORT 0x3f8
 
+#define KTRACE(a) { slputs("["); slputs(__FILE__); slputs(":"); slputdec(__LINE__); slputs("] "); slputs(a); }
+#define KTRACERAW(a) { slputs(a); }
+
 void init_serial();
 int serial_received();
 char read_serial();

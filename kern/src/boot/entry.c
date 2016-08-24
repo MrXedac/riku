@@ -11,6 +11,7 @@
 #include "mmu.h"
 #include "heap.h"
 #include "task.h"
+#include "hw.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -80,7 +81,9 @@ void main()
 	
 	/* Initialize some stuff related to early-boot IO */
 	init_serial();
-	slputs("Welcome to Riku");
+	KTRACE("64-bits entrypoint reached\n");
+	KTRACE("The Riku Operating System - MrXedac(c) 2016\n");
+	KTRACE("Initializing early-boot console\n");
 	init_terminal();
 	BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
 	
@@ -114,7 +117,7 @@ void main()
 	
 	/* Parse the multiboot info */
 	puts("\nNow parsing Multiboot2 header info.\n");
-
+	KTRACE("Parsing MB2I\n");
 	parse_mbi((uintptr_t)info->mbi_addr | 0xFFFF800000000000);
 	
 	puts("\nOkay, everything is fine. \nThanks RikuLdr, I'm taking care of the remaining stuff...\n");
@@ -128,7 +131,7 @@ void main()
 	puts("mmu init ");
 	mmu_init();
 	puts("complete\n");
-	
+	KTRACE("GDT, IDT and MMU initialization complete\n");
 	puts("kernel pml4t at ");
 	puthex((uintptr_t)kernel_cr3);
 	puts("\nkernel master table/pdpt at ");
@@ -136,7 +139,9 @@ void main()
 	puts("\n");
 	init_kheap();
 	puts("early-boot complete, now starting kernel tasks\n");
+	probe_hardware();
 	
+	KTRACE("Starting kernel early tasks\n");
 	/* Some tasking */
 	struct riku_task* dummyTask = (struct riku_task*)kalloc(sizeof(struct riku_task));
 	struct riku_task* dummyTask2 = (struct riku_task*)kalloc(sizeof(struct riku_task));

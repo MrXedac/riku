@@ -2,9 +2,9 @@ IMAGE=kern.bin
 SRC_DIR=src
 
 # Toolchain
-CC=x86_64-elf-gcc
-AS=/opt/local/bin/nasm
-LD=x86_64-elf-ld
+CC=gcc
+AS=nasm
+LD=ld
 
 # Sources
 CSOURCES=$(wildcard $(SRC_DIR)/boot/*.c)
@@ -12,6 +12,8 @@ CSOURCES+=$(wildcard $(SRC_DIR)/int/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/io/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/mm/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/task/*.c)
+CSOURCES+=$(wildcard $(SRC_DIR)/hw/*.c)
+CSOURCES+=$(wildcard $(SRC_DIR)/vfs/*.c)
 
 ASOURCES=$(wildcard $(SRC_DIR)/boot/*.s)
 ASOURCES+=$(wildcard $(SRC_DIR)/int/*.s)

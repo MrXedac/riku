@@ -8,3 +8,11 @@ void* memset(void* bufptr, int value, size_t size)
 		buf[i] = (unsigned char) value;
 	return bufptr;
 }
+
+char *strcpy(char* dest, const char* source) {
+	int i = 0;
+	while ((dest[i] = source[i]) != '\0') {
+		i++;
+	} 
+	return dest;
+}

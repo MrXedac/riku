@@ -2,9 +2,9 @@ IMAGE=rikuldr.bin
 SRC_DIR=src
 
 # Toolchain
-CC=x86_64-elf-gcc
-AS=/opt/local/bin/nasm
-LD=x86_64-elf-ld
+CC=gcc
+AS=nasm
+LD=ld
 
 # Sources
 CSOURCES=$(wildcard $(SRC_DIR)/*.c)
