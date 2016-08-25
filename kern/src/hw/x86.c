@@ -38,7 +38,7 @@ void hardware_add_resource(struct riku_devfs_node* node, enum riku_resource_type
 	res->begin = begin;
 	res->size = size;
 	
-	KTRACE("added resource range %x length %x type %s for device /dev/%s\n", res->begin, res->size, res->type==PORTIO?"ioport":"mmio", node->name);
+	KTRACE("added resource range %x length %x type %s for device devfs:/%s\n", res->begin, res->size, res->type==PORTIO?"ioport":"mmio", node->name);
 }
 
 void probe_hardware()
@@ -72,7 +72,7 @@ void probe_hardware()
 	struct riku_devfs_node* devnode = nullDev;
 	while(devnode != 0x0)
 	{
-		KTRACERAW("/dev/");
+		KTRACERAW("devfs:/");
 		KTRACERAW(devnode->name);
 		KTRACERAW("\t");
 		devnode = devnode->next;

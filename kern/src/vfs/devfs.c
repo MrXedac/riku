@@ -16,7 +16,7 @@ struct riku_devfs_node *devfs_last_node()
 
 void devfs_add(struct riku_devfs_node* node)
 {
-	KTRACE("devfs: creating node /dev/");
+	KTRACE("devfs: creating node devfs:/");
 	KTRACERAW(node->name);
 	KTRACERAW("\n");
 	struct riku_devfs_node *end = devfs_last_node(); /* Get last node */
