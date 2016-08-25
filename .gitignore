@@ -34,3 +34,6 @@
 
 # ISO
 *.iso
+
+# Toolchain define
+toolchain.mk

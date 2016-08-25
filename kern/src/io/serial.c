@@ -1,3 +1,5 @@
+#include <stdarg.h>
+#include <string.h>
 #include "ioport.h"
 #include "serial.h"
 
@@ -127,3 +129,111 @@ void slputdec(int n)
 	slputs(c2);
 }
 
+void sprintdec(int n, char* dest)
+{
+	if (n == 0)
+	{
+		dest[0] = '0';
+		dest[1] = '\0';
+	}
+	
+	int acc = n;
+	char c[32];
+	int i = 0;
+	while (acc > 0)
+	{
+		c[i] = '0' + acc%10;
+		acc /= 10;
+		i++;
+	}
+	c[i] = 0;
+	
+	char c2[32];
+	c2[i--] = 0;
+	int j = 0;
+	while(i >= 0)
+	{
+		c2[i--] = c[j++];
+	}
+	strcpy(dest, c2);
+}
+
+static char* bf;
+static char buf[12];
+static unsigned int num;
+static char uc;
+static char zs;
+
+/* Full credits to https://github.com/rlangoy/ZedBoard-BareMetal-Examples/blob/master/Hello05/printf.c for this, thanks buddy */
+void slprintf(char *fmt, ...)
+{
+	va_list va;
+	char ch;
+	char* p;
+	
+	va_start(va,fmt);
+	
+	while ((ch=*(fmt++))) {
+		if (ch!='%') {
+			write_serial(ch);
+		}
+		else {
+			char lz=0;
+			char w=0;
+			ch=*(fmt++);
+			if (ch=='0') {
+				ch=*(fmt++);
+				lz=1;
+			}
+			if (ch>='0' && ch<='9') {
+				w=0;
+				while (ch>='0' && ch<='9') {
+					w=(((w<<2)+w)<<1)+ch-'0';
+					ch=*fmt++;
+				}
+			}
+			bf=buf;
+			p=bf;
+			zs=0;
+			switch (ch) {
+				case 0:
+					goto abort;
+				case 'u':
+				case 'd' :
+					num=va_arg(va, unsigned int);
+					if (ch=='d' && (int)num<0) {
+						num = -(int)num;
+						write_serial('-');
+					}
+					slputdec(num);
+					break;
+				case 'x':
+				case 'X' :
+					uc= ch=='X';
+					num=va_arg(va, unsigned int);
+					slputhex(num);
+					break;
+				case 'c' :
+					write_serial((char)(va_arg(va, int)));
+					break;
+				case 's' :
+					p=va_arg(va, char*);
+					break;
+				case '%' :
+					write_serial('%');
+				default:
+					break;
+			}
+			*bf=0;
+			bf=p;
+			while (*bf++ && w > 0)
+				w--;
+			while (w-- > 0)
+				write_serial(lz ? '0' : ' ');
+			while ((ch= *p++))
+				write_serial(ch);
+		}
+	}
+abort:;
+	va_end(va);
+}

@@ -25,6 +25,7 @@ struct riku_devfs_node {
 
 struct riku_devfs_node *devfs_last_node();
 void devfs_add(struct riku_devfs_node* node);
+struct riku_devfs_node *devfs_find_node(char* name);
 
 struct riku_devfs_node *nullDev; /* The NULL device. Reads NULL, writes NULL. A typical /dev/null. */
 

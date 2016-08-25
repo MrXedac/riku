@@ -1,10 +1,7 @@
+include ../toolchain.mk
+
 IMAGE=rikuldr.bin
 SRC_DIR=src
-
-# Toolchain
-CC=gcc
-AS=nasm
-LD=ld
 
 # Sources
 CSOURCES=$(wildcard $(SRC_DIR)/*.c)

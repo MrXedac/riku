@@ -1,10 +1,13 @@
 #ifndef __SERIAL_DRIVER__
 #define __SERIAL_DRIVER__
 
+#include <stdarg.h>
+
 #define PORT 0x3f8
 
-#define KTRACE(a) { slputs("["); slputs(__FILE__); slputs(":"); slputdec(__LINE__); slputs("] "); slputs(a); }
+
 #define KTRACERAW(a) { slputs(a); }
+#define KTRACE(a,...) slprintf(" [%s:%d] " a, __FILE__, __LINE__, ##__VA_ARGS__);
 
 void init_serial();
 int serial_received();
@@ -14,5 +17,6 @@ void write_serial(char a);
 void slputs(char* a);
 void slputdec(int n);
 void slputhex(int n);
-
+void slprintf(char *fmt, ...);
+void sprintdec(int n, char* buf);
 #endif

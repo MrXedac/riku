@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 #include "hw.h"
 #include "vfs/devfs.h"
 #include "serial.h"
@@ -25,4 +26,16 @@ void devfs_add(struct riku_devfs_node* node)
 	node->next = 0x0;
 	
 	return;
+}
+
+struct riku_devfs_node *devfs_find_node(char* name)	{
+	struct riku_devfs_node *start = nullDev;
+	do{
+		if(strcmp(start->name, name) == 0)
+			return start;
+		
+		start = start->next;
+	} while(start != 0x0);
+	
+	return 0x0;
 }

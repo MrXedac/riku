@@ -1,10 +1,7 @@
+include ../toolchain.mk
+
 IMAGE=kern.bin
 SRC_DIR=src
-
-# Toolchain
-CC=gcc
-AS=nasm
-LD=ld
 
 # Sources
 CSOURCES=$(wildcard $(SRC_DIR)/boot/*.c)
