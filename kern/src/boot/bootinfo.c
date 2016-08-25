@@ -2,6 +2,7 @@
 #include "multiboot.h"
 #include "vga.h"
 #include "vm.h"
+#include "serial.h"
 
 /* Parse the multiboot header to find some relevant data */
 void parse_mbi(uintptr_t mbi)
@@ -44,6 +45,12 @@ void parse_mbi(uintptr_t mbi)
 				//dump_mmap((struct multiboot_tag_mmap *) tag);
 				mmap_init((struct multiboot_tag_mmap *) tag);
 				break;
+			}
+			case MULTIBOOT_TAG_TYPE_MODULE:
+			{
+				struct multiboot_tag_module* mod = (struct multiboot_tag_module*)tag;
+				KTRACE("boot module type %d, size %x, start %x, end %x, cmdline %s\n", mod->type, mod->size, mod->mod_start, mod->mod_end, mod->cmdline);
+				KTRACE("load_module: not implemented, displaying raw contents (we're loading a text file...) : %s\n", mod->mod_start);
 			}
 			default:
 			{
