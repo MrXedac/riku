@@ -33,7 +33,7 @@ void displayKernelInfo()
 	puts(" (size of uintptr_t is ");
 	putdec(sizeof(uintptr_t) * 8);
 	puts(" bits)\n");
-	
+
 	extern uintptr_t __code;
 	puts("\nKernel code at virtual address ");
 	puthex((uintptr_t)&__code);
@@ -44,7 +44,7 @@ void showDisclaimer()
 {
 	puts("\n");
 	puts("The Riku Operating System\n");
-	puts("\t(c) Quentin \"MrXedac\" Bergougnoux - 2014-2016\n");
+	puts("\t(c) Quentin \"MrXedac\"/Mk. Bergougnoux - 2014-2016\n");
 	puts("\tThis product is open-source, released under the GNU GPL licence.\n");
 	puts("\tThis software is a pre-release software and isn't ready for an everyday usage yet.\n");
 	puts("\n");
@@ -61,9 +61,9 @@ void dummy2()
 void dummy()
 {
 	puts("Entered Riku main kernel task.\n");
-	
+
 	showDisclaimer();
-	
+
 	uintptr_t* usrstack = alloc_page();
 	uintptr_t* krnstack = alloc_page();
 	struct riku_task* dummyTask2 = (struct riku_task*)kalloc(sizeof(struct riku_task));
@@ -78,15 +78,15 @@ void dummy()
 void main()
 {
 	vm_init();
-	
+
 	/* Initialize some stuff related to early-boot IO */
 	init_serial();
 	KTRACE("64-bits entrypoint reached\n");
-	KTRACE("The Riku Operating System - MrXedac(c) 2016\n");
+	KTRACE("The Riku Operating System - MrXedac(c)/Mk.(c) 2016\n");
 	KTRACE("Initializing early-boot console\n");
 	init_terminal();
-	BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
-	
+    BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
+
 	/* Show we are alive ! */
 	puts("Welcome to the Riku Operating System\n");
 	puts("Early console: ");
@@ -99,7 +99,7 @@ void main()
 	putdec(BGA_CYMAX);
 	puts(" console\n");
 	displayKernelInfo();
-	
+
 	/* Get the Riku Loader info structure */
 	puts("Parsing RikuLdr info structure.\n");
 	struct rikuldr_info* info = (struct rikuldr_info*)LDRINFO_ADDR;
@@ -114,12 +114,12 @@ void main()
 	puts("\n\tGlobal descriptor table pointer at ");
 	puthex((uintptr_t)info->gdtptr_paddr);
 	puts("\n");
-	
+
 	/* Parse the multiboot info */
 	puts("\nNow parsing Multiboot2 header info.\n");
 	KTRACE("Parsing MB2I\n");
 	parse_mbi((uintptr_t)info->mbi_addr | 0xFFFF800000000000);
-	
+
 	puts("\nOkay, everything is fine. \nThanks RikuLdr, I'm taking care of the remaining stuff...\n");
 	puts("gdt init ");
 	gdt_init((uintptr_t)info->gdt_paddr, (uintptr_t)info->gdtptr_paddr);
@@ -140,7 +140,7 @@ void main()
 	init_kheap();
 	puts("early-boot complete, now starting kernel tasks\n");
 	probe_hardware();
-	
+
 	KTRACE("Starting kernel early tasks\n");
 	/* Some tasking */
 	struct riku_task* dummyTask = (struct riku_task*)kalloc(sizeof(struct riku_task));

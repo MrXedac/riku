@@ -3,6 +3,7 @@
 #include "vga.h"
 #include "vm.h"
 #include "serial.h"
+#include "elf64.h"
 
 /* Parse the multiboot header to find some relevant data */
 void parse_mbi(uintptr_t mbi)
@@ -50,7 +51,11 @@ void parse_mbi(uintptr_t mbi)
 			{
 				struct multiboot_tag_module* mod = (struct multiboot_tag_module*)tag;
 				KTRACE("boot module type %d, size %x, start %x, end %x, cmdline %s\n", mod->type, mod->size, mod->mod_start, mod->mod_end, mod->cmdline);
-				KTRACE("load_module: not implemented, displaying raw contents (we're loading a text file...) : %s\n", mod->mod_start);
+				// KTRACE("load_module: not implemented, displaying raw contents (we're loading a text file...) : %s\n", mod->mod_start);
+				KTRACE("load_module: displaying ELF64 info\n");
+				Elf64_Ehdr* hdr = (Elf64_Ehdr*)((uintptr_t)(mod->mod_start));
+				KTRACE("\tProgram section begin: %x\n", hdr->e_shoff);
+				dump_elf64_info(hdr);
 			}
 			default:
 			{
