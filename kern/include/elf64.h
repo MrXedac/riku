@@ -62,7 +62,7 @@ struct Elf64_SymbolHeader {
 struct Elf64_RelocationHeader {
   Elf64_Addr    r_offset;
   Elf64_XWord   r_info;
-  Elf64_SXWord  r_addend;
+  Elf64_XWord  r_addend;
 };
 
 typedef struct Elf64_FileHeader Elf64_Ehdr;

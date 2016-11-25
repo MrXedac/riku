@@ -6,8 +6,9 @@
  * This is crap.
  */
 
-void dummy_entry()
+void module_init()
 {
     puts("This is the dummy kernel module speaking!\n");
     return;
 }
+

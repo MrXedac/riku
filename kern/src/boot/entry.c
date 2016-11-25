@@ -115,11 +115,6 @@ void main()
 	puthex((uintptr_t)info->gdtptr_paddr);
 	puts("\n");
 
-	/* Parse the multiboot info */
-	puts("\nNow parsing Multiboot2 header info.\n");
-	KTRACE("Parsing MB2I\n");
-	parse_mbi((uintptr_t)info->mbi_addr | 0xFFFF800000000000);
-
 	puts("\nOkay, everything is fine. \nThanks RikuLdr, I'm taking care of the remaining stuff...\n");
 	puts("gdt init ");
 	gdt_init((uintptr_t)info->gdt_paddr, (uintptr_t)info->gdtptr_paddr);
@@ -128,6 +123,11 @@ void main()
 	idt_init();
 	puts("complete\n");
 	//__asm volatile("INT $0x14;");
+	/* Parse the multiboot info */
+	puts("\nNow parsing Multiboot2 header info.\n");
+	KTRACE("Parsing MB2I\n");
+	parse_mbi((uintptr_t)info->mbi_addr | 0xFFFF800000000000);
+
 	puts("mmu init ");
 	mmu_init();
 	puts("complete\n");
