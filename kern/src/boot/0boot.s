@@ -15,7 +15,6 @@ start:
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-	mov rsp, _earlystack		; Setup early-boot stack
 	mov rax, main				; Prepare to jump to higher half !
 	mov rdx, 0xFFFF800000000000
 	or rax, rdx	; OR with the higher half offset

@@ -12,6 +12,7 @@
 #include "heap.h"
 #include "task.h"
 #include "hw.h"
+#include "kernsym.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -137,9 +138,21 @@ void main()
 	puts("\nkernel master table/pdpt at ");
 	puthex((uintptr_t)masterTable);
 	puts("\n");
+	
 	init_kheap();
-	puts("early-boot complete, now starting kernel tasks\n");
+	
+	puts("starting kernel modules\n");
+	start_modules((uintptr_t)info->mbi_addr | 0xFFFF800000000000);
+	
+	puts("Probing additional hardware...\n");
 	probe_hardware();
+	
+	puts("Early-boot complete.\n");
+	uintptr_t rsp;
+	__asm volatile("MOV %%RSP, %0"
+	: "=r"(rsp));
+	KTRACE("rsp was %x before starting tasks; that's okay\n", rsp);
+	for(;;);
 
 	KTRACE("Starting kernel early tasks\n");
 	/* Some tasking */

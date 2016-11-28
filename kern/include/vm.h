@@ -42,4 +42,6 @@ uint64_t allocated_pages;
 uintptr_t* alloc_page();
 void free_page(uintptr_t *page);
 
+#define PHYS(a) (a | 0xFFFF800000000000)
+
 #endif

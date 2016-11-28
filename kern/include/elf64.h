@@ -65,10 +65,25 @@ struct Elf64_RelocationHeader {
   Elf64_XWord  r_addend;
 };
 
+enum Elf64_RikuSections { SECTION_TEXT, SECTION_SYM, SECTION_STR, SECTION_DYNSYM, SECTION_DYNSTR, SECTION_RELA_PLT };
+typedef enum Elf64_RikuSections Elf64_Section;
+
+static const char* Elf64_SectionNames[] = {
+	".text",
+	".symtab",
+	".strtab",
+	".dynsym",
+	".dynstr",
+	".rela.plt"
+};
+
 typedef struct Elf64_FileHeader Elf64_Ehdr;
 typedef struct Elf64_SectionHeader Elf64_Shdr;
 typedef struct Elf64_SymbolHeader Elf64_Sym;
 typedef struct Elf64_RelocationHeader Elf64_Rela;
-void dump_elf64_info(Elf64_Ehdr* hdr);
+void elf64_load_module(Elf64_Ehdr* hdr);
+
+/* Get the address of a symbol in the ELF64 kernel binary. Talk about a big function. */
+uintptr_t elf64_kernel_symbol_addr(const char* symname);
 
 #endif

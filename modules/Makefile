@@ -8,7 +8,7 @@ COBJ=$(CSOURCES:.c=.ko)
 
 # Toolchain flags
 CFLAGS=-Tlink.ld -Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -Wno-unused-variable -fPIC 
-LDFLAGS=-Bshareable
+LDFLAGS=-Bshareable -z max-page-size=0x1000
 
 # Include directories : kernel includes
 CFLAGS+=-I../kern/include
@@ -21,6 +21,7 @@ clean:
 
 %.ko: %.o
 	$(LD) $(LDFLAGS) $< -o $@
+	cp $@ ../boot/boot/modules/$(@:.ko=.rkm)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $< -o $@

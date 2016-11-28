@@ -47,16 +47,6 @@ void parse_mbi(uintptr_t mbi)
 				mmap_init((struct multiboot_tag_mmap *) tag);
 				break;
 			}
-			case MULTIBOOT_TAG_TYPE_MODULE:
-			{
-				struct multiboot_tag_module* mod = (struct multiboot_tag_module*)tag;
-				KTRACE("boot module type %d, size %x, start %x, end %x, cmdline %s\n", mod->type, mod->size, mod->mod_start, mod->mod_end, mod->cmdline);
-				// KTRACE("load_module: not implemented, displaying raw contents (we're loading a text file...) : %s\n", mod->mod_start);
-				KTRACE("load_module: displaying ELF64 info\n");
-				Elf64_Ehdr* hdr = (Elf64_Ehdr*)((uintptr_t)(mod->mod_start));
-				KTRACE("\tProgram section begin: %x\n", hdr->e_shoff);
-				dump_elf64_info(hdr);
-			}
 			default:
 			{
 				break;
@@ -68,4 +58,28 @@ void parse_mbi(uintptr_t mbi)
 	puts("\tTotal multiboot2 info size : ");
 	puthex((uint64_t)tag - addr);
 	puts("\n");
+}
+
+/* Parse the multiboot header to find some relevant data */
+void start_modules(uintptr_t mbi)
+{
+	struct multiboot_header* header = (struct multiboot_header*)mbi;
+	struct multiboot_tag *tag;
+	uint64_t addr = (uint64_t)header;
+
+	for (tag = (struct multiboot_tag *) (addr + 8);
+		 tag->type != MULTIBOOT_TAG_TYPE_END;
+		 tag = (struct multiboot_tag *) ((multiboot_uint8_t *) tag
+										 + ((tag->size + 7) & ~7)))
+	{
+		if (tag->type == MULTIBOOT_TAG_TYPE_MODULE)
+		{
+			struct multiboot_tag_module* mod = (struct multiboot_tag_module*)tag;
+			KTRACE("boot module type %d, size %x, start %x, end %x, cmdline %s\n", mod->type, mod->size, mod->mod_start, mod->mod_end, mod->cmdline);
+			KTRACE("load_module: displaying ELF64 info\n");
+			Elf64_Ehdr* hdr = (Elf64_Ehdr*)((uintptr_t)(mod->mod_start));
+			KTRACE("\tProgram section begin: %x\n", hdr->e_shoff);
+			elf64_load_module(hdr);
+		}
+	}
 }
