@@ -79,4 +79,5 @@ enter_long_mode:
 
 	; We're in x86 compatibility mode. This is exactly what we need : jump to the kernel's compatibility entry-point !
 	lgdt [GDT64Pointer]		; Load x64 GDT
-	jmp GDT64.Code:kernel	; Kernel's entrypoint
+	jmp GDT64.Code:0x300000	; Kernel's entrypoint : kernel image loaded at 0x2FF000, 0x1000 offset with .text, EP is *(.text) so 0x300000
+                            ; This is dirty and I really should clean this up
