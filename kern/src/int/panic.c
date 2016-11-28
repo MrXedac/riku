@@ -40,7 +40,14 @@ void panic(char* message, registers_t* regs)
 	} else {
 		puts("\t<no register data found>\n");
 	}
-	
+
+    uintptr_t cr2;
+    __asm volatile("MOV %%CR2, %0"
+            : "=r" (cr2));
+    puts("cr2=");
+    puthex(cr2);
+    puts("\n");
+    
 	puts("Halting system.\n");
 	__asm volatile("CLI;");
 	for(;;);

@@ -2,6 +2,8 @@
 #include "elf64.h"
 #include "serial.h"
 #include "idt64.h"
+#include "vga.h"
+#include "string.h"
 
 void dump_elf64_info(Elf64_Ehdr* hdr)
 {
@@ -10,6 +12,7 @@ void dump_elf64_info(Elf64_Ehdr* hdr)
   Elf64_Shdr* sSymbolTable = 0x0;
   Elf64_Shdr* sStringTable = 0x0;
   Elf64_Shdr* sRelaTable = 0x0;
+  Elf64_Shdr* sText = 0x0;
   unsigned char* sNameTableBegin = (unsigned char*)((uintptr_t)hdr + (uintptr_t)sNameTable->sh_offset);
   unsigned char* sSymNameTableBegin = 0x0;
 
@@ -22,12 +25,17 @@ void dump_elf64_info(Elf64_Ehdr* hdr)
     unsigned char* sName = (unsigned char*)sNameTableBegin + sTable->sh_name;
     KTRACE("\t\tName is %s\n", sName);
 
-    if(sTable->sh_type == 2) { /* SHT_SYMTAB */
+    if(sTable->sh_type == 1 && !sText) { /* SHT_PROGBITS */
+      sText = sTable;
+      KTRACE("Found PROGBITS section; assuming .text\n");
+    }
+
+    if(sTable->sh_type == 11) { /* SHT_DYNSYM */
       sSymbolTable = sTable;
       KTRACE("Found symbol table entry at %x\n", sSymbolTable);
     }
 
-    if(sTable->sh_type == 3) { /* SHT_STRTAB */
+    if(sTable->sh_type == 3 && !sStringTable) { /* SHT_STRTAB */
       sStringTable = sTable;
       sSymNameTableBegin = (unsigned char*)((uintptr_t)hdr + (uintptr_t)(sStringTable->sh_offset));
       KTRACE("Found string table entry at %x\n", sSymbolTable);
@@ -53,7 +61,7 @@ void dump_elf64_info(Elf64_Ehdr* hdr)
   Elf64_Sym* sSym = (Elf64_Sym*)((uintptr_t)hdr + (uintptr_t)(sSymbolTable->sh_offset));
   while(sSymbolIdx < sSymbolTableSize)
   {
-    KTRACE("\tSymbol %d size %x\n", sSymbolIdx, sSym->st_size);
+    KTRACE("\tSymbol %d size %x value %x\n", sSymbolIdx, sSym->st_size, sSym->st_value);
     unsigned char* sSymName = (unsigned char*)sSymNameTableBegin + sSym->st_name;
     KTRACE("\t\tSymbol name is %s\n", sSymName);
     sSym = (Elf64_Sym*)((uintptr_t)sSym + sizeof(Elf64_Sym));
@@ -67,9 +75,30 @@ void dump_elf64_info(Elf64_Ehdr* hdr)
   {
     KTRACE("\tRelocation entry %d refers to symbol %d\n", sRelaIdx, (sRela->r_info >> 32));
     sSym = (Elf64_Sym*)((uintptr_t)hdr + (uintptr_t)(sSymbolTable->sh_offset) + (sRela->r_info >> 32) * sizeof(Elf64_Sym));
+    if(sRela->r_info >> 32 == 2)
+    {
+        KTRACE("Found puts (debug) -> %x\n", &puts);
+        KTRACE("Symbol in GOT should be around %x\n", sRela->r_offset);
+        uintptr_t dest = (uintptr_t)hdr + (uintptr_t)sRela->r_offset;
+        *(uintptr_t*)dest = (uintptr_t)&puts;
+        // sRela->r_addend = (((Elf64_XWord)&puts));
+        // KTRACE("Relocated symbol to %x\n", sRela->r_addend);
+        KTRACE("Relocated symbol to %x\n", *(uintptr_t*)dest);
+        void (*puts_sym)(char*) = (void*)sRela->r_addend;
+    }
     unsigned char* sSymName = (unsigned char*)sSymNameTableBegin + sSym->st_name;
     KTRACE("\t\t'%s' has to be linked with kernel\n", sSymName);
     sRela = (Elf64_Rela*)((uintptr_t)sRela + sizeof(Elf64_Rela));
     sRelaIdx++;
   }
+
+  KTRACE("Preparing to run module\n");
+  uintptr_t sModEP = (uintptr_t)hdr + 0x230 /* (uintptr_t)(hdr->e_entry) */;
+  void (*modEP)(void)  = (void*)sModEP;
+  KTRACE("Module EP=%x\n", sModEP);
+  __asm volatile("MOV %0, %%RAX; \
+                  CALL %%RAX;"
+                  :: "r" (sModEP));
+  KTRACE("Back from module\n");
+  for(;;);
 }

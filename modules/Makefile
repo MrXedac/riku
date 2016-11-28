@@ -7,7 +7,8 @@ CSOURCES=$(wildcard *.c)
 COBJ=$(CSOURCES:.c=.ko)
 
 # Toolchain flags
-CFLAGS=-Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -Wno-unused-variable -mcmodel=large
+CFLAGS=-Tlink.ld -Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -Wno-unused-variable -fPIC 
+LDFLAGS=-Bshareable
 
 # Include directories : kernel includes
 CFLAGS+=-I../kern/include
@@ -16,8 +17,12 @@ all: $(COBJ)
 
 clean:
 	rm -f $(COBJ)
+	rm -f *.o
 
-%.ko: %.c
+%.ko: %.o
+	$(LD) $(LDFLAGS) $< -o $@
+
+%.o: %.c
 	$(CC) $(CFLAGS) $< -o $@
 
 .PHONY: all clean
