@@ -20,8 +20,8 @@ ASOURCES+=$(wildcard $(SRC_DIR)/mm/*.s)
 ASOURCES+=$(wildcard $(SRC_DIR)/task/*.s)
 
 # Objects
-COBJ=$(CSOURCES:.c=.o)
-AOBJ=$(ASOURCES:.s=.o)
+COBJ=$(sort $(CSOURCES:.c=.o))
+AOBJ=$(sort $(ASOURCES:.s=.o))
 
 # Toolchain flags
 CFLAGS=-Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -Wno-unused-variable -mcmodel=large

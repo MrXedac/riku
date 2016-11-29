@@ -8,8 +8,8 @@ CSOURCES=$(wildcard $(SRC_DIR)/*.c)
 ASOURCES=$(wildcard $(SRC_DIR)/*.s)
 
 # Objects
-COBJ=$(CSOURCES:.c=.o)
-AOBJ=$(ASOURCES:.s=.o)
+COBJ=$(sort $(CSOURCES:.c=.o))
+AOBJ=$(sort $(ASOURCES:.s=.o))
 
 # Toolchain flags
 CFLAGS=-m32 -Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -g -Wno-unused-variable -fPIC 
