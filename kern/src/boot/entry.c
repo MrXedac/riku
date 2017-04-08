@@ -13,6 +13,7 @@
 #include "task.h"
 #include "hw.h"
 #include "kernsym.h"
+#include "sched.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -59,20 +60,17 @@ void dummy2()
 		puts("2");
 }
 
-void dummy()
+/* When we enter this function, we should have a proper page allocator, interrupt handling and working threading.
+ * We can initialize the "later" boot tasks, and then spawn our init task. */
+void late_init()
 {
 	puts("Entered Riku main kernel task.\n");
 
 	showDisclaimer();
+	setup_sched();
 
-	uintptr_t* usrstack = alloc_page();
-	uintptr_t* krnstack = alloc_page();
-	struct riku_task* dummyTask2 = (struct riku_task*)kalloc(sizeof(struct riku_task));
-	init_task(dummyTask2, "Riku Dummy", (uintptr_t*)((uintptr_t)(usrstack) | 0xFFFF800000000000), (uintptr_t*)((uintptr_t)(krnstack) | 0xFFFF800000000000), &dummy2, (uintptr_t*)kernel_cr3);
-	tasking_ready = 1;
-	__asm volatile("STI");
-	while(1)
-		puts("1");
+	puts("Entered boot stage 2\n");
+	for(;;);
 }
 
 /* Loader entry-point. */
@@ -86,7 +84,7 @@ void main()
 	KTRACE("The Riku Operating System - MrXedac(c)/Mk.(c) 2016\n");
 	KTRACE("Initializing early-boot console\n");
 	init_terminal();
-    BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
+  //  BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
 
 	/* Show we are alive ! */
 	puts("Welcome to the Riku Operating System\n");
@@ -117,6 +115,8 @@ void main()
 	puts("\n");
 
 	puts("\nOkay, everything is fine. \nThanks RikuLdr, I'm taking care of the remaining stuff...\n");
+
+	/* Enter platform initialization */
 	puts("gdt init ");
 	gdt_init((uintptr_t)info->gdt_paddr, (uintptr_t)info->gdtptr_paddr);
 	puts("complete\n");
@@ -138,36 +138,30 @@ void main()
 	puts("\nkernel master table/pdpt at ");
 	puthex((uintptr_t)masterTable);
 	puts("\n");
-	
+
 	init_kheap();
-	
-	puts("starting kernel modules\n");
-	start_modules((uintptr_t)info->mbi_addr | 0xFFFF800000000000);
-	
+
+	/* We should start modules at a later point */
+	/* puts("starting kernel modules\n");
+	start_modules((uintptr_t)info->mbi_addr | 0xFFFF800000000000); */
+
+	/* Populate devfs:/ */
 	puts("Probing additional hardware...\n");
 	probe_hardware();
-	
-	puts("Early-boot complete.\n");
-	uintptr_t rsp;
-	__asm volatile("MOV %%RSP, %0"
-	: "=r"(rsp));
-	KTRACE("rsp was %x before starting tasks; that's okay\n", rsp);
-	for(;;);
 
-	KTRACE("Starting kernel early tasks\n");
+	puts("Early-boot complete.\n");
+
+	KTRACE("Preparing to enter boot stage 2\n");
 	/* Some tasking */
 	struct riku_task* dummyTask = (struct riku_task*)kalloc(sizeof(struct riku_task));
-	struct riku_task* dummyTask2 = (struct riku_task*)kalloc(sizeof(struct riku_task));
 	uintptr_t* usrstack = alloc_page();
 	uintptr_t* krnstack = alloc_page();
-	uintptr_t* usrstack2 = alloc_page();
-	uintptr_t* krnstack2 = alloc_page();
 	puts("Riku dummy task at ");
 	puthex((uintptr_t)dummyTask);
 	puts("\n");
+	KTRACE("Stage 2 boot context RSP %x, USP %x\n", krnstack, usrstack);
 	/* First prepare task */
-	init_task(dummyTask, "Riku init", (uintptr_t*)((uintptr_t)(usrstack) | 0xFFFF800000000000), (uintptr_t*)((uintptr_t)(krnstack) | 0xFFFF800000000000), &dummy, (uintptr_t*)kernel_cr3);
-	//init_task(dummyTask2, "Riku Dummy", (uintptr_t*)((uintptr_t)(usrstack2 + 0xFFF) | 0xFFFF800000000000), (uintptr_t*)((uintptr_t)(krnstack2 + 0xFFF) | 0xFFFF800000000000), &dummy2, (uintptr_t*)kernel_cr3);
+	init_task(dummyTask, "Riku init", (uintptr_t*)((uintptr_t)(usrstack) | 0xFFFF800000000000), (uintptr_t*)((uintptr_t)(krnstack) | 0xFFFF800000000000), &late_init, (uintptr_t*)kernel_cr3);
 	switch_to_task(dummyTask);
 
 	__asm volatile("INT $0x11");

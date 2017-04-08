@@ -54,6 +54,10 @@ typedef struct registers
 
 typedef struct idt_ptr_struct idt_ptr_t;
 
+/* Some stuff about IRQ registering */
+typedef void (*irq_t)(registers_t*);
+void register_irq(uint8_t int_no, irq_t handler);
+
 /* Defines the assembly handler for generic interrupts */
 extern void isr0 (); //!< ISR 0
 extern void isr1 (); //!< ISR 1
@@ -109,5 +113,8 @@ typedef void (*isr_t)(registers_t); //!< Definition of interrupt handler
 
 void panic(char* message, registers_t* regs);
 void idt_init();
+
+void enable_interrupts();
+void disable_interrupts();
 
 #endif

@@ -12,6 +12,7 @@ CSOURCES+=$(wildcard $(SRC_DIR)/task/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/hw/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/vfs/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/bin/*.c)
+CSOURCES+=$(wildcard $(SRC_DIR)/time/*.c)
 
 ASOURCES=$(wildcard $(SRC_DIR)/boot/*.s)
 ASOURCES+=$(wildcard $(SRC_DIR)/int/*.s)

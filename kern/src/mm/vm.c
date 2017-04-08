@@ -1,6 +1,7 @@
 #include "vm.h"
 #include "multiboot.h"
 #include "vga.h"
+#include "serial.h"
 #include <stdint.h>
 
 /* Initializes the MMU during early-boot */
@@ -8,10 +9,10 @@ void vm_init()
 {
 	uint64_t* pdpt = (uint64_t*)EARLY_PDPT_KERN; // PDPT pointer
 	uint64_t* pdptk = (uint64_t*)EARLY_PDPT_PHYS; // Kernel PDPT
-	
+
 	uint64_t gbOffset = 0x40000000; // Address offset corresponding to one PDPT entry
 	uint64_t i = 0;
-	
+
 	// Fill-in every entry of the PDPT with 1-1 mapping of the address space
 	for(i = 0; i < 512; i++)
 	{
@@ -20,7 +21,7 @@ void vm_init()
 		pdpt = (uint64_t*)((uint64_t)pdpt + 0x8); // Next entry
 		pdptk = (uint64_t*)((uint64_t)pdptk + 0x8);
 	}
-	
+
 }
 
 /* Adds a memory range to the pagination list */
@@ -43,6 +44,7 @@ void paging_init(uintptr_t* base, uint64_t length)
 				max_pages++;
 			}
 		}
+		KTRACE("[%x-%x] : Paging area\n", (uintptr_t)base, (uintptr_t)base + length);
 	} else {
 		puts("skipped low-memory paging area\n");
 	}
@@ -104,7 +106,7 @@ uintptr_t* alloc_page()
 	uintptr_t i = 0;
 	for(i = 0; i < 512; i++)
 		*(uintptr_t*)(((uintptr_t)res + i * 0x8) | 0xFFFF800000000000) = 0x0;
-	
+
 	allocated_pages++;
 	return res;
 }
@@ -113,6 +115,6 @@ void free_page(uintptr_t *page)
 {
 	*page = (uintptr_t)first_free_page;
 	first_free_page = (uintptr_t*)page;
-	
+
 	allocated_pages--;
 }

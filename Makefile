@@ -1,4 +1,5 @@
 IMAGE=riku.iso
+MAKE=make
 
 .PHONY: $(IMAGE) run
 
@@ -6,8 +7,8 @@ all: $(IMAGE)
 	echo "Done !"
 
 $(IMAGE):
-	cd kern && gmake clean && gmake all
-	cd loader && gmake clean && gmake all
+	cd kern && $(MAKE) clean && $(MAKE) all
+	cd loader && $(MAKE) clean && $(MAKE) all
 	cp loader/rikuldr.bin boot/boot/rikuldr.bin
 	grub-mkrescue -o riku.iso boot/
 

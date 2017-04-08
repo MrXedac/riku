@@ -3,12 +3,25 @@
 #include "vga.h"
 #include "mem.h"
 #include "task.h"
+#include "serial.h"
 #include <stdint.h>
 
 extern void idt_flush(uint64_t idt_ptr);
 
+/* IRQ handlers, better hook your drivers here */
+irq_t IRQHANDLERS[16];
+
 idt_entry_t idt_entries[256]; //!< Interrupt Descriptor Table
 idt_ptr_t   idt_ptr; //!< Pointer to the IDT
+
+/* Register a hardware interrupt handler */
+void register_irq(uint8_t int_no, irq_t handler)
+{
+	if(int_no >= 0 && int_no < 16)
+		IRQHANDLERS[int_no] = handler;
+
+	return;
+}
 
 void enable_interrupts()
 {
@@ -22,23 +35,19 @@ void disable_interrupts()
 
 void irq_handler(registers_t* regs)
 {
+	/* Clear master (and slave) PIC */
 	if (regs->int_no >= 40)
 	{
 		outb(0xA0, 0x20);
 	}
-	
+
 	outb(0x20, 0x20);
-	
-	/* Timer */
-	if(regs->int_no == 32)
-	{
-		if(current_task) {
-			if(current_task->next) {
-				switch_to_task(current_task->next);
-			} else {
-				switch_to_task(task_list);
-			}
-		}
+
+	if(IRQHANDLERS[regs->int_no - 0x20]){
+		irq_t handler = IRQHANDLERS[regs->int_no - 0x20]; /* IRQs begin at 32 */
+		handler(regs);
+	} else {
+		KTRACE("WARNING: unhandled interrupt %x\n", regs->int_no);
 	}
 }
 
@@ -66,7 +75,7 @@ void isr_handler(registers_t* regs)
 		} else {
 			puts("from kernel land");
 		}
-		
+
 		puts(") at address ");
 		uint64_t addr;
 		__asm volatile ("mov %%cr2, %0"
@@ -89,11 +98,11 @@ void idt_set_gate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags)
 	idt_entries[num].base_lo = base_hhalf & 0xFFFF;
 	idt_entries[num].base_mid = (base_hhalf >> 16) & 0xFFFF;
 	idt_entries[num].base_high = (base_hhalf >> 32) & 0xFFFFFFFF;
-	
+
 	idt_entries[num].sel     = sel;
 	idt_entries[num].always0 = 0x0;
 	idt_entries[num].always0too = 0x00000000;
-	
+
 	idt_entries[num].flags   = flags;
 }
 
@@ -131,7 +140,7 @@ void bind_irq()
 	idt_set_gate(45, (uint64_t)irq13, 0x08, 0x8E);
 	idt_set_gate(46, (uint64_t)irq14, 0x08, 0x8E);
 	idt_set_gate(47, (uint64_t)irq15, 0x08, 0x8E);
-	
+
 	idt_flush((uint64_t)&idt_ptr);
 }
 
@@ -169,7 +178,7 @@ void bind_isr()
 	idt_set_gate(28, (uint64_t)isr28, 0x08, 0xEE);
 	idt_set_gate(29, (uint64_t)isr29, 0x08, 0xEE);
 	idt_set_gate(30, (uint64_t)isr30, 0x08, 0xEE);
-	idt_set_gate(31, (uint64_t)isr31, 0x08, 0xEE);	
+	idt_set_gate(31, (uint64_t)isr31, 0x08, 0xEE);
 	idt_flush((uint64_t)&idt_ptr);
 }
 
