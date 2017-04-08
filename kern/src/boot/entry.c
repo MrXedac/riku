@@ -46,7 +46,7 @@ void showDisclaimer()
 {
 	puts("\n");
 	puts("The Riku Operating System\n");
-	puts("\t(c) Quentin \"MrXedac\"/Mk. Bergougnoux - 2014-2016\n");
+	puts("\t(c) Quentin \"MrXedac\"/Mk. Bergougnoux - 2014-2017\n");
 	puts("\tThis product is open-source, released under the GNU GPL licence.\n");
 	puts("\tThis software is a pre-release software and isn't ready for an everyday usage yet.\n");
 	puts("\n");
@@ -60,14 +60,20 @@ void dummy2()
 		puts("2");
 }
 
+#define INIT_TASK(s, f) { KTRACE("-> Init task \"%s\"\n", s); f(); }
+void late_init_tasks()
+{
+	INIT_TASK("disclaimer", showDisclaimer);
+	INIT_TASK("setup_sched", setup_sched);
+	INIT_TASK("probe_hardware", probe_hardware);
+}
+
 /* When we enter this function, we should have a proper page allocator, interrupt handling and working threading.
  * We can initialize the "later" boot tasks, and then spawn our init task. */
 void late_init()
 {
-	puts("Entered Riku main kernel task.\n");
-
-	showDisclaimer();
-	setup_sched();
+	/* Some day I'll put something really extensible here. Right now I don't care, so... */
+	late_init_tasks();
 
 	puts("Entered boot stage 2\n");
 	for(;;);
@@ -81,10 +87,10 @@ void main()
 	/* Initialize some stuff related to early-boot IO */
 	init_serial();
 	KTRACE("64-bits entrypoint reached\n");
-	KTRACE("The Riku Operating System - MrXedac(c)/Mk.(c) 2016\n");
+	KTRACE("The Riku Operating System - MrXedac(c)/Mk.(c) 2017\n");
 	KTRACE("Initializing early-boot console\n");
 	init_terminal();
-  //  BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
+  // BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
 
 	/* Show we are alive ! */
 	puts("Welcome to the Riku Operating System\n");
@@ -145,10 +151,6 @@ void main()
 	/* puts("starting kernel modules\n");
 	start_modules((uintptr_t)info->mbi_addr | 0xFFFF800000000000); */
 
-	/* Populate devfs:/ */
-	puts("Probing additional hardware...\n");
-	probe_hardware();
-
 	puts("Early-boot complete.\n");
 
 	KTRACE("Preparing to enter boot stage 2\n");
@@ -164,6 +166,5 @@ void main()
 	init_task(dummyTask, "Riku init", (uintptr_t*)((uintptr_t)(usrstack) | 0xFFFF800000000000), (uintptr_t*)((uintptr_t)(krnstack) | 0xFFFF800000000000), &late_init, (uintptr_t*)kernel_cr3);
 	switch_to_task(dummyTask);
 
-	__asm volatile("INT $0x11");
-	panic("threading initialization failed: not implemented", 0x0);
+	panic("I shouldn't have returned here.", 0x0);
 }
