@@ -47,7 +47,7 @@ void irq_handler(registers_t* regs)
 		irq_t handler = IRQHANDLERS[regs->int_no - 0x20]; /* IRQs begin at 32 */
 		handler(regs);
 	} else {
-		KTRACE("WARNING: unhandled interrupt %x\n", regs->int_no);
+		printk("WARNING: unhandled interrupt %x\n", regs->int_no);
 	}
 }
 

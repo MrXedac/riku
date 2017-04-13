@@ -1,0 +1,1019 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ACTIVABLE	include/task.h	/^enum task_state { READY, ACTIVABLE, SLEEPING, TERMINATED };$/;"	e	enum:task_state
+AOBJ	Makefile	/^AOBJ=$(sort $(ASOURCES:.s=.o))$/;"	m
+ASFLAGS	Makefile	/^ASFLAGS=-felf64$/;"	m
+ASOURCES	Makefile	/^ASOURCES=$(wildcard $(SRC_DIR)\/boot\/*.s)$/;"	m
+BGA_CXMAX	include/bga.h	7;"	d
+BGA_CYMAX	include/bga.h	8;"	d
+BGA_HEIGHT	include/bga.h	6;"	d
+BGA_WIDTH	include/bga.h	5;"	d
+BgaIsAvailable	src/io/bga.c	/^int BgaIsAvailable(void)$/;"	f
+BgaReadRegister	src/io/bga.c	/^unsigned short BgaReadRegister(unsigned short IndexValue)$/;"	f
+BgaSetBank	src/io/bga.c	/^void BgaSetBank(unsigned short BankNumber)$/;"	f
+BgaSetVideoMode	src/io/bga.c	/^void BgaSetVideoMode(unsigned int Width, unsigned int Height, unsigned int BitDepth, int UseLinearFrameBuffer, int ClearVideoMemory)$/;"	f
+BgaWriteRegister	src/io/bga.c	/^void BgaWriteRegister(unsigned short IndexValue, unsigned short DataValue)$/;"	f
+Bitmap	include/bgafont.h	/^	const unsigned char *Bitmap;	\/\/\/< bitmap of all characters$/;"	m	struct:bitmap_font
+CFLAGS	Makefile	/^CFLAGS=-Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -Wno-unused-variable -mcmodel=large$/;"	m
+COBJ	Makefile	/^COBJ=$(sort $(CSOURCES:.c=.o))$/;"	m
+CSOURCES	Makefile	/^CSOURCES=$(wildcard $(SRC_DIR)\/boot\/*.c)$/;"	m
+Chars	include/bgafont.h	/^	unsigned short Chars;		\/\/\/< number of characters in font$/;"	m	struct:bitmap_font
+DRIVER_INIT	include/driver.h	4;"	d
+EARLY_PDPT_KERN	include/vm.h	16;"	d
+EARLY_PDPT_PHYS	include/vm.h	15;"	d
+EARLY_PML4T	include/vm.h	14;"	d
+Elf64_Addr	include/elf64.h	/^typedef uint64_t Elf64_Addr;$/;"	t
+Elf64_Ehdr	include/elf64.h	/^typedef struct Elf64_FileHeader Elf64_Ehdr;$/;"	t	typeref:struct:Elf64_FileHeader
+Elf64_FileHeader	include/elf64.h	/^struct Elf64_FileHeader {$/;"	s
+Elf64_Half	include/elf64.h	/^typedef uint16_t Elf64_Half;$/;"	t
+Elf64_Off	include/elf64.h	/^typedef uint64_t Elf64_Off;$/;"	t
+Elf64_Rela	include/elf64.h	/^typedef struct Elf64_RelocationHeader Elf64_Rela;$/;"	t	typeref:struct:Elf64_RelocationHeader
+Elf64_RelocationHeader	include/elf64.h	/^struct Elf64_RelocationHeader {$/;"	s
+Elf64_RikuSections	include/elf64.h	/^enum Elf64_RikuSections { SECTION_TEXT, SECTION_SYM, SECTION_STR, SECTION_DYNSYM, SECTION_DYNSTR, SECTION_RELA_PLT };$/;"	g
+Elf64_SWord	include/elf64.h	/^typedef int32_t Elf64_SWord;$/;"	t
+Elf64_SXWord	include/elf64.h	/^typedef int64_t Elf64_SXWord;$/;"	t
+Elf64_Section	include/elf64.h	/^typedef enum Elf64_RikuSections Elf64_Section;$/;"	t	typeref:enum:Elf64_RikuSections
+Elf64_SectionHeader	include/elf64.h	/^struct Elf64_SectionHeader {$/;"	s
+Elf64_SectionNames	include/elf64.h	/^static const char* Elf64_SectionNames[] = {$/;"	v
+Elf64_Shdr	include/elf64.h	/^typedef struct Elf64_SectionHeader Elf64_Shdr;$/;"	t	typeref:struct:Elf64_SectionHeader
+Elf64_Sym	include/elf64.h	/^typedef struct Elf64_SymbolHeader Elf64_Sym;$/;"	t	typeref:struct:Elf64_SymbolHeader
+Elf64_SymbolHeader	include/elf64.h	/^struct Elf64_SymbolHeader {$/;"	s
+Elf64_UChar	include/elf64.h	/^typedef uint8_t Elf64_UChar;$/;"	t
+Elf64_Word	include/elf64.h	/^typedef uint32_t Elf64_Word;$/;"	t
+Elf64_XWord	include/elf64.h	/^typedef uint64_t Elf64_XWord;$/;"	t
+FLAGS_PDPT_LARGE	include/vm.h	23;"	d
+FLAGS_PML4T	include/vm.h	22;"	d
+FLAG_LARGE_PAGE	include/vm.h	21;"	d
+FLAG_PRESENT	include/vm.h	19;"	d
+FLAG_RW	include/vm.h	20;"	d
+GDT_ENTRIES	include/gdt64.h	6;"	d
+HEAP_BEGIN	include/heap.h	8;"	d
+HEAP_END	include/heap.h	9;"	d
+HEAP_FOOTER_MAGIC	include/heap.h	11;"	d
+HEAP_HEADER_MAGIC	include/heap.h	10;"	d
+Height	include/bgafont.h	/^	unsigned char Height;		\/\/\/< character height$/;"	m	struct:bitmap_font
+IMAGE	Makefile	/^IMAGE=kern.bin$/;"	m
+INIT_TASK	src/boot/entry.c	65;"	d	file:
+IRQHANDLERS	src/int/idt64.c	/^irq_t IRQHANDLERS[16];$/;"	v
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 0 , 32$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 1 , 33$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 10 , 42$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 11 , 43$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 12 , 44$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 13 , 45$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 14 , 46$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 15 , 47$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 2 , 34$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 3 , 35$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 4 , 36$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 5 , 37$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 6 , 38$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 7 , 39$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 8 , 40$/;"	l
+IRQ_STUB	src/int/idt0.s	/^IRQ_STUB 9 , 41$/;"	l
+ISR_ERRCODE	src/int/idt0.s	/^ISR_ERRCODE   10$/;"	l
+ISR_ERRCODE	src/int/idt0.s	/^ISR_ERRCODE   11$/;"	l
+ISR_ERRCODE	src/int/idt0.s	/^ISR_ERRCODE   12$/;"	l
+ISR_ERRCODE	src/int/idt0.s	/^ISR_ERRCODE   13$/;"	l
+ISR_ERRCODE	src/int/idt0.s	/^ISR_ERRCODE   14$/;"	l
+ISR_ERRCODE	src/int/idt0.s	/^ISR_ERRCODE   8$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 0$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 1$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 15$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 16$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 17$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 18$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 19$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 2$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 20$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 21$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 22$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 23$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 24$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 25$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 254/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 26$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 27$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 28$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 29$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 3$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 30$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 31$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 4$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 5$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 6$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 7$/;"	l
+ISR_NOERRCODE	src/int/idt0.s	/^ISR_NOERRCODE 9$/;"	l
+Index	include/bgafont.h	/^	const unsigned short *Index;	\/\/\/< encoding to character index$/;"	m	struct:bitmap_font
+KERNEL_ARCH	include/version.h	4;"	d
+KERNEL_CODENAME	include/version.h	7;"	d
+KERNEL_NAME	include/version.h	5;"	d
+KERNEL_VERSION	include/version.h	6;"	d
+KTRACE	include/serial.h	14;"	d
+KTRACERAW	include/serial.h	13;"	d
+LDFLAGS	Makefile	/^LDFLAGS=-z max-page-size=0x1000$/;"	m
+LDRINFO_ADDR	include/ldrinfo.h	4;"	d
+MMIO	include/vfs/devfs.h	/^enum riku_resource_type { PORTIO, MMIO, UNKNOWN };$/;"	e	enum:riku_resource_type
+MULTIBOOT2_BOOTLOADER_MAGIC	include/multiboot.h	33;"	d
+MULTIBOOT2_HEADER_MAGIC	include/multiboot.h	30;"	d
+MULTIBOOT_ARCHITECTURE_I386	include/multiboot.h	73;"	d
+MULTIBOOT_ARCHITECTURE_MIPS32	include/multiboot.h	74;"	d
+MULTIBOOT_CONSOLE_FLAGS_CONSOLE_REQUIRED	include/multiboot.h	77;"	d
+MULTIBOOT_CONSOLE_FLAGS_EGA_TEXT_SUPPORTED	include/multiboot.h	78;"	d
+MULTIBOOT_FRAMEBUFFER_TYPE_EGA_TEXT	include/multiboot.h	266;"	d
+MULTIBOOT_FRAMEBUFFER_TYPE_INDEXED	include/multiboot.h	264;"	d
+MULTIBOOT_FRAMEBUFFER_TYPE_RGB	include/multiboot.h	265;"	d
+MULTIBOOT_HEADER	include/multiboot.h	23;"	d
+MULTIBOOT_HEADER_ALIGN	include/multiboot.h	27;"	d
+MULTIBOOT_HEADER_TAG_ADDRESS	include/multiboot.h	66;"	d
+MULTIBOOT_HEADER_TAG_CONSOLE_FLAGS	include/multiboot.h	68;"	d
+MULTIBOOT_HEADER_TAG_EFI_BS	include/multiboot.h	71;"	d
+MULTIBOOT_HEADER_TAG_END	include/multiboot.h	64;"	d
+MULTIBOOT_HEADER_TAG_ENTRY_ADDRESS	include/multiboot.h	67;"	d
+MULTIBOOT_HEADER_TAG_FRAMEBUFFER	include/multiboot.h	69;"	d
+MULTIBOOT_HEADER_TAG_INFORMATION_REQUEST	include/multiboot.h	65;"	d
+MULTIBOOT_HEADER_TAG_MODULE_ALIGN	include/multiboot.h	70;"	d
+MULTIBOOT_HEADER_TAG_OPTIONAL	include/multiboot.h	75;"	d
+MULTIBOOT_INFO_ALIGN	include/multiboot.h	39;"	d
+MULTIBOOT_MEMORY_ACPI_RECLAIMABLE	include/multiboot.h	174;"	d
+MULTIBOOT_MEMORY_AVAILABLE	include/multiboot.h	172;"	d
+MULTIBOOT_MEMORY_BADRAM	include/multiboot.h	176;"	d
+MULTIBOOT_MEMORY_NVS	include/multiboot.h	175;"	d
+MULTIBOOT_MEMORY_RESERVED	include/multiboot.h	173;"	d
+MULTIBOOT_MOD_ALIGN	include/multiboot.h	36;"	d
+MULTIBOOT_SEARCH	include/multiboot.h	26;"	d
+MULTIBOOT_TAG_ALIGN	include/multiboot.h	43;"	d
+MULTIBOOT_TAG_TYPE_ACPI_NEW	include/multiboot.h	59;"	d
+MULTIBOOT_TAG_TYPE_ACPI_OLD	include/multiboot.h	58;"	d
+MULTIBOOT_TAG_TYPE_APM	include/multiboot.h	54;"	d
+MULTIBOOT_TAG_TYPE_BASIC_MEMINFO	include/multiboot.h	48;"	d
+MULTIBOOT_TAG_TYPE_BOOTDEV	include/multiboot.h	49;"	d
+MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME	include/multiboot.h	46;"	d
+MULTIBOOT_TAG_TYPE_CMDLINE	include/multiboot.h	45;"	d
+MULTIBOOT_TAG_TYPE_EFI32	include/multiboot.h	55;"	d
+MULTIBOOT_TAG_TYPE_EFI64	include/multiboot.h	56;"	d
+MULTIBOOT_TAG_TYPE_EFI_BS	include/multiboot.h	62;"	d
+MULTIBOOT_TAG_TYPE_EFI_MMAP	include/multiboot.h	61;"	d
+MULTIBOOT_TAG_TYPE_ELF_SECTIONS	include/multiboot.h	53;"	d
+MULTIBOOT_TAG_TYPE_END	include/multiboot.h	44;"	d
+MULTIBOOT_TAG_TYPE_FRAMEBUFFER	include/multiboot.h	52;"	d
+MULTIBOOT_TAG_TYPE_MMAP	include/multiboot.h	50;"	d
+MULTIBOOT_TAG_TYPE_MODULE	include/multiboot.h	47;"	d
+MULTIBOOT_TAG_TYPE_NETWORK	include/multiboot.h	60;"	d
+MULTIBOOT_TAG_TYPE_SMBIOS	include/multiboot.h	57;"	d
+MULTIBOOT_TAG_TYPE_VBE	include/multiboot.h	51;"	d
+PAGE_SIZE	include/vm.h	29;"	d
+PCI_CLASSES	include/pci.h	/^static char* PCI_CLASSES[18] = {$/;"	v
+PCI_CLASSES_SHORT	include/pci.h	/^static char* PCI_CLASSES_SHORT[18] = {$/;"	v
+PCI_CONFIG_ADDRESS	include/pci.h	4;"	d
+PCI_CONFIG_ADDRESS_STRUCT	include/pci.h	/^typedef struct pci_config_address PCI_CONFIG_ADDRESS_STRUCT;$/;"	t	typeref:struct:pci_config_address
+PCI_CONFIG_DATA	include/pci.h	5;"	d
+PHYS	include/vm.h	45;"	d
+PML4T_UPPER	include/vm.h	26;"	d
+PORT	include/serial.h	10;"	d
+PORTIO	include/vfs/devfs.h	/^enum riku_resource_type { PORTIO, MMIO, UNKNOWN };$/;"	e	enum:riku_resource_type
+PRINTK_JIFFIES_DIVISOR	include/printk.h	7;"	d
+READY	include/task.h	/^enum task_state { READY, ACTIVABLE, SLEEPING, TERMINATED };$/;"	e	enum:task_state
+Riku_KSym	include/kernsym.h	/^struct Riku_KSym {$/;"	s
+Riku_Symbol	include/kernsym.h	/^typedef struct Riku_KSym Riku_Symbol;$/;"	t	typeref:struct:Riku_KSym
+SECTION	src/boot/0boot.s	/^SECTION .stack$/;"	l
+SECTION	src/boot/0boot.s	/^SECTION .text$/;"	l
+SECTION_DYNSTR	include/elf64.h	/^enum Elf64_RikuSections { SECTION_TEXT, SECTION_SYM, SECTION_STR, SECTION_DYNSYM, SECTION_DYNSTR, SECTION_RELA_PLT };$/;"	e	enum:Elf64_RikuSections
+SECTION_DYNSYM	include/elf64.h	/^enum Elf64_RikuSections { SECTION_TEXT, SECTION_SYM, SECTION_STR, SECTION_DYNSYM, SECTION_DYNSTR, SECTION_RELA_PLT };$/;"	e	enum:Elf64_RikuSections
+SECTION_RELA_PLT	include/elf64.h	/^enum Elf64_RikuSections { SECTION_TEXT, SECTION_SYM, SECTION_STR, SECTION_DYNSYM, SECTION_DYNSTR, SECTION_RELA_PLT };$/;"	e	enum:Elf64_RikuSections
+SECTION_STR	include/elf64.h	/^enum Elf64_RikuSections { SECTION_TEXT, SECTION_SYM, SECTION_STR, SECTION_DYNSYM, SECTION_DYNSTR, SECTION_RELA_PLT };$/;"	e	enum:Elf64_RikuSections
+SECTION_SYM	include/elf64.h	/^enum Elf64_RikuSections { SECTION_TEXT, SECTION_SYM, SECTION_STR, SECTION_DYNSYM, SECTION_DYNSTR, SECTION_RELA_PLT };$/;"	e	enum:Elf64_RikuSections
+SECTION_TEXT	include/elf64.h	/^enum Elf64_RikuSections { SECTION_TEXT, SECTION_SYM, SECTION_STR, SECTION_DYNSYM, SECTION_DYNSTR, SECTION_RELA_PLT };$/;"	e	enum:Elf64_RikuSections
+SLEEPING	include/task.h	/^enum task_state { READY, ACTIVABLE, SLEEPING, TERMINATED };$/;"	e	enum:task_state
+SRC_DIR	Makefile	/^SRC_DIR=src$/;"	m
+TABLE_PD	include/vm.h	10;"	d
+TABLE_PDPT	include/vm.h	9;"	d
+TABLE_PML4T	include/vm.h	8;"	d
+TABLE_PT	include/vm.h	11;"	d
+TERMINATED	include/task.h	/^enum task_state { READY, ACTIVABLE, SLEEPING, TERMINATED };$/;"	e	enum:task_state
+UNKNOWN	include/vfs/devfs.h	/^enum riku_resource_type { PORTIO, MMIO, UNKNOWN };$/;"	e	enum:riku_resource_type
+VBE_DISPI_DISABLED	include/bga.h	28;"	d
+VBE_DISPI_ENABLED	include/bga.h	29;"	d
+VBE_DISPI_ID0	include/bga.h	22;"	d
+VBE_DISPI_ID1	include/bga.h	23;"	d
+VBE_DISPI_ID2	include/bga.h	24;"	d
+VBE_DISPI_ID3	include/bga.h	25;"	d
+VBE_DISPI_ID4	include/bga.h	26;"	d
+VBE_DISPI_ID5	include/bga.h	27;"	d
+VBE_DISPI_INDEX_BANK	include/bga.h	17;"	d
+VBE_DISPI_INDEX_BPP	include/bga.h	15;"	d
+VBE_DISPI_INDEX_ENABLE	include/bga.h	16;"	d
+VBE_DISPI_INDEX_ID	include/bga.h	12;"	d
+VBE_DISPI_INDEX_VIRT_HEIGHT	include/bga.h	19;"	d
+VBE_DISPI_INDEX_VIRT_WIDTH	include/bga.h	18;"	d
+VBE_DISPI_INDEX_XRES	include/bga.h	13;"	d
+VBE_DISPI_INDEX_X_OFFSET	include/bga.h	20;"	d
+VBE_DISPI_INDEX_YRES	include/bga.h	14;"	d
+VBE_DISPI_INDEX_Y_OFFSET	include/bga.h	21;"	d
+VBE_DISPI_IOPORT_DATA	include/bga.h	11;"	d
+VBE_DISPI_IOPORT_INDEX	include/bga.h	10;"	d
+VBE_DISPI_LFB_ENABLED	include/bga.h	30;"	d
+VBE_DISPI_NOCLEARMEM	include/bga.h	31;"	d
+VBE_LFB	include/bga.h	34;"	d
+Width	include/bgafont.h	/^	unsigned char Width;		\/\/\/< max. character width$/;"	m	struct:bitmap_font
+Widths	include/bgafont.h	/^	const unsigned char *Widths;	\/\/\/< width of each character$/;"	m	struct:bitmap_font
+XXXXXXXX	include/bgafont.h	269;"	d
+XXXXXXX_	include/bgafont.h	268;"	d
+XXXXXX_X	include/bgafont.h	267;"	d
+XXXXXX__	include/bgafont.h	266;"	d
+XXXXX_XX	include/bgafont.h	265;"	d
+XXXXX_X_	include/bgafont.h	264;"	d
+XXXXX__X	include/bgafont.h	263;"	d
+XXXXX___	include/bgafont.h	262;"	d
+XXXX_XXX	include/bgafont.h	261;"	d
+XXXX_XX_	include/bgafont.h	260;"	d
+XXXX_X_X	include/bgafont.h	259;"	d
+XXXX_X__	include/bgafont.h	258;"	d
+XXXX__XX	include/bgafont.h	257;"	d
+XXXX__X_	include/bgafont.h	256;"	d
+XXXX___X	include/bgafont.h	255;"	d
+XXXX____	include/bgafont.h	254;"	d
+XXX_XXXX	include/bgafont.h	253;"	d
+XXX_XXX_	include/bgafont.h	252;"	d
+XXX_XX_X	include/bgafont.h	251;"	d
+XXX_XX__	include/bgafont.h	250;"	d
+XXX_X_XX	include/bgafont.h	249;"	d
+XXX_X_X_	include/bgafont.h	248;"	d
+XXX_X__X	include/bgafont.h	247;"	d
+XXX_X___	include/bgafont.h	246;"	d
+XXX__XXX	include/bgafont.h	245;"	d
+XXX__XX_	include/bgafont.h	244;"	d
+XXX__X_X	include/bgafont.h	243;"	d
+XXX__X__	include/bgafont.h	242;"	d
+XXX___XX	include/bgafont.h	241;"	d
+XXX___X_	include/bgafont.h	240;"	d
+XXX____X	include/bgafont.h	239;"	d
+XXX_____	include/bgafont.h	238;"	d
+XX_XXXXX	include/bgafont.h	237;"	d
+XX_XXXX_	include/bgafont.h	236;"	d
+XX_XXX_X	include/bgafont.h	235;"	d
+XX_XXX__	include/bgafont.h	234;"	d
+XX_XX_XX	include/bgafont.h	233;"	d
+XX_XX_X_	include/bgafont.h	232;"	d
+XX_XX__X	include/bgafont.h	231;"	d
+XX_XX___	include/bgafont.h	230;"	d
+XX_X_XXX	include/bgafont.h	229;"	d
+XX_X_XX_	include/bgafont.h	228;"	d
+XX_X_X_X	include/bgafont.h	227;"	d
+XX_X_X__	include/bgafont.h	226;"	d
+XX_X__XX	include/bgafont.h	225;"	d
+XX_X__X_	include/bgafont.h	224;"	d
+XX_X___X	include/bgafont.h	223;"	d
+XX_X____	include/bgafont.h	222;"	d
+XX__XXXX	include/bgafont.h	221;"	d
+XX__XXX_	include/bgafont.h	220;"	d
+XX__XX_X	include/bgafont.h	219;"	d
+XX__XX__	include/bgafont.h	218;"	d
+XX__X_XX	include/bgafont.h	217;"	d
+XX__X_X_	include/bgafont.h	216;"	d
+XX__X__X	include/bgafont.h	215;"	d
+XX__X___	include/bgafont.h	214;"	d
+XX___XXX	include/bgafont.h	213;"	d
+XX___XX_	include/bgafont.h	212;"	d
+XX___X_X	include/bgafont.h	211;"	d
+XX___X__	include/bgafont.h	210;"	d
+XX____XX	include/bgafont.h	209;"	d
+XX____X_	include/bgafont.h	208;"	d
+XX_____X	include/bgafont.h	207;"	d
+XX______	include/bgafont.h	206;"	d
+X_XXXXXX	include/bgafont.h	205;"	d
+X_XXXXX_	include/bgafont.h	204;"	d
+X_XXXX_X	include/bgafont.h	203;"	d
+X_XXXX__	include/bgafont.h	202;"	d
+X_XXX_XX	include/bgafont.h	201;"	d
+X_XXX_X_	include/bgafont.h	200;"	d
+X_XXX__X	include/bgafont.h	199;"	d
+X_XXX___	include/bgafont.h	198;"	d
+X_XX_XXX	include/bgafont.h	197;"	d
+X_XX_XX_	include/bgafont.h	196;"	d
+X_XX_X_X	include/bgafont.h	195;"	d
+X_XX_X__	include/bgafont.h	194;"	d
+X_XX__XX	include/bgafont.h	193;"	d
+X_XX__X_	include/bgafont.h	192;"	d
+X_XX___X	include/bgafont.h	191;"	d
+X_XX____	include/bgafont.h	190;"	d
+X_X_XXXX	include/bgafont.h	189;"	d
+X_X_XXX_	include/bgafont.h	188;"	d
+X_X_XX_X	include/bgafont.h	187;"	d
+X_X_XX__	include/bgafont.h	186;"	d
+X_X_X_XX	include/bgafont.h	185;"	d
+X_X_X_X_	include/bgafont.h	184;"	d
+X_X_X__X	include/bgafont.h	183;"	d
+X_X_X___	include/bgafont.h	182;"	d
+X_X__XXX	include/bgafont.h	181;"	d
+X_X__XX_	include/bgafont.h	180;"	d
+X_X__X_X	include/bgafont.h	179;"	d
+X_X__X__	include/bgafont.h	178;"	d
+X_X___XX	include/bgafont.h	177;"	d
+X_X___X_	include/bgafont.h	176;"	d
+X_X____X	include/bgafont.h	175;"	d
+X_X_____	include/bgafont.h	174;"	d
+X__XXXXX	include/bgafont.h	173;"	d
+X__XXXX_	include/bgafont.h	172;"	d
+X__XXX_X	include/bgafont.h	171;"	d
+X__XXX__	include/bgafont.h	170;"	d
+X__XX_XX	include/bgafont.h	169;"	d
+X__XX_X_	include/bgafont.h	168;"	d
+X__XX__X	include/bgafont.h	167;"	d
+X__XX___	include/bgafont.h	166;"	d
+X__X_XXX	include/bgafont.h	165;"	d
+X__X_XX_	include/bgafont.h	164;"	d
+X__X_X_X	include/bgafont.h	163;"	d
+X__X_X__	include/bgafont.h	162;"	d
+X__X__XX	include/bgafont.h	161;"	d
+X__X__X_	include/bgafont.h	160;"	d
+X__X___X	include/bgafont.h	159;"	d
+X__X____	include/bgafont.h	158;"	d
+X___XXXX	include/bgafont.h	157;"	d
+X___XXX_	include/bgafont.h	156;"	d
+X___XX_X	include/bgafont.h	155;"	d
+X___XX__	include/bgafont.h	154;"	d
+X___X_XX	include/bgafont.h	153;"	d
+X___X_X_	include/bgafont.h	152;"	d
+X___X__X	include/bgafont.h	151;"	d
+X___X___	include/bgafont.h	150;"	d
+X____XXX	include/bgafont.h	149;"	d
+X____XX_	include/bgafont.h	148;"	d
+X____X_X	include/bgafont.h	147;"	d
+X____X__	include/bgafont.h	146;"	d
+X_____XX	include/bgafont.h	145;"	d
+X_____X_	include/bgafont.h	144;"	d
+X______X	include/bgafont.h	143;"	d
+X_______	include/bgafont.h	142;"	d
+_XXXXXXX	include/bgafont.h	141;"	d
+_XXXXXX_	include/bgafont.h	140;"	d
+_XXXXX_X	include/bgafont.h	139;"	d
+_XXXXX__	include/bgafont.h	138;"	d
+_XXXX_XX	include/bgafont.h	137;"	d
+_XXXX_X_	include/bgafont.h	136;"	d
+_XXXX__X	include/bgafont.h	135;"	d
+_XXXX___	include/bgafont.h	134;"	d
+_XXX_XXX	include/bgafont.h	133;"	d
+_XXX_XX_	include/bgafont.h	132;"	d
+_XXX_X_X	include/bgafont.h	131;"	d
+_XXX_X__	include/bgafont.h	130;"	d
+_XXX__XX	include/bgafont.h	129;"	d
+_XXX__X_	include/bgafont.h	128;"	d
+_XXX___X	include/bgafont.h	127;"	d
+_XXX____	include/bgafont.h	126;"	d
+_XX_XXXX	include/bgafont.h	125;"	d
+_XX_XXX_	include/bgafont.h	124;"	d
+_XX_XX_X	include/bgafont.h	123;"	d
+_XX_XX__	include/bgafont.h	122;"	d
+_XX_X_XX	include/bgafont.h	121;"	d
+_XX_X_X_	include/bgafont.h	120;"	d
+_XX_X__X	include/bgafont.h	119;"	d
+_XX_X___	include/bgafont.h	118;"	d
+_XX__XXX	include/bgafont.h	117;"	d
+_XX__XX_	include/bgafont.h	116;"	d
+_XX__X_X	include/bgafont.h	115;"	d
+_XX__X__	include/bgafont.h	114;"	d
+_XX___XX	include/bgafont.h	113;"	d
+_XX___X_	include/bgafont.h	112;"	d
+_XX____X	include/bgafont.h	111;"	d
+_XX_____	include/bgafont.h	110;"	d
+_X_XXXXX	include/bgafont.h	109;"	d
+_X_XXXX_	include/bgafont.h	108;"	d
+_X_XXX_X	include/bgafont.h	107;"	d
+_X_XXX__	include/bgafont.h	106;"	d
+_X_XX_XX	include/bgafont.h	105;"	d
+_X_XX_X_	include/bgafont.h	104;"	d
+_X_XX__X	include/bgafont.h	103;"	d
+_X_XX___	include/bgafont.h	102;"	d
+_X_X_XXX	include/bgafont.h	101;"	d
+_X_X_XX_	include/bgafont.h	100;"	d
+_X_X_X_X	include/bgafont.h	99;"	d
+_X_X_X__	include/bgafont.h	98;"	d
+_X_X__XX	include/bgafont.h	97;"	d
+_X_X__X_	include/bgafont.h	96;"	d
+_X_X___X	include/bgafont.h	95;"	d
+_X_X____	include/bgafont.h	94;"	d
+_X__XXXX	include/bgafont.h	93;"	d
+_X__XXX_	include/bgafont.h	92;"	d
+_X__XX_X	include/bgafont.h	91;"	d
+_X__XX__	include/bgafont.h	90;"	d
+_X__X_XX	include/bgafont.h	89;"	d
+_X__X_X_	include/bgafont.h	88;"	d
+_X__X__X	include/bgafont.h	87;"	d
+_X__X___	include/bgafont.h	86;"	d
+_X___XXX	include/bgafont.h	85;"	d
+_X___XX_	include/bgafont.h	84;"	d
+_X___X_X	include/bgafont.h	83;"	d
+_X___X__	include/bgafont.h	82;"	d
+_X____XX	include/bgafont.h	81;"	d
+_X____X_	include/bgafont.h	80;"	d
+_X_____X	include/bgafont.h	79;"	d
+_X______	include/bgafont.h	78;"	d
+__BGA_H__	include/bga.h	2;"	d
+__BOOTINFO__	include/bootinfo.h	2;"	d
+__DEVFS__	include/vfs/devfs.h	2;"	d
+__DRIVER__	include/driver.h	2;"	d
+__ELF64__	include/elf64.h	6;"	d
+__GDT64_H__	include/gdt64.h	2;"	d
+__HEAP_H__	include/heap.h	2;"	d
+__HW__	include/hw.h	2;"	d
+__IDT64_H__	include/idt64.h	2;"	d
+__IOTYPES__	include/iotypes.h	2;"	d
+__KSYM__	include/kernsym.h	2;"	d
+__LDRINFO__	include/ldrinfo.h	2;"	d
+__MEM_H__	include/mem.h	2;"	d
+__MMU_H__	include/mmu.h	2;"	d
+__MODULE__	include/module.h	2;"	d
+__PORT__	include/ioport.h	2;"	d
+__PRINTK__	include/printk.h	2;"	d
+__SCHED__	include/sched.h	2;"	d
+__SERIAL_DRIVER__	include/serial.h	2;"	d
+__TASK__	include/task.h	2;"	d
+__VERSION_H__	include/version.h	2;"	d
+__VGA_H__	include/vga.h	2;"	d
+__VM_H__	include/vm.h	2;"	d
+__X86_PCI__	include/pci.h	2;"	d
+__XXXXXX	include/bgafont.h	77;"	d
+__XXXXX_	include/bgafont.h	76;"	d
+__XXXX_X	include/bgafont.h	75;"	d
+__XXXX__	include/bgafont.h	74;"	d
+__XXX_XX	include/bgafont.h	73;"	d
+__XXX_X_	include/bgafont.h	72;"	d
+__XXX__X	include/bgafont.h	71;"	d
+__XXX___	include/bgafont.h	70;"	d
+__XX_XXX	include/bgafont.h	69;"	d
+__XX_XX_	include/bgafont.h	68;"	d
+__XX_X_X	include/bgafont.h	67;"	d
+__XX_X__	include/bgafont.h	66;"	d
+__XX__XX	include/bgafont.h	65;"	d
+__XX__X_	include/bgafont.h	64;"	d
+__XX___X	include/bgafont.h	63;"	d
+__XX____	include/bgafont.h	62;"	d
+__X_XXXX	include/bgafont.h	61;"	d
+__X_XXX_	include/bgafont.h	60;"	d
+__X_XX_X	include/bgafont.h	59;"	d
+__X_XX__	include/bgafont.h	58;"	d
+__X_X_XX	include/bgafont.h	57;"	d
+__X_X_X_	include/bgafont.h	56;"	d
+__X_X__X	include/bgafont.h	55;"	d
+__X_X___	include/bgafont.h	54;"	d
+__X__XXX	include/bgafont.h	53;"	d
+__X__XX_	include/bgafont.h	52;"	d
+__X__X_X	include/bgafont.h	51;"	d
+__X__X__	include/bgafont.h	50;"	d
+__X___XX	include/bgafont.h	49;"	d
+__X___X_	include/bgafont.h	48;"	d
+__X____X	include/bgafont.h	47;"	d
+__X_____	include/bgafont.h	46;"	d
+___XXXXX	include/bgafont.h	45;"	d
+___XXXX_	include/bgafont.h	44;"	d
+___XXX_X	include/bgafont.h	43;"	d
+___XXX__	include/bgafont.h	42;"	d
+___XX_XX	include/bgafont.h	41;"	d
+___XX_X_	include/bgafont.h	40;"	d
+___XX__X	include/bgafont.h	39;"	d
+___XX___	include/bgafont.h	38;"	d
+___X_XXX	include/bgafont.h	37;"	d
+___X_XX_	include/bgafont.h	36;"	d
+___X_X_X	include/bgafont.h	35;"	d
+___X_X__	include/bgafont.h	34;"	d
+___X__XX	include/bgafont.h	33;"	d
+___X__X_	include/bgafont.h	32;"	d
+___X___X	include/bgafont.h	31;"	d
+___X____	include/bgafont.h	30;"	d
+____XXXX	include/bgafont.h	29;"	d
+____XXX_	include/bgafont.h	28;"	d
+____XX_X	include/bgafont.h	27;"	d
+____XX__	include/bgafont.h	26;"	d
+____X_XX	include/bgafont.h	25;"	d
+____X_X_	include/bgafont.h	24;"	d
+____X__X	include/bgafont.h	23;"	d
+____X___	include/bgafont.h	22;"	d
+_____XXX	include/bgafont.h	21;"	d
+_____XX_	include/bgafont.h	20;"	d
+_____X_X	include/bgafont.h	19;"	d
+_____X__	include/bgafont.h	18;"	d
+______XX	include/bgafont.h	17;"	d
+______X_	include/bgafont.h	16;"	d
+_______X	include/bgafont.h	15;"	d
+________	include/bgafont.h	14;"	d
+__font_bitmap__	src/io/bgafont.c	/^static const unsigned char __font_bitmap__[] = {$/;"	v	file:
+__font_index__	src/io/bgafont.c	/^static const unsigned short __font_index__[] = {$/;"	v	file:
+__font_widths__	src/io/bgafont.c	/^static const unsigned char __font_widths__[] = {$/;"	v	file:
+_earlystack	src/boot/0boot.s	/^	_earlystack:$/;"	l
+access	include/gdt64.h	/^	uint8_t access;$/;"	m	struct:gdt_entry
+access	include/gdt64.h	/^	uint8_t access;$/;"	m	struct:gdt_extended_entry
+addr	include/kernsym.h	/^	uintptr_t addr; \/* Symbol address *\/$/;"	m	struct:Riku_KSym
+addr	include/multiboot.h	/^	multiboot_uint64_t addr;$/;"	m	struct:multiboot_mmap_entry
+addrIndex	src/mm/mmu.c	/^uint32_t addrIndex(uint32_t level, uintptr_t addr)$/;"	f
+alloc_page	src/mm/vm.c	/^uintptr_t* alloc_page()$/;"	f
+allocated_pages	include/vm.h	/^uint64_t allocated_pages;$/;"	v
+always0	include/idt64.h	/^	uint8_t  always0; \/\/!< ?$/;"	m	struct:idt_entry_struct
+always0too	include/idt64.h	/^	uint32_t always0too; \/\/!< Always zero aswell$/;"	m	struct:idt_entry_struct
+architecture	include/multiboot.h	/^	multiboot_uint32_t architecture;$/;"	m	struct:multiboot_header
+base	include/gdt64.h	/^    uintptr_t base;$/;"	m	struct:gdt_ptr
+base	include/idt64.h	/^	uint64_t base; \/\/!< IDT pointer base$/;"	m	struct:idt_ptr_struct
+base_high	include/gdt64.h	/^    uint8_t base_high;$/;"	m	struct:gdt_entry
+base_high	include/gdt64.h	/^    uint8_t base_high;$/;"	m	struct:gdt_extended_entry
+base_high	include/idt64.h	/^	uint32_t base_high; \/\/!< Higher bytes of handler address$/;"	m	struct:idt_entry_struct
+base_lo	include/idt64.h	/^	uint16_t base_lo; \/\/!< Lower bytes of handler address$/;"	m	struct:idt_entry_struct
+base_low	include/gdt64.h	/^	uint16_t base_low;$/;"	m	struct:gdt_entry
+base_low	include/gdt64.h	/^	uint16_t base_low;$/;"	m	struct:gdt_extended_entry
+base_mid	include/idt64.h	/^	uint16_t base_mid; \/\/!< Middle bytes of handler address$/;"	m	struct:idt_entry_struct
+base_middle	include/gdt64.h	/^	uint8_t base_middle;$/;"	m	struct:gdt_entry
+base_middle	include/gdt64.h	/^	uint8_t base_middle;$/;"	m	struct:gdt_extended_entry
+base_rlyhigh	include/gdt64.h	/^	uint32_t base_rlyhigh;$/;"	m	struct:gdt_extended_entry
+begin	include/vfs/devfs.h	/^	uintptr_t begin; \/* Resource begin *\/$/;"	m	struct:riku_devfs_resource
+bf	src/io/printk.c	/^static char* bf;$/;"	v	file:
+bf	src/io/serial.c	/^static char* bf;$/;"	v	file:
+bga_mode	include/bga.h	/^uint8_t bga_mode;$/;"	v
+bgacx	src/io/bga.c	/^uint32_t bgacx = 0;$/;"	v
+bgacy	src/io/bga.c	/^uint32_t bgacy = 1;$/;"	v
+bgafont	src/io/bgafont.c	/^const struct bitmap_font bgafont = {$/;"	v	typeref:struct:bitmap_font
+bgaputch	src/io/bga.c	/^int bgaputch(char c)$/;"	f
+bgaputch_internal	src/io/bga.c	/^void bgaputch_internal(unsigned char c, int x, int y, int fgcolor, int bgcolor)$/;"	f
+bgaputch_internal_transp	src/io/bga.c	/^void bgaputch_internal_transp(unsigned char c, int x, int y, int fgcolor)$/;"	f
+bgaputs	src/io/bga.c	/^void bgaputs(char* str)$/;"	f
+bgascroll	src/io/bga.c	/^void bgascroll()$/;"	f
+bind_irq	src/int/idt64.c	/^void bind_irq()$/;"	f
+bind_isr	src/int/idt64.c	/^void bind_isr()$/;"	f
+biosdev	include/multiboot.h	/^	multiboot_uint32_t biosdev;$/;"	m	struct:multiboot_tag_bootdev
+bitmap_font	include/bgafont.h	/^struct bitmap_font {$/;"	s
+block_data_space	src/mm/heap.c	/^uintptr_t* block_data_space(block_header_t* block)$/;"	f
+block_footer_t	include/heap.h	/^} block_footer_t;$/;"	t	typeref:struct:__anon5
+block_header_t	include/heap.h	/^} block_header_t;$/;"	t	typeref:struct:__anon4
+blue	include/multiboot.h	/^	multiboot_uint8_t blue;$/;"	m	struct:multiboot_color
+bss_end_addr	include/multiboot.h	/^	multiboot_uint32_t bss_end_addr;$/;"	m	struct:multiboot_header_tag_address
+buf	src/io/printk.c	/^static char buf[12];$/;"	v	file:
+buf	src/io/serial.c	/^static char buf[12];$/;"	v	file:
+build_heap	src/mm/heap.c	/^heap_t* build_heap(uintptr_t *heap_vaddr, uint8_t is_kernel, uint8_t is_read_only)$/;"	f
+bus_number	include/pci.h	/^	uint8_t bus_number : 8;$/;"	m	struct:pci_config_address
+checksum	include/multiboot.h	/^	multiboot_uint32_t checksum;$/;"	m	struct:multiboot_header
+cls	src/io/vga.c	/^void cls()$/;"	f
+cmdline	include/multiboot.h	/^	char cmdline[0];$/;"	m	struct:multiboot_tag_module
+color2int	src/io/bga.c	/^uint32_t color2int(uint8_t r, uint8_t g, uint8_t b, uint8_t a)$/;"	f
+common	include/multiboot.h	/^	struct multiboot_tag_framebuffer_common common;$/;"	m	struct:multiboot_tag_framebuffer	typeref:struct:multiboot_tag_framebuffer::multiboot_tag_framebuffer_common
+console	include/vfs/devfs.h	/^struct riku_devfs_node *console;$/;"	v	typeref:struct:riku_devfs_node
+console_flags	include/multiboot.h	/^	multiboot_uint32_t console_flags;$/;"	m	struct:multiboot_header_tag_console_flags
+cs	include/idt64.h	/^	uint64_t cs; \/\/!< Code segment$/;"	m	struct:registers
+cseg	include/multiboot.h	/^	multiboot_uint16_t cseg;$/;"	m	struct:multiboot_tag_apm
+cseg_16	include/multiboot.h	/^	multiboot_uint16_t cseg_16;$/;"	m	struct:multiboot_tag_apm
+cseg_16_len	include/multiboot.h	/^	multiboot_uint16_t cseg_16_len;$/;"	m	struct:multiboot_tag_apm
+cseg_len	include/multiboot.h	/^	multiboot_uint16_t cseg_len;$/;"	m	struct:multiboot_tag_apm
+current_cr3	include/mmu.h	/^uintptr_t *current_cr3;$/;"	v
+current_task	include/task.h	/^struct riku_task *current_task;$/;"	v	typeref:struct:riku_task
+cursor_x	src/io/vga.c	/^uint8_t cursor_x = 0;$/;"	v
+cursor_y	src/io/vga.c	/^uint8_t cursor_y = 0;$/;"	v
+depth	include/multiboot.h	/^	multiboot_uint32_t depth;$/;"	m	struct:multiboot_header_tag_framebuffer
+descr_size	include/multiboot.h	/^	multiboot_uint32_t descr_size;$/;"	m	struct:multiboot_tag_efi_mmap
+descr_vers	include/multiboot.h	/^	multiboot_uint32_t descr_vers;$/;"	m	struct:multiboot_tag_efi_mmap
+dev_number	include/pci.h	/^	uint8_t dev_number : 5;$/;"	m	struct:pci_config_address
+devfs_add	src/vfs/devfs.c	/^void devfs_add(struct riku_devfs_node* node)$/;"	f
+devfs_find_node	src/vfs/devfs.c	/^struct riku_devfs_node *devfs_find_node(char* name)	{$/;"	f
+devfs_last_node	src/vfs/devfs.c	/^struct riku_devfs_node *devfs_last_node()$/;"	f
+dhcpack	include/multiboot.h	/^	multiboot_uint8_t dhcpack[0];$/;"	m	struct:multiboot_tag_network
+disable_interrupts	src/int/idt64.c	/^void disable_interrupts()$/;"	f
+displayKernelInfo	src/boot/entry.c	/^void displayKernelInfo()$/;"	f
+do_schedule	src/time/r2ds.c	/^void do_schedule()$/;"	f
+ds	include/idt64.h	/^	uint64_t ds; \/\/!< Data segment$/;"	m	struct:registers
+dseg	include/multiboot.h	/^	multiboot_uint16_t dseg;$/;"	m	struct:multiboot_tag_apm
+dseg_len	include/multiboot.h	/^	multiboot_uint16_t dseg_len;$/;"	m	struct:multiboot_tag_apm
+dummy2	src/boot/entry.c	/^void dummy2()$/;"	f
+e_ehsize	include/elf64.h	/^  Elf64_Half  e_ehsize;$/;"	m	struct:Elf64_FileHeader
+e_entry	include/elf64.h	/^  Elf64_Addr  e_entry;$/;"	m	struct:Elf64_FileHeader
+e_flags	include/elf64.h	/^  Elf64_Word  e_flags;$/;"	m	struct:Elf64_FileHeader
+e_ident	include/elf64.h	/^  Elf64_UChar e_ident[16];$/;"	m	struct:Elf64_FileHeader
+e_machine	include/elf64.h	/^  Elf64_Half  e_machine;$/;"	m	struct:Elf64_FileHeader
+e_phentsize	include/elf64.h	/^  Elf64_Half  e_phentsize;$/;"	m	struct:Elf64_FileHeader
+e_phnum	include/elf64.h	/^  Elf64_Half  e_phnum;$/;"	m	struct:Elf64_FileHeader
+e_phoff	include/elf64.h	/^  Elf64_Off   e_phoff;$/;"	m	struct:Elf64_FileHeader
+e_shentsize	include/elf64.h	/^  Elf64_Half  e_shentsize;$/;"	m	struct:Elf64_FileHeader
+e_shnum	include/elf64.h	/^  Elf64_Half  e_shnum;$/;"	m	struct:Elf64_FileHeader
+e_shoff	include/elf64.h	/^  Elf64_Off   e_shoff;$/;"	m	struct:Elf64_FileHeader
+e_shstidx	include/elf64.h	/^  Elf64_Half  e_shstidx;$/;"	m	struct:Elf64_FileHeader
+e_type	include/elf64.h	/^  Elf64_Half  e_type;$/;"	m	struct:Elf64_FileHeader
+e_version	include/elf64.h	/^  Elf64_Word  e_version;$/;"	m	struct:Elf64_FileHeader
+efi_mmap	include/multiboot.h	/^	multiboot_uint8_t efi_mmap[0];$/;"	m	struct:multiboot_tag_efi_mmap
+eflags	include/idt64.h	/^	uint64_t eflags; \/\/!< CPU flags$/;"	m	struct:registers
+elf64_find_symbol	src/bin/elf64.c	/^uintptr_t elf64_find_symbol(Elf64_Ehdr* hdr, const char* symname)$/;"	f
+elf64_get_section	src/bin/elf64.c	/^Elf64_Shdr* elf64_get_section(Elf64_Ehdr* hdr, Elf64_Section type)$/;"	f
+elf64_get_symbol	src/bin/elf64.c	/^Elf64_Sym* elf64_get_symbol(Elf64_Ehdr* hdr, Elf64_Shdr* symtable, uint32_t idx)$/;"	f
+elf64_get_symbol_name	src/bin/elf64.c	/^unsigned char* elf64_get_symbol_name(Elf64_Ehdr* hdr, Elf64_Shdr* strtable, Elf64_Sym* symbol)$/;"	f
+elf64_kernel_symbol_addr	src/bin/elf64.c	/^uintptr_t elf64_kernel_symbol_addr(const char* symname)$/;"	f
+elf64_load_module	src/bin/elf64.c	/^void elf64_load_module(Elf64_Ehdr* hdr)$/;"	f
+enable	include/pci.h	/^	uint8_t enable : 1;$/;"	m	struct:pci_config_address
+enable_interrupts	src/int/idt64.c	/^void enable_interrupts()$/;"	f
+entries	include/multiboot.h	/^	struct multiboot_mmap_entry entries[0];$/;"	m	struct:multiboot_tag_mmap	typeref:struct:multiboot_tag_mmap::multiboot_mmap_entry
+entry_addr	include/multiboot.h	/^	multiboot_uint32_t entry_addr;$/;"	m	struct:multiboot_header_tag_entry_address
+entry_size	include/multiboot.h	/^	multiboot_uint32_t entry_size;$/;"	m	struct:multiboot_tag_mmap
+entry_version	include/multiboot.h	/^	multiboot_uint32_t entry_version;$/;"	m	struct:multiboot_tag_mmap
+entrypoint	include/task.h	/^	void (*entrypoint)(); \/* Entrypoint function pointer *\/$/;"	m	struct:riku_task
+entsize	include/multiboot.h	/^	multiboot_uint32_t entsize;$/;"	m	struct:multiboot_tag_elf_sections
+err_code	include/idt64.h	/^	uint64_t err_code; \/\/!< Interrupt error code$/;"	m	struct:registers
+expand_left	src/mm/heap.c	/^void expand_left(block_header_t* block)$/;"	f
+expand_right	src/mm/heap.c	/^void expand_right(block_header_t* block)$/;"	f
+extern	src/boot/gdt.s	/^extern gp$/;"	l
+external_specification	include/multiboot.h	/^	multiboot_uint8_t external_specification[256];$/;"	m	struct:multiboot_vbe_mode_info_block
+external_specification	include/multiboot.h	/^	multiboot_uint8_t external_specification[512];$/;"	m	struct:multiboot_vbe_info_block
+first_free_page	include/vm.h	/^uintptr_t *first_free_page; \/\/!< First free available page.$/;"	v
+flags	include/gdt64.h	/^	uint8_t flags : 4;$/;"	m	struct:gdt_extended_entry
+flags	include/heap.h	/^    uint32_t flags; \/\/ 0 = free, 1 = in use$/;"	m	struct:__anon4
+flags	include/idt64.h	/^	uint8_t  flags; \/\/!< Interrupt handler flags (Required Privilege Level etc)$/;"	m	struct:idt_entry_struct
+flags	include/multiboot.h	/^	multiboot_uint16_t flags;$/;"	m	struct:multiboot_header_tag
+flags	include/multiboot.h	/^	multiboot_uint16_t flags;$/;"	m	struct:multiboot_header_tag_address
+flags	include/multiboot.h	/^	multiboot_uint16_t flags;$/;"	m	struct:multiboot_header_tag_console_flags
+flags	include/multiboot.h	/^	multiboot_uint16_t flags;$/;"	m	struct:multiboot_header_tag_entry_address
+flags	include/multiboot.h	/^	multiboot_uint16_t flags;$/;"	m	struct:multiboot_header_tag_framebuffer
+flags	include/multiboot.h	/^	multiboot_uint16_t flags;$/;"	m	struct:multiboot_header_tag_information_request
+flags	include/multiboot.h	/^	multiboot_uint16_t flags;$/;"	m	struct:multiboot_header_tag_module_align
+flags	include/multiboot.h	/^	multiboot_uint16_t flags;$/;"	m	struct:multiboot_tag_apm
+framebuffer_addr	include/multiboot.h	/^	multiboot_uint64_t framebuffer_addr;$/;"	m	struct:multiboot_tag_framebuffer_common
+framebuffer_blue_field_position	include/multiboot.h	/^			multiboot_uint8_t framebuffer_blue_field_position;$/;"	m	struct:multiboot_tag_framebuffer::__anon1::__anon3
+framebuffer_blue_mask_size	include/multiboot.h	/^			multiboot_uint8_t framebuffer_blue_mask_size;$/;"	m	struct:multiboot_tag_framebuffer::__anon1::__anon3
+framebuffer_bpp	include/multiboot.h	/^	multiboot_uint8_t framebuffer_bpp;$/;"	m	struct:multiboot_tag_framebuffer_common
+framebuffer_green_field_position	include/multiboot.h	/^			multiboot_uint8_t framebuffer_green_field_position;$/;"	m	struct:multiboot_tag_framebuffer::__anon1::__anon3
+framebuffer_green_mask_size	include/multiboot.h	/^			multiboot_uint8_t framebuffer_green_mask_size;$/;"	m	struct:multiboot_tag_framebuffer::__anon1::__anon3
+framebuffer_height	include/multiboot.h	/^	multiboot_uint32_t framebuffer_height;$/;"	m	struct:multiboot_tag_framebuffer_common
+framebuffer_palette	include/multiboot.h	/^			struct multiboot_color framebuffer_palette[0];$/;"	m	struct:multiboot_tag_framebuffer::__anon1::__anon2	typeref:struct:multiboot_tag_framebuffer::__anon1::__anon2::multiboot_color
+framebuffer_palette_num_colors	include/multiboot.h	/^			multiboot_uint16_t framebuffer_palette_num_colors;$/;"	m	struct:multiboot_tag_framebuffer::__anon1::__anon2
+framebuffer_pitch	include/multiboot.h	/^	multiboot_uint32_t framebuffer_pitch;$/;"	m	struct:multiboot_tag_framebuffer_common
+framebuffer_red_field_position	include/multiboot.h	/^			multiboot_uint8_t framebuffer_red_field_position;$/;"	m	struct:multiboot_tag_framebuffer::__anon1::__anon3
+framebuffer_red_mask_size	include/multiboot.h	/^			multiboot_uint8_t framebuffer_red_mask_size;$/;"	m	struct:multiboot_tag_framebuffer::__anon1::__anon3
+framebuffer_type	include/multiboot.h	/^	multiboot_uint8_t framebuffer_type;$/;"	m	struct:multiboot_tag_framebuffer_common
+framebuffer_width	include/multiboot.h	/^	multiboot_uint32_t framebuffer_width;$/;"	m	struct:multiboot_tag_framebuffer_common
+free_page	src/mm/vm.c	/^void free_page(uintptr_t *page)$/;"	f
+fun_number	include/pci.h	/^	uint8_t fun_number : 3;$/;"	m	struct:pci_config_address
+gdt	src/boot/gdt64.c	/^struct gdt_entry *gdt;$/;"	v	typeref:struct:gdt_entry
+gdtInstallGate	src/boot/gdt64.c	/^void gdtInstallGate(int num, unsigned long base, unsigned long limit, unsigned char access, unsigned char gran)$/;"	f
+gdt_entry	include/gdt64.h	/^struct gdt_entry$/;"	s
+gdt_extended_entry	include/gdt64.h	/^struct gdt_extended_entry$/;"	s
+gdt_flush	src/boot/gdt.s	/^gdt_flush:$/;"	l
+gdt_init	src/boot/gdt64.c	/^void gdt_init(uintptr_t gdt_addr, uintptr_t gptptr_addr)$/;"	f
+gdt_paddr	include/ldrinfo.h	/^	uint32_t gdt_paddr; \/* GDT physical address *\/$/;"	m	struct:rikuldr_info
+gdt_ptr	include/gdt64.h	/^struct gdt_ptr$/;"	s
+gdtptr_paddr	include/ldrinfo.h	/^	uint32_t gdtptr_paddr; \/* GDT pointer physical address *\/$/;"	m	struct:rikuldr_info
+getVendorName	src/hw/pci.c	/^char* getVendorName(uint32_t vendor)$/;"	f
+get_footer	src/mm/heap.c	/^block_footer_t* get_footer(block_header_t* block)$/;"	f
+getch	include/vfs/devfs.h	/^	readchar_t getch;$/;"	m	struct:riku_devfs_node
+global	src/boot/gdt.s	/^global gdt_flush$/;"	l
+gp	src/boot/gdt64.c	/^struct gdt_ptr *gp;$/;"	v	typeref:struct:gdt_ptr
+granularity	include/gdt64.h	/^    uint8_t granularity;$/;"	m	struct:gdt_entry
+green	include/multiboot.h	/^	multiboot_uint8_t green;$/;"	m	struct:multiboot_color
+handle_timer	src/time/r2ds.c	/^void handle_timer(registers_t* regs)$/;"	f
+hardware_add_resource	src/hw/x86.c	/^void hardware_add_resource(struct riku_devfs_node* node, enum riku_resource_type type, uintptr_t begin, uintptr_t size)$/;"	f
+hardware_create_node	src/hw/x86.c	/^struct riku_devfs_node* hardware_create_node(const char* name)$/;"	f
+header	include/heap.h	/^    block_header_t* header; \/\/ = Pointer to the header of the block$/;"	m	struct:__anon5
+header_addr	include/multiboot.h	/^	multiboot_uint32_t header_addr;$/;"	m	struct:multiboot_header_tag_address
+header_length	include/multiboot.h	/^	multiboot_uint32_t header_length;$/;"	m	struct:multiboot_header
+heap_begin	include/heap.h	/^    block_header_t *heap_begin; \/\/ First block of the heap$/;"	m	struct:__anon6
+heap_size	include/heap.h	/^    uint32_t heap_size; \/\/ Size of the heap$/;"	m	struct:__anon6
+heap_t	include/heap.h	/^} heap_t;$/;"	t	typeref:struct:__anon6
+height	include/multiboot.h	/^	multiboot_uint32_t height;$/;"	m	struct:multiboot_header_tag_framebuffer
+idt_entries	src/int/idt64.c	/^idt_entry_t idt_entries[256]; \/\/!< Interrupt Descriptor Table$/;"	v
+idt_entry_struct	include/idt64.h	/^struct idt_entry_struct$/;"	s
+idt_entry_t	include/idt64.h	/^typedef struct idt_entry_struct idt_entry_t;$/;"	t	typeref:struct:idt_entry_struct
+idt_flush	src/int/idt0.s	/^idt_flush:$/;"	l
+idt_init	src/int/idt64.c	/^void idt_init()$/;"	f
+idt_ptr	src/int/idt64.c	/^idt_ptr_t   idt_ptr; \/\/!< Pointer to the IDT$/;"	v
+idt_ptr_struct	include/idt64.h	/^struct idt_ptr_struct$/;"	s
+idt_ptr_t	include/idt64.h	/^typedef struct idt_ptr_struct idt_ptr_t;$/;"	t	typeref:struct:idt_ptr_struct
+idt_set_gate	src/int/idt64.c	/^void idt_set_gate(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags)$/;"	f
+inb	src/io/ioport.c	/^uint8_t inb(uint16_t port)$/;"	f
+init_kheap	src/mm/heap.c	/^void init_kheap()$/;"	f
+init_ksym	src/bin/kernsym.c	/^void init_ksym(uint32_t size)$/;"	f
+init_serial	src/io/serial.c	/^void init_serial() {$/;"	f
+init_task	src/task/task.c	/^void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* kernrsp, void (*entrypoint)(), uintptr_t* cr3)$/;"	f
+init_terminal	src/boot/entry.c	/^void init_terminal()$/;"	f
+inl	src/io/ioport.c	/^uint32_t inl(uint16_t port)$/;"	f
+int_no	include/idt64.h	/^	uint64_t int_no; \/\/!< Interrupt number$/;"	m	struct:registers
+invert	src/io/bga.c	/^void invert()$/;"	f
+inw	src/io/ioport.c	/^uint16_t inw(uint16_t port)$/;"	f
+iomap_base	include/gdt64.h	/^	uint16_t iomap_base;$/;"	m	struct:tss_entry_struct
+irq_common_stub	src/int/idt0.s	/^irq_common_stub:$/;"	l
+irq_handler	src/int/idt64.c	/^void irq_handler(registers_t* regs)$/;"	f
+irq_t	include/idt64.h	/^typedef void (*irq_t)(registers_t*);$/;"	t
+is_transmit_empty	src/io/serial.c	/^int is_transmit_empty() {$/;"	f
+isr_common_stub	src/int/idt0.s	/^isr_common_stub:$/;"	l
+isr_handler	src/int/idt64.c	/^void isr_handler(registers_t* regs)$/;"	f
+isr_t	include/idt64.h	/^typedef void (*isr_t)(registers_t); \/\/!< Definition of interrupt handler$/;"	t
+ist1	include/gdt64.h	/^	uint64_t ist1;$/;"	m	struct:tss_entry_struct
+ist2	include/gdt64.h	/^	uint64_t ist2;$/;"	m	struct:tss_entry_struct
+ist3	include/gdt64.h	/^	uint64_t ist3;$/;"	m	struct:tss_entry_struct
+ist4	include/gdt64.h	/^	uint64_t ist4;$/;"	m	struct:tss_entry_struct
+ist5	include/gdt64.h	/^	uint64_t ist5;$/;"	m	struct:tss_entry_struct
+ist6	include/gdt64.h	/^	uint64_t ist6;$/;"	m	struct:tss_entry_struct
+ist7	include/gdt64.h	/^	uint64_t ist7;$/;"	m	struct:tss_entry_struct
+jiffies	src/time/r2ds.c	/^uint64_t jiffies;$/;"	v
+kalloc	src/mm/heap.c	/^uintptr_t* kalloc(uint32_t asize)$/;"	f
+kconsole	include/vfs/devfs.h	/^struct riku_devfs_node *kconsole;$/;"	v	typeref:struct:riku_devfs_node
+kernel_cr3	include/mmu.h	/^uintptr_t *kernel_cr3;$/;"	v
+kernel_heap	include/heap.h	/^    uint8_t kernel_heap; \/\/ Is it the kernel heap ?$/;"	m	struct:__anon6
+kernel_heap	include/heap.h	/^heap_t *kernel_heap; \/* Kernel main heap *\/$/;"	v
+kernel_rsp	include/task.h	/^	uintptr_t kernel_rsp; \/* Kernel RSP to store into TSS *\/$/;"	m	struct:riku_task
+kfree	src/mm/heap.c	/^void kfree(uintptr_t* ptr)$/;"	f
+kputs	include/module.h	7;"	d
+krn_paddr	include/ldrinfo.h	/^	uint32_t krn_paddr; \/* Kernel physical address *\/$/;"	m	struct:rikuldr_info
+late_init	src/boot/entry.c	/^void late_init()$/;"	f
+late_init_tasks	src/boot/entry.c	/^void late_init_tasks()$/;"	f
+ldr_paddr	include/ldrinfo.h	/^	uint32_t ldr_paddr; \/* Loader physical address *\/$/;"	m	struct:rikuldr_info
+len	include/multiboot.h	/^	multiboot_uint64_t len;$/;"	m	struct:multiboot_mmap_entry
+limit	include/gdt64.h	/^    uint16_t limit;$/;"	m	struct:gdt_ptr
+limit	include/idt64.h	/^	uint16_t limit; \/\/!< Address limit$/;"	m	struct:idt_ptr_struct
+limit_hi	include/gdt64.h	/^	uint8_t limit_hi : 4;$/;"	m	struct:gdt_extended_entry
+limit_low	include/gdt64.h	/^	uint16_t limit_low;$/;"	m	struct:gdt_entry
+limit_low	include/gdt64.h	/^	uint16_t limit_low;$/;"	m	struct:gdt_extended_entry
+load_addr	include/multiboot.h	/^	multiboot_uint32_t load_addr;$/;"	m	struct:multiboot_header_tag_address
+load_end_addr	include/multiboot.h	/^	multiboot_uint32_t load_end_addr;$/;"	m	struct:multiboot_header_tag_address
+magic	include/heap.h	/^    uint32_t magic; \/\/ = HEAP_FOOTER_MAGIC$/;"	m	struct:__anon5
+magic	include/heap.h	/^    uint32_t magic; \/\/ = HEAP_HEADER_MAGIC$/;"	m	struct:__anon4
+magic	include/multiboot.h	/^	multiboot_uint32_t magic;$/;"	m	struct:multiboot_header
+main	src/boot/entry.c	/^void main()$/;"	f
+major	include/multiboot.h	/^	multiboot_uint8_t major;$/;"	m	struct:multiboot_tag_smbios
+masterTable	include/mmu.h	/^uintptr_t *masterTable; \/* Kernel master table, at PML4T | PML4T_UPPER *\/$/;"	v
+max_pages	include/vm.h	/^uint64_t max_pages;$/;"	v
+mbi_addr	include/ldrinfo.h	/^	uint32_t mbi_addr;	\/* Multiboot header address *\/$/;"	m	struct:rikuldr_info
+mem_lower	include/multiboot.h	/^	multiboot_uint32_t mem_lower;$/;"	m	struct:multiboot_tag_basic_meminfo
+mem_upper	include/multiboot.h	/^	multiboot_uint32_t mem_upper;$/;"	m	struct:multiboot_tag_basic_meminfo
+memcpy	src/mm/memset.c	/^void* memcpy(void* dest, const void* src, size_t count) {$/;"	f
+memset	src/mm/memset.c	/^void* memset(void* bufptr, int value, size_t size)$/;"	f
+minor	include/multiboot.h	/^	multiboot_uint8_t minor;$/;"	m	struct:multiboot_tag_smbios
+mmap_init	src/mm/vm.c	/^void mmap_init(struct multiboot_tag_mmap *mmap_tag_ptr)$/;"	f
+mmu_init	src/mm/mmu.c	/^void mmu_init()$/;"	f
+mod_end	include/multiboot.h	/^	multiboot_uint32_t mod_end;$/;"	m	struct:multiboot_tag_module
+mod_start	include/multiboot.h	/^	multiboot_uint32_t mod_start;$/;"	m	struct:multiboot_tag_module
+move_cursor	src/io/vga.c	/^static void move_cursor()$/;"	f	file:
+multiboot_color	include/multiboot.h	/^struct multiboot_color$/;"	s
+multiboot_header	include/multiboot.h	/^struct multiboot_header$/;"	s
+multiboot_header_tag	include/multiboot.h	/^struct multiboot_header_tag$/;"	s
+multiboot_header_tag_address	include/multiboot.h	/^struct multiboot_header_tag_address$/;"	s
+multiboot_header_tag_console_flags	include/multiboot.h	/^struct multiboot_header_tag_console_flags$/;"	s
+multiboot_header_tag_entry_address	include/multiboot.h	/^struct multiboot_header_tag_entry_address$/;"	s
+multiboot_header_tag_framebuffer	include/multiboot.h	/^struct multiboot_header_tag_framebuffer$/;"	s
+multiboot_header_tag_information_request	include/multiboot.h	/^struct multiboot_header_tag_information_request$/;"	s
+multiboot_header_tag_module_align	include/multiboot.h	/^struct multiboot_header_tag_module_align$/;"	s
+multiboot_memory_map_t	include/multiboot.h	/^typedef struct multiboot_mmap_entry multiboot_memory_map_t;$/;"	t	typeref:struct:multiboot_mmap_entry
+multiboot_mmap_entry	include/multiboot.h	/^struct multiboot_mmap_entry$/;"	s
+multiboot_tag	include/multiboot.h	/^struct multiboot_tag$/;"	s
+multiboot_tag_apm	include/multiboot.h	/^struct multiboot_tag_apm$/;"	s
+multiboot_tag_basic_meminfo	include/multiboot.h	/^struct multiboot_tag_basic_meminfo$/;"	s
+multiboot_tag_bootdev	include/multiboot.h	/^struct multiboot_tag_bootdev$/;"	s
+multiboot_tag_efi32	include/multiboot.h	/^struct multiboot_tag_efi32$/;"	s
+multiboot_tag_efi64	include/multiboot.h	/^struct multiboot_tag_efi64$/;"	s
+multiboot_tag_efi_mmap	include/multiboot.h	/^struct multiboot_tag_efi_mmap$/;"	s
+multiboot_tag_elf_sections	include/multiboot.h	/^struct multiboot_tag_elf_sections$/;"	s
+multiboot_tag_framebuffer	include/multiboot.h	/^struct multiboot_tag_framebuffer$/;"	s
+multiboot_tag_framebuffer_common	include/multiboot.h	/^struct multiboot_tag_framebuffer_common$/;"	s
+multiboot_tag_mmap	include/multiboot.h	/^struct multiboot_tag_mmap$/;"	s
+multiboot_tag_module	include/multiboot.h	/^struct multiboot_tag_module$/;"	s
+multiboot_tag_network	include/multiboot.h	/^struct multiboot_tag_network$/;"	s
+multiboot_tag_new_acpi	include/multiboot.h	/^struct multiboot_tag_new_acpi$/;"	s
+multiboot_tag_old_acpi	include/multiboot.h	/^struct multiboot_tag_old_acpi$/;"	s
+multiboot_tag_smbios	include/multiboot.h	/^struct multiboot_tag_smbios$/;"	s
+multiboot_tag_string	include/multiboot.h	/^struct multiboot_tag_string$/;"	s
+multiboot_tag_vbe	include/multiboot.h	/^struct multiboot_tag_vbe$/;"	s
+multiboot_uint16_t	include/multiboot.h	/^typedef unsigned short		multiboot_uint16_t;$/;"	t
+multiboot_uint32_t	include/multiboot.h	/^typedef unsigned int		multiboot_uint32_t;$/;"	t
+multiboot_uint64_t	include/multiboot.h	/^typedef unsigned long long	multiboot_uint64_t;$/;"	t
+multiboot_uint8_t	include/multiboot.h	/^typedef unsigned char		multiboot_uint8_t;$/;"	t
+multiboot_vbe_info_block	include/multiboot.h	/^struct multiboot_vbe_info_block$/;"	s
+multiboot_vbe_mode_info_block	include/multiboot.h	/^struct multiboot_vbe_mode_info_block$/;"	s
+name	include/kernsym.h	/^	char name[64]; \/* Symbol name *\/$/;"	m	struct:Riku_KSym
+name	include/task.h	/^	char name[32]; \/* Task name *\/$/;"	m	struct:riku_task
+name	include/vfs/devfs.h	/^	char name[16]; \/* Device node name *\/$/;"	m	struct:riku_devfs_node
+next	include/task.h	/^	struct riku_task *next; \/* Next task into linked list *\/$/;"	m	struct:riku_task	typeref:struct:riku_task::riku_task
+next	include/vfs/devfs.h	/^	struct riku_devfs_node* next; \/* Next node in device space *\/$/;"	m	struct:riku_devfs_node	typeref:struct:riku_devfs_node::riku_devfs_node
+next_block	src/mm/heap.c	/^block_header_t* next_block(block_header_t* block)$/;"	f
+nullDev	include/vfs/devfs.h	/^struct riku_devfs_node *nullDev; \/* The NULL device. Reads NULL, writes NULL. A typical \/dev\/null. *\/$/;"	v	typeref:struct:riku_devfs_node
+null_entry	include/pci.h	/^	uint8_t null_entry : 2;$/;"	m	struct:pci_config_address
+num	include/multiboot.h	/^	multiboot_uint32_t num;$/;"	m	struct:multiboot_tag_elf_sections
+num	src/io/printk.c	/^static unsigned int num;$/;"	v	file:
+num	src/io/serial.c	/^static unsigned int num;$/;"	v	file:
+offset	include/multiboot.h	/^	multiboot_uint32_t offset;$/;"	m	struct:multiboot_tag_apm
+outb	src/io/ioport.c	/^void outb(uint16_t port, uint8_t value)$/;"	f
+outl	src/io/ioport.c	/^void outl(uint16_t port, uint32_t value)$/;"	f
+outw	src/io/ioport.c	/^void outw(uint16_t port, uint16_t value)$/;"	f
+paging_init	src/mm/vm.c	/^void paging_init(uintptr_t* base, uint64_t length)$/;"	f
+panic	src/int/panic.c	/^void panic(char* message, registers_t* regs)$/;"	f
+parse_mbi	src/boot/bootinfo.c	/^void parse_mbi(uintptr_t mbi)$/;"	f
+part	include/multiboot.h	/^	multiboot_uint32_t part;$/;"	m	struct:multiboot_tag_bootdev
+pciCheckVendor	src/hw/pci.c	/^uint16_t pciCheckVendor(uint8_t bus, uint8_t slot)$/;"	f
+pciConfigReadWord	src/hw/pci.c	/^uint16_t pciConfigReadWord(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset)$/;"	f
+pci_config_address	include/pci.h	/^struct pci_config_address {$/;"	s
+pci_config_write_word	src/hw/pci.c	/^void pci_config_write_word(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset, uint16_t data)$/;"	f
+pci_idx	src/hw/pci.c	/^uint8_t pci_idx = 0;$/;"	v
+pointer	include/multiboot.h	/^	multiboot_uint32_t pointer;$/;"	m	struct:multiboot_tag_efi32
+pointer	include/multiboot.h	/^	multiboot_uint64_t pointer;$/;"	m	struct:multiboot_tag_efi64
+prev_block	src/mm/heap.c	/^block_header_t* prev_block(block_header_t* block)$/;"	f
+printk	include/printk.h	11;"	d
+printk_dec	src/io/printk.c	/^void printk_dec(uint64_t n)$/;"	f
+printk_enabled	src/io/printk.c	/^uint8_t printk_enabled = 0;$/;"	v
+printk_hex	src/io/printk.c	/^void printk_hex(uint64_t n)$/;"	f
+printk_internal	src/io/printk.c	/^void printk_internal(char *fmt, ...)$/;"	f
+probe_hardware	src/hw/x86.c	/^void probe_hardware()$/;"	f
+probe_pci	src/hw/pci.c	/^void probe_pci()$/;"	f
+putch	include/vfs/devfs.h	/^	writechar_t putch;$/;"	m	struct:riku_devfs_node
+putdec	src/io/vga.c	/^void putdec(uintptr_t n)$/;"	f
+puthex	src/io/vga.c	/^void puthex(uintptr_t n)$/;"	f
+putpixel	src/io/bga.c	/^void putpixel(uint32_t color, uint32_t x, uint32_t y)$/;"	f
+puts	src/io/vga.c	/^void puts(char *c)$/;"	f
+r10	include/idt64.h	/^	uint64_t r10;$/;"	m	struct:registers
+r11	include/idt64.h	/^	uint64_t r11;$/;"	m	struct:registers
+r12	include/idt64.h	/^	uint64_t r12;$/;"	m	struct:registers
+r13	include/idt64.h	/^	uint64_t r13;$/;"	m	struct:registers
+r14	include/idt64.h	/^	uint64_t r14;$/;"	m	struct:registers
+r15	include/idt64.h	/^	uint64_t r15;$/;"	m	struct:registers
+r8	include/idt64.h	/^	uint64_t r8;$/;"	m	struct:registers
+r9	include/idt64.h	/^	uint64_t r9;$/;"	m	struct:registers
+r_addend	include/elf64.h	/^  Elf64_XWord  r_addend;$/;"	m	struct:Elf64_RelocationHeader
+r_info	include/elf64.h	/^  Elf64_XWord   r_info;$/;"	m	struct:Elf64_RelocationHeader
+r_offset	include/elf64.h	/^  Elf64_Addr    r_offset;$/;"	m	struct:Elf64_RelocationHeader
+rax	include/idt64.h	/^	uint64_t rax; \/\/!< General register EAX$/;"	m	struct:registers
+rbp	include/idt64.h	/^	uint64_t rbp; \/\/!< EBP$/;"	m	struct:registers
+rbx	include/idt64.h	/^	uint64_t rbx; \/\/!< General register EBX$/;"	m	struct:registers
+rcx	include/idt64.h	/^	uint64_t rcx; \/\/!< General register ECX$/;"	m	struct:registers
+rdi	include/idt64.h	/^	uint64_t rdi; \/\/!< General register EDI$/;"	m	struct:registers
+rdx	include/idt64.h	/^	uint64_t rdx; \/\/!< General register EDX$/;"	m	struct:registers
+read	include/vfs/devfs.h	/^	read_t read;$/;"	m	struct:riku_devfs_node
+read_only	include/heap.h	/^    uint8_t read_only; \/\/ Do the extra pages mapped by this heap are read-only ?$/;"	m	struct:__anon6
+read_serial	src/io/serial.c	/^char read_serial() {$/;"	f
+read_t	include/vfs/devfs.h	/^typedef int (*read_t)(struct riku_devfs_node* self, const char* buffer, uint32_t count);$/;"	t
+readchar_t	include/vfs/devfs.h	/^typedef int (*readchar_t)(struct riku_devfs_node* self, char* buffer);$/;"	t
+red	include/multiboot.h	/^	multiboot_uint8_t red;$/;"	m	struct:multiboot_color
+reg_number	include/pci.h	/^	uint8_t reg_number : 6;$/;"	m	struct:pci_config_address
+register_irq	src/int/idt64.c	/^void register_irq(uint8_t int_no, irq_t handler)$/;"	f
+register_pci_device	src/hw/pci.c	/^void register_pci_device(uint8_t bus, uint8_t slot, uint16_t vendor)$/;"	f
+registers	include/idt64.h	/^typedef struct registers$/;"	s
+registers_t	include/idt64.h	/^} registers_t;$/;"	t	typeref:struct:registers
+remap_irq	src/int/idt64.c	/^void remap_irq()$/;"	f
+requests	include/multiboot.h	/^	multiboot_uint32_t requests[0];$/;"	m	struct:multiboot_header_tag_information_request
+reserved	include/gdt64.h	/^	uint32_t reserved;$/;"	m	struct:tss_entry_struct
+reserved	include/multiboot.h	/^	multiboot_uint16_t reserved;$/;"	m	struct:multiboot_tag_framebuffer_common
+reserved	include/multiboot.h	/^	multiboot_uint8_t reserved[6];$/;"	m	struct:multiboot_tag_smbios
+reserved	include/pci.h	/^	uint8_t reserved : 7;$/;"	m	struct:pci_config_address
+reserved2	include/gdt64.h	/^	uint64_t reserved2;$/;"	m	struct:tss_entry_struct
+reserved3	include/gdt64.h	/^	uint64_t reserved3;$/;"	m	struct:tss_entry_struct
+reserved4	include/gdt64.h	/^	uint16_t reserved4;$/;"	m	struct:tss_entry_struct
+resources	include/vfs/devfs.h	/^	struct riku_devfs_resource resources[6]; \/* PCI devices has a maximum of 6 BAR in PCI configuration space. We align on this. *\/$/;"	m	struct:riku_devfs_node	typeref:struct:riku_devfs_node::riku_devfs_resource
+riku_devfs_node	include/vfs/devfs.h	/^struct riku_devfs_node {$/;"	s
+riku_devfs_resource	include/vfs/devfs.h	/^struct riku_devfs_resource {$/;"	s
+riku_resource_type	include/vfs/devfs.h	/^enum riku_resource_type { PORTIO, MMIO, UNKNOWN };$/;"	g
+riku_task	include/task.h	/^struct riku_task {$/;"	s
+rikuldr_info	include/ldrinfo.h	/^struct rikuldr_info {$/;"	s
+rip	include/idt64.h	/^	uint64_t rip; \/\/!< Execution pointer$/;"	m	struct:registers
+rsdp	include/multiboot.h	/^	multiboot_uint8_t rsdp[0];$/;"	m	struct:multiboot_tag_new_acpi
+rsdp	include/multiboot.h	/^	multiboot_uint8_t rsdp[0];$/;"	m	struct:multiboot_tag_old_acpi
+rsi	include/idt64.h	/^	uint64_t rsi; \/\/!< General register ESI$/;"	m	struct:registers
+rsp	include/idt64.h	/^	uint64_t rsp; \/\/!< Stack pointer$/;"	m	struct:registers
+rsp0	include/gdt64.h	/^	uint64_t rsp0;$/;"	m	struct:tss_entry_struct
+rsp1	include/gdt64.h	/^	uint64_t rsp1;$/;"	m	struct:tss_entry_struct
+rsp2	include/gdt64.h	/^	uint64_t rsp2;$/;"	m	struct:tss_entry_struct
+sbz	include/gdt64.h	/^	uint32_t sbz;$/;"	m	struct:gdt_extended_entry
+scroll	src/io/vga.c	/^void scroll()$/;"	f
+sections	include/multiboot.h	/^	char sections[0];$/;"	m	struct:multiboot_tag_elf_sections
+sel	include/idt64.h	/^	uint16_t sel; \/\/!< Selector$/;"	m	struct:idt_entry_struct
+ser_putch	src/driver/serial/x86serial.c	/^int ser_putch(struct riku_devfs_node* self, char c)$/;"	f
+serial_received	src/io/serial.c	/^int serial_received() {$/;"	f
+serial_write	src/driver/serial/x86serial.c	/^int serial_write(struct riku_devfs_node* self, const char* buf, uint32_t count)$/;"	f
+setup_sched	src/time/r2ds.c	/^void setup_sched()$/;"	f
+sh_addr	include/elf64.h	/^  Elf64_Addr  sh_addr;$/;"	m	struct:Elf64_SectionHeader
+sh_addralign	include/elf64.h	/^  Elf64_XWord sh_addralign;$/;"	m	struct:Elf64_SectionHeader
+sh_entsize	include/elf64.h	/^  Elf64_XWord sh_entsize;$/;"	m	struct:Elf64_SectionHeader
+sh_flags	include/elf64.h	/^  Elf64_XWord sh_flags;$/;"	m	struct:Elf64_SectionHeader
+sh_info	include/elf64.h	/^  Elf64_Word  sh_info;$/;"	m	struct:Elf64_SectionHeader
+sh_link	include/elf64.h	/^  Elf64_Word  sh_link;$/;"	m	struct:Elf64_SectionHeader
+sh_name	include/elf64.h	/^  Elf64_Word  sh_name; \/* Offset in bytes from the section name table *\/$/;"	m	struct:Elf64_SectionHeader
+sh_offset	include/elf64.h	/^  Elf64_Off   sh_offset;$/;"	m	struct:Elf64_SectionHeader
+sh_size	include/elf64.h	/^  Elf64_XWord sh_size;$/;"	m	struct:Elf64_SectionHeader
+sh_type	include/elf64.h	/^  Elf64_Word  sh_type;$/;"	m	struct:Elf64_SectionHeader
+shndx	include/multiboot.h	/^	multiboot_uint32_t shndx;$/;"	m	struct:multiboot_tag_elf_sections
+showDisclaimer	src/boot/entry.c	/^void showDisclaimer()$/;"	f
+size	include/heap.h	/^    uint32_t size; \/\/ size of the block, including header & footer$/;"	m	struct:__anon4
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_header_tag
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_header_tag_address
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_header_tag_console_flags
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_header_tag_entry_address
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_header_tag_framebuffer
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_header_tag_information_request
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_header_tag_module_align
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_apm
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_basic_meminfo
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_bootdev
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_efi32
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_efi64
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_efi_mmap
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_elf_sections
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_framebuffer_common
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_mmap
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_module
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_network
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_new_acpi
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_old_acpi
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_smbios
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_string
+size	include/multiboot.h	/^	multiboot_uint32_t size;$/;"	m	struct:multiboot_tag_vbe
+size	include/vfs/devfs.h	/^	uintptr_t size; \/* Resource size *\/$/;"	m	struct:riku_devfs_resource
+slice	include/multiboot.h	/^	multiboot_uint32_t slice;$/;"	m	struct:multiboot_tag_bootdev
+slprintf	src/io/serial.c	/^void slprintf(char *fmt, ...)$/;"	f
+slputdec	src/io/serial.c	/^void slputdec(int n)$/;"	f
+slputhex	src/io/serial.c	/^void slputhex(int n)$/;"	f
+slputs	src/io/serial.c	/^void slputs(char* a)$/;"	f
+sprintdec	src/io/serial.c	/^void sprintdec(int n, char* dest)$/;"	f
+ss	include/idt64.h	/^	uint64_t ss; \/\/!< Stack segment$/;"	m	struct:registers
+st_info	include/elf64.h	/^  Elf64_UChar st_info;$/;"	m	struct:Elf64_SymbolHeader
+st_name	include/elf64.h	/^  Elf64_Word  st_name;$/;"	m	struct:Elf64_SymbolHeader
+st_other	include/elf64.h	/^  Elf64_UChar st_other;$/;"	m	struct:Elf64_SymbolHeader
+st_shndx	include/elf64.h	/^  Elf64_Half  st_shndx;$/;"	m	struct:Elf64_SymbolHeader
+st_size	include/elf64.h	/^  Elf64_XWord st_size;$/;"	m	struct:Elf64_SymbolHeader
+st_value	include/elf64.h	/^  Elf64_Addr  st_value;$/;"	m	struct:Elf64_SymbolHeader
+start	src/boot/0boot.s	/^start:$/;"	l
+start_modules	src/boot/bootinfo.c	/^void start_modules(uintptr_t mbi)$/;"	f
+start_task	src/task/task.c	/^void start_task()$/;"	f
+state	include/task.h	/^	enum task_state state; \/* Task state *\/$/;"	m	struct:riku_task	typeref:enum:riku_task::task_state
+strcat	src/mm/memset.c	/^char *strcat(char *dest, const char *src)$/;"	f
+strcmp	src/mm/memset.c	/^int strcmp(const char* s1, const char* s2)$/;"	f
+strcpy	src/mm/memset.c	/^char *strcpy(char* dest, const char* source) {$/;"	f
+string	include/multiboot.h	/^	char string[0];$/;"	m	struct:multiboot_tag_string
+strlen	src/mm/memset.c	/^size_t strlen(const char * str)$/;"	f
+switch_cr3	src/mm/mmu.c	/^void switch_cr3(uintptr_t cr3)$/;"	f
+switch_to_task	src/task/task.c	/^void switch_to_task(struct riku_task* task)$/;"	f
+symTable	include/kernsym.h	/^Riku_Symbol* symTable;$/;"	v
+tableRead	src/mm/mmu.c	/^uintptr_t tableRead(uintptr_t table, uint32_t index)$/;"	f
+tableReadWithFlags	src/mm/mmu.c	/^uintptr_t tableReadWithFlags(uintptr_t table, uint32_t index)$/;"	f
+tableWrite	src/mm/mmu.c	/^void tableWrite(uintptr_t table, uint32_t index, uintptr_t value)$/;"	f
+tableWriteWithFlags	src/mm/mmu.c	/^void tableWriteWithFlags(uintptr_t table, uint32_t index, uintptr_t value)$/;"	f
+tables	include/multiboot.h	/^	multiboot_uint8_t tables[0];$/;"	m	struct:multiboot_tag_smbios
+task_list	include/task.h	/^struct riku_task *task_list;$/;"	v	typeref:struct:riku_task
+task_rbp	include/task.h	/^	uintptr_t task_rsp, task_rbp; \/* Interrupted RSP *\/$/;"	m	struct:riku_task
+task_rsp	include/task.h	/^	uintptr_t task_rsp, task_rbp; \/* Interrupted RSP *\/$/;"	m	struct:riku_task
+task_state	include/task.h	/^enum task_state { READY, ACTIVABLE, SLEEPING, TERMINATED };$/;"	g
+tasking_ready	include/task.h	/^uint8_t tasking_ready;$/;"	v
+tss_entry	src/boot/gdt64.c	/^tss_entry_t tss_entry; \/\/!< Generic TSS entry for userland-to-kernel switch$/;"	v
+tss_entry_struct	include/gdt64.h	/^struct tss_entry_struct {$/;"	s
+tss_entry_t	include/gdt64.h	/^typedef struct tss_entry_struct tss_entry_t; \/\/!< TSS entry for kernel-mode switch$/;"	t	typeref:struct:tss_entry_struct
+tss_flush	src/boot/gdt.s	/^tss_flush:$/;"	l
+tss_set_kern_stack	src/boot/gdt64.c	/^void tss_set_kern_stack(uintptr_t rsp)$/;"	f
+type	include/multiboot.h	/^	multiboot_uint16_t type;$/;"	m	struct:multiboot_header_tag
+type	include/multiboot.h	/^	multiboot_uint16_t type;$/;"	m	struct:multiboot_header_tag_address
+type	include/multiboot.h	/^	multiboot_uint16_t type;$/;"	m	struct:multiboot_header_tag_console_flags
+type	include/multiboot.h	/^	multiboot_uint16_t type;$/;"	m	struct:multiboot_header_tag_entry_address
+type	include/multiboot.h	/^	multiboot_uint16_t type;$/;"	m	struct:multiboot_header_tag_framebuffer
+type	include/multiboot.h	/^	multiboot_uint16_t type;$/;"	m	struct:multiboot_header_tag_information_request
+type	include/multiboot.h	/^	multiboot_uint16_t type;$/;"	m	struct:multiboot_header_tag_module_align
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_mmap_entry
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_apm
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_basic_meminfo
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_bootdev
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_efi32
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_efi64
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_efi_mmap
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_elf_sections
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_framebuffer_common
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_mmap
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_module
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_network
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_new_acpi
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_old_acpi
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_smbios
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_string
+type	include/multiboot.h	/^	multiboot_uint32_t type;$/;"	m	struct:multiboot_tag_vbe
+type	include/vfs/devfs.h	/^	enum riku_resource_type type; \/* Resource type *\/$/;"	m	struct:riku_devfs_resource	typeref:enum:riku_devfs_resource::riku_resource_type
+uc	src/io/printk.c	/^static char uc;$/;"	v	file:
+uc	src/io/serial.c	/^static char uc;$/;"	v	file:
+userrsp	include/idt64.h	/^	uint64_t userrsp; \/\/!< User-mode ESP$/;"	m	struct:registers
+vbe_control_info	include/multiboot.h	/^	struct multiboot_vbe_info_block vbe_control_info;$/;"	m	struct:multiboot_tag_vbe	typeref:struct:multiboot_tag_vbe::multiboot_vbe_info_block
+vbe_interface_len	include/multiboot.h	/^	multiboot_uint16_t vbe_interface_len;$/;"	m	struct:multiboot_tag_vbe
+vbe_interface_off	include/multiboot.h	/^	multiboot_uint16_t vbe_interface_off;$/;"	m	struct:multiboot_tag_vbe
+vbe_interface_seg	include/multiboot.h	/^	multiboot_uint16_t vbe_interface_seg;$/;"	m	struct:multiboot_tag_vbe
+vbe_mode	include/multiboot.h	/^	multiboot_uint16_t vbe_mode;$/;"	m	struct:multiboot_tag_vbe
+vbe_mode_info	include/multiboot.h	/^	struct multiboot_vbe_mode_info_block vbe_mode_info;$/;"	m	struct:multiboot_tag_vbe	typeref:struct:multiboot_tag_vbe::multiboot_vbe_mode_info_block
+version	include/multiboot.h	/^	multiboot_uint16_t version;$/;"	m	struct:multiboot_tag_apm
+vgaputch	src/io/vga.c	/^int vgaputch(char c)$/;"	f
+video_memory	src/io/vga.c	/^uint16_t *video_memory = (uint16_t *)0xFFFF8000000B8000;$/;"	v
+vm_init	src/mm/vm.c	/^void vm_init()$/;"	f
+vm_root	include/task.h	/^	uintptr_t vm_root; \/* CR3 register for task *\/$/;"	m	struct:riku_task
+width	include/multiboot.h	/^	multiboot_uint32_t width;$/;"	m	struct:multiboot_header_tag_framebuffer
+write	include/vfs/devfs.h	/^	write_t write;$/;"	m	struct:riku_devfs_node
+write_serial	src/io/serial.c	/^void write_serial(char a) {$/;"	f
+write_t	include/vfs/devfs.h	/^typedef int (*write_t)(struct riku_devfs_node* self, const char* buffer, uint32_t count);$/;"	t
+write_tss	src/boot/gdt64.c	/^void write_tss(int32_t num, uint64_t rsp0)$/;"	f
+writechar_t	include/vfs/devfs.h	/^typedef int (*writechar_t)(struct riku_devfs_node* self, char c);$/;"	t
+x86serial_init	src/driver/serial/x86serial.c	/^void x86serial_init()$/;"	f
+x86vga_cls	src/driver/vga/x86vga.c	/^void x86vga_cls(struct riku_devfs_node* self)$/;"	f
+x86vga_cursor_x	src/driver/vga/x86vga.c	/^uint8_t x86vga_cursor_x = 0;$/;"	v
+x86vga_cursor_y	src/driver/vga/x86vga.c	/^uint8_t x86vga_cursor_y = 0;$/;"	v
+x86vga_init	src/driver/vga/x86vga.c	/^void x86vga_init()$/;"	f
+x86vga_move_cursor	src/driver/vga/x86vga.c	/^void x86vga_move_cursor()$/;"	f
+x86vga_putch	src/driver/vga/x86vga.c	/^int x86vga_putch(struct riku_devfs_node* self, char c)$/;"	f
+x86vga_putdec	src/driver/vga/x86vga.c	/^void x86vga_putdec(struct riku_devfs_node* self, uintptr_t n)$/;"	f
+x86vga_puthex	src/driver/vga/x86vga.c	/^void x86vga_puthex(struct riku_devfs_node* self, uintptr_t n)$/;"	f
+x86vga_puts	src/driver/vga/x86vga.c	/^int x86vga_puts(struct riku_devfs_node* self, const char *c, uint32_t count)$/;"	f
+x86vga_scroll	src/driver/vga/x86vga.c	/^void x86vga_scroll(struct riku_devfs_node* self)$/;"	f
+zero	include/multiboot.h	/^	multiboot_uint32_t zero;$/;"	m	struct:multiboot_mmap_entry
+zs	src/io/printk.c	/^static char zs;$/;"	v	file:
+zs	src/io/serial.c	/^static char zs;$/;"	v	file:

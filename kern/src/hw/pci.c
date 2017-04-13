@@ -112,7 +112,7 @@ void register_pci_device(uint8_t bus, uint8_t slot, uint16_t vendor)
 	/* Enable bus mastering for network devices */
 	if(class_id == 0x2)
 	{
-		KTRACE("Found network device, enabling bus mastering.\n");
+		printk("Found network device, enabling bus mastering.\n");
 		uint16_t pciconf = pciConfigReadWord(bus,slot,0,4);
 		/* pciconf contains the command register for the PCI device. Write bus mastering bit and write it on the bus */
 		pciconf = pciconf | 0x0004; /* Set bit 2 (Bus Master) into command register */
@@ -124,7 +124,7 @@ void register_pci_device(uint8_t bus, uint8_t slot, uint16_t vendor)
 	/* If header type & 0x80 != 0 : multifunction device */
 	if((hdr_type & 0x80) != 0)
 	{
-		KTRACE("multifunction PCI device detected, needs further parsing\n");
+		printk("multifunction PCI device detected, needs further parsing\n");
 	}
 	
 	/* Find free PCI device index */
@@ -163,7 +163,7 @@ void register_pci_device(uint8_t bus, uint8_t slot, uint16_t vendor)
 		{
 			if(class_id == 0x03 && i == 0)
 			{
-				KTRACE("Found VGA linear framebuffer...\n");
+				printk("Found VGA linear framebuffer...\n");
 				/*extern uintptr_t vgaframebuffer;
 				vgaframebuffer = (uintptr_t)(bar & 0xFFFFFFF0);*/
 			}
@@ -187,7 +187,7 @@ void probe_pci()
 	uint16_t bus;
 	uint16_t device;
 	uint16_t vendor;
-	KTRACE("Enumerating PCI devices.\n");
+	printk("Enumerating PCI devices.\n");
 	for(bus = 0; bus < 256; bus++) {
 		for(device = 0; device < 32; device++) {
 			vendor = pciCheckVendor((uint8_t)bus, (uint8_t)device);
@@ -195,5 +195,5 @@ void probe_pci()
 				register_pci_device(bus, device, vendor);
 		}
 	}
-	KTRACE("Finished PCI probe.\n");
+	printk("Finished PCI probe.\n");
 }

@@ -4,7 +4,7 @@
 #include "serial.h"
 
 void init_serial() {
-	outb(PORT + 1, 0x00);    // Disable all interrupts
+	outb(PORT + 1, 0x00);    // Disable all interruptsvoid hardware_add_resource(struct riku_devfs_node* node, enum riku_resource_type type, uintptr_t begin, uintptr_t size)
 	outb(PORT + 3, 0x80);    // Enable DLAB (set baud rate divisor)
 	outb(PORT + 0, 0x03);    // Set divisor to 3 (lo byte) 38400 baud
 	outb(PORT + 1, 0x00);    //                  (hi byte)
@@ -61,11 +61,11 @@ void slputs(char* a)
 void slputhex(int n)
 {
 	int tmp;
-	
+
 	slputs("0x");
-	
+
 	char noZeroes = 1;
-	
+
 	int i;
 	for (i = 28; i > 0; i -= 4)
 	{
@@ -74,7 +74,7 @@ void slputhex(int n)
 		{
 			continue;
 		}
-		
+
 		if (tmp >= 0xA)
 		{
 			noZeroes = 0;
@@ -86,7 +86,7 @@ void slputhex(int n)
 			write_serial( tmp+'0' );
 		}
 	}
-	
+
 	tmp = n & 0xF;
 	if (tmp >= 0xA)
 	{
@@ -96,18 +96,18 @@ void slputhex(int n)
 	{
 		write_serial (tmp+'0');
 	}
-	
+
 }
 
 void slputdec(int n)
 {
-	
+
 	if (n == 0)
 	{
 		write_serial('0');
 		return;
 	}
-	
+
 	int acc = n;
 	char c[32];
 	int i = 0;
@@ -118,7 +118,7 @@ void slputdec(int n)
 		i++;
 	}
 	c[i] = 0;
-	
+
 	char c2[32];
 	c2[i--] = 0;
 	int j = 0;
@@ -136,7 +136,7 @@ void sprintdec(int n, char* dest)
 		dest[0] = '0';
 		dest[1] = '\0';
 	}
-	
+
 	int acc = n;
 	char c[32];
 	int i = 0;
@@ -147,7 +147,7 @@ void sprintdec(int n, char* dest)
 		i++;
 	}
 	c[i] = 0;
-	
+
 	char c2[32];
 	c2[i--] = 0;
 	int j = 0;
@@ -170,9 +170,9 @@ void slprintf(char *fmt, ...)
 	va_list va;
 	char ch;
 	char* p;
-	
+
 	va_start(va,fmt);
-	
+
 	while ((ch=*(fmt++))) {
 		if (ch!='%') {
 			write_serial(ch);

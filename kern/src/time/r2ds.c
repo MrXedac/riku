@@ -5,16 +5,24 @@
 #include "vga.h"
 #include <stdint.h>
 
+/* Kernel jiffies, youpi */
+uint64_t jiffies;
+
 void setup_sched()
 {
   register_irq(0, &handle_timer);
+  jiffies = 0;
 	tasking_ready = 1;
-  KTRACE("Initialized scheduler.\n");
+  printk("Initialized scheduler.\n");
   enable_interrupts();
 }
 
 void handle_timer(registers_t* regs)
 {
+  if(jiffies >= 0xFFFFFFFFFFFFFFFE)
+    jiffies = 0;
+  else
+    jiffies++;
   do_schedule();
   return;
 }

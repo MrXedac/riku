@@ -75,10 +75,10 @@ void start_modules(uintptr_t mbi)
 		if (tag->type == MULTIBOOT_TAG_TYPE_MODULE)
 		{
 			struct multiboot_tag_module* mod = (struct multiboot_tag_module*)tag;
-			KTRACE("boot module type %d, size %x, start %x, end %x, cmdline %s\n", mod->type, mod->size, mod->mod_start, mod->mod_end, mod->cmdline);
-			KTRACE("load_module: displaying ELF64 info\n");
+			printk("boot module type %d, size %x, start %x, end %x, cmdline %s\n", mod->type, mod->size, mod->mod_start, mod->mod_end, mod->cmdline);
+			printk("load_module: displaying ELF64 info\n");
 			Elf64_Ehdr* hdr = (Elf64_Ehdr*)((uintptr_t)(mod->mod_start));
-			KTRACE("\tProgram section begin: %x\n", hdr->e_shoff);
+			printk("\tProgram section begin: %x\n", hdr->e_shoff);
 			elf64_load_module(hdr);
 		}
 	}

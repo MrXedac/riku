@@ -12,7 +12,7 @@ struct riku_devfs_node* hardware_create_node(const char* name)
 	struct riku_devfs_node* ret = (struct riku_devfs_node*)kalloc(sizeof(struct riku_devfs_node)); /* Allocate node in heap */
 	memset(ret, 0x0, sizeof(struct riku_devfs_node)); /* Nullify node */
 	strcpy(ret->name, name); /* Write name */
-	
+
 	return ret;
 }
 
@@ -24,33 +24,34 @@ void hardware_add_resource(struct riku_devfs_node* node, enum riku_resource_type
 	{
 		if(node->resources[i].begin == 0x0)
 			res = &(node->resources[i]);
-			
+
 		i++;
 	}
-	
+
 	if(res == 0x0)
 	{
-		KTRACE("hardware_add_resource: couldn't find an available slot in device descriptor\n");
+		printk("hardware_add_resource: couldn't find an available slot in device descriptor\n");
 		return;
 	}
-	
+
 	res->type = type;
 	res->begin = begin;
 	res->size = size;
-	
-	KTRACE("added resource range %x length %x type %s for device devfs:/%s\n", res->begin, res->size, res->type==PORTIO?"ioport":"mmio", node->name);
+
+	printk("added resource range %x length %x type %s for device devfs:/%s\n", res->begin, res->size, res->type==PORTIO?"ioport":"mmio", node->name);
+
 }
 
 void probe_hardware()
 {
-	KTRACE("Beginning hardware probe.\n");
+	printk("Beginning hardware probe.\n");
 	puts("Now beginning hardware probe.\n");
-	
+
 	/* Create some space for nullDev. */
 	nullDev = (struct riku_devfs_node*)kalloc(sizeof(struct riku_devfs_node));
 	strcpy(nullDev->name, "null");
 	nullDev->next = 0;
-	
+
 	/* TODO : Once we have a working virtual filesystem
 	 * (and I should implement this rather quickly, eh),
 	 * we should create a node for each device,
@@ -58,24 +59,18 @@ void probe_hardware()
 	 * /dev/kbd for interrupt 1 keyboard input.
 	 * Right now we don't have a VFS, so this is a
 	 * big placeholder. */
-	struct riku_devfs_node* vgat = hardware_create_node("vgaterm");
-	hardware_add_resource(vgat, MMIO, 0xB8000, 0x4000);
-	devfs_add(vgat);
-	
 	struct riku_devfs_node* kbd = hardware_create_node("kbd");
 	devfs_add(kbd);
-	
+
 	puts("Probing PCI.\n");
 	probe_pci();
-	
-	KTRACE("Probed devices: ");
+
+	printk("Probed devices: ");
 	struct riku_devfs_node* devnode = nullDev;
 	while(devnode != 0x0)
 	{
-		KTRACERAW("devfs:/");
-		KTRACERAW(devnode->name);
-		KTRACERAW("\t");
+		printk("devfs:/%s\t", devnode->name);
 		devnode = devnode->next;
 	}
-	KTRACERAW("\n");
+	printk("\n");
 }

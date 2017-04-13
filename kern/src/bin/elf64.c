@@ -21,25 +21,25 @@ Elf64_Shdr* elf64_get_section(Elf64_Ehdr* hdr, Elf64_Section type)
 		unsigned char* sName = (unsigned char*)sNameTableBegin + sTable->sh_name;
 		if(strcmp((const char*)sName, Elf64_SectionNames[type]) == 0)
 		{
-			KTRACE("Yay! Found %s on section %d, addr %x\n", Elf64_SectionNames[type], sIndex, sTable);
+			printk("Yay! Found %s on section %d, addr %x\n", Elf64_SectionNames[type], sIndex, sTable);
 			return sTable;
 		}
 		sTable = (Elf64_Shdr*)((uintptr_t)sTable + (uintptr_t)(hdr->e_shentsize));
 		sIndex++;
 	}
-	KTRACE("Didn't found section %s...\n", Elf64_SectionNames[type]);
+	printk("Didn't found section %s...\n", Elf64_SectionNames[type]);
 	return 0x0;
 }
 
 Elf64_Sym* elf64_get_symbol(Elf64_Ehdr* hdr, Elf64_Shdr* symtable, uint32_t idx)
 {
-	//KTRACE("elf64: get_symbol, %x, %x\n", symtable, idx);
+	//printk("elf64: get_symbol, %x, %x\n", symtable, idx);
 	return (Elf64_Sym*)((uintptr_t)hdr + (uintptr_t)(symtable->sh_offset) + idx * sizeof(Elf64_Sym));
 }
 
 unsigned char* elf64_get_symbol_name(Elf64_Ehdr* hdr, Elf64_Shdr* strtable, Elf64_Sym* symbol)
 {
-	//KTRACE("elf64: get_symbol_name, %x, %x\n", strtable, symbol);
+	//printk("elf64: get_symbol_name, %x, %x\n", strtable, symbol);
 	unsigned char* sSymNameTableBegin = (unsigned char*)((uintptr_t)hdr + (uintptr_t)(strtable->sh_offset));
 	unsigned char* sSymName = (unsigned char*)sSymNameTableBegin + symbol->st_name;
 	return sSymName;
@@ -56,7 +56,7 @@ uintptr_t elf64_find_symbol(Elf64_Ehdr* hdr, const char* symname)
 	
 	/* Amount of symbols in kernel (ie. A LOT) */
 	uint32_t sSymbolTableSize = sSymbolTable->sh_size / sizeof(Elf64_Sym);
-	KTRACE("elf64_find_symbol: worst case, going through %d entries\n", sSymbolTableSize);
+	printk("elf64_find_symbol: worst case, going through %d entries\n", sSymbolTableSize);
 	uint32_t sSymbolIdx = 0;
 	while(sSymbolIdx < sSymbolTableSize)
 	{
@@ -64,12 +64,12 @@ uintptr_t elf64_find_symbol(Elf64_Ehdr* hdr, const char* symname)
 		unsigned char* ksymname = elf64_get_symbol_name(hdr, sStringTable, sym);
 		if(strcmp((const char*)ksymname, symname) == 0)
 		{
-			KTRACE("elf64_kernel_symbol_addr: found symbol %s at %x\n", symname, sym->st_value);
+			printk("elf64_kernel_symbol_addr: found symbol %s at %x\n", symname, sym->st_value);
 			return (uintptr_t)sym->st_value;
 		} 
 		sSymbolIdx++;
 	}
-	KTRACE("elf64_find_symbol: did not found symbol address :( this is sad\n");
+	printk("elf64_find_symbol: did not found symbol address :( this is sad\n");
 
 	return 0x0;
 }
@@ -86,14 +86,14 @@ void elf64_load_module(Elf64_Ehdr* hdr)
   Elf64_Shdr* sText = elf64_get_section(hdr, SECTION_TEXT);
   unsigned char* sNameTableBegin = (unsigned char*)((uintptr_t)hdr + (uintptr_t)sNameTable->sh_offset);
 
-  KTRACE("\tSection name table should be around %x, having a %x size\n", sNameTable, sNameTable->sh_size);
-  KTRACE("\tWe have %d section entries, starting at %x, with %x length per entry\n", hdr->e_shnum, sTable, hdr->e_shentsize);
+  printk("\tSection name table should be around %x, having a %x size\n", sNameTable, sNameTable->sh_size);
+  printk("\tWe have %d section entries, starting at %x, with %x length per entry\n", hdr->e_shnum, sTable, hdr->e_shentsize);
   uint32_t sIndex = 0;
   Elf64_Sym* sSym = (Elf64_Sym*)((uintptr_t)hdr + (uintptr_t)(sSymbolTable->sh_offset));
   
   uint32_t sSymbolTableSize = sSymbolTable->sh_size / sizeof(Elf64_Sym);
-  KTRACE("Symbol table contains %d entries\n", sSymbolTableSize);
-  KTRACE("We shall refer to string table with section entry at %x\n", sStringTable);
+  printk("Symbol table contains %d entries\n", sSymbolTableSize);
+  printk("We shall refer to string table with section entry at %x\n", sStringTable);
 
   uint32_t sSymbolIdx = 0;
   
@@ -105,28 +105,28 @@ void elf64_load_module(Elf64_Ehdr* hdr)
   while(sRelaIdx < sRelaTableSize)
   {
 	/* Find symbol and name */
-    KTRACE("\tRelocation entry %d refers to symbol %d\n", sRelaIdx, (sRela->r_info >> 32));
+    printk("\tRelocation entry %d refers to symbol %d\n", sRelaIdx, (sRela->r_info >> 32));
 	sSym = elf64_get_symbol(hdr, sSymbolTable, (sRela->r_info) >> 32);
 	unsigned char* symname = elf64_get_symbol_name(hdr, sStringTable, sSym);
 	if(sSym->st_value == 0x0) {
 		/* Find linked symbol in kernel */
-		KTRACE("Searching symbol %s in kernel\n", symname);
+		printk("Searching symbol %s in kernel\n", symname);
 		uintptr_t kernsym = elf64_kernel_symbol_addr((const char*)symname);
 		if(!kernsym)
 		{
-			KTRACE("Whoops! Kernel module linked against invalid symbol : '%s'\n", symname);
+			printk("Whoops! Kernel module linked against invalid symbol : '%s'\n", symname);
 			return;
 		}
 		
 		/* Now that we found the symbol, link it into our module */
-		KTRACE("Symbol in GOT should be around %x\n", sRela->r_offset);
+		printk("Symbol in GOT should be around %x\n", sRela->r_offset);
 		uintptr_t dest = (uintptr_t)hdr + (uintptr_t)sRela->r_offset;
 		*(uintptr_t*)dest = kernsym;
 		
 		/* Some user output */
-		KTRACE("Relocated symbol %s to %x\n", symname, *(uintptr_t*)dest);	
+		printk("Relocated symbol %s to %x\n", symname, *(uintptr_t*)dest);	
 	} else {
-		KTRACE("\tSymbol didn't need relocation, locating into binary\n");
+		printk("\tSymbol didn't need relocation, locating into binary\n");
 		uintptr_t dest = (uintptr_t)hdr + (uintptr_t)sRela->r_offset;
 		*(uintptr_t*)dest = (uintptr_t)hdr + (uintptr_t)sSym->st_value;
 	}
@@ -136,12 +136,12 @@ void elf64_load_module(Elf64_Ehdr* hdr)
   }
 
   /* Now that everything has been linked, run the module */
-  KTRACE("Preparing to run module\n");
+  printk("Preparing to run module\n");
   
   /* First we have to find a specific symbol in our module : module_init */
   uintptr_t sModEP = (uintptr_t)hdr + elf64_find_symbol(hdr, "module_init");
   void (*modEP)(void)  = (void*)sModEP;
-  KTRACE("Module EP=%x\n", sModEP);
+  printk("Module EP=%x\n", sModEP);
   
   /* Find module information in binary */
   /* TODO : This -0x1000 thing is due to some misplacement in the module binary.
@@ -155,11 +155,11 @@ void elf64_load_module(Elf64_Ehdr* hdr)
   puts("\t(");
   puts(moddesc());
   puts(")\n");
-  KTRACE("Loading module %s\n", modname());
+  printk("Loading module %s\n", modname());
   __asm volatile("MOV %0, %%RAX; \
                   CALL %%RAX;"
                   :: "r" (sModEP));
-  KTRACE("Back from module\n");
+  printk("Back from module\n");
 
 }
 

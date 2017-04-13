@@ -14,6 +14,8 @@
 #include "hw.h"
 #include "kernsym.h"
 #include "sched.h"
+#include "driver.h"
+#include "printk.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -60,12 +62,21 @@ void dummy2()
 		puts("2");
 }
 
-#define INIT_TASK(s, f) { KTRACE("-> Init task \"%s\"\n", s); f(); }
+#define INIT_TASK(s, f) { printk("-> Init task \"%s\"\n", s); f(); }
 void late_init_tasks()
 {
 	INIT_TASK("disclaimer", showDisclaimer);
 	INIT_TASK("setup_sched", setup_sched);
 	INIT_TASK("probe_hardware", probe_hardware);
+
+	/* Initialize some required drivers. */
+	/* x86serial is responsible for kconsole. */
+	DRIVER_INIT(x86serial);
+	/* x86vga is responsible for console. */
+	DRIVER_INIT(x86vga);
+
+	if(!printk_enabled)
+		panic("Couldn't find a suitable device for printk().\n", 0);
 }
 
 /* When we enter this function, we should have a proper page allocator, interrupt handling and working threading.
@@ -75,7 +86,8 @@ void late_init()
 	/* Some day I'll put something really extensible here. Right now I don't care, so... */
 	late_init_tasks();
 
-	puts("Entered boot stage 2\n");
+	/* At this point we have a working printk() if everything went fine */
+	printk("Entered boot stage 2\n");
 	for(;;);
 }
 
@@ -86,9 +98,9 @@ void main()
 
 	/* Initialize some stuff related to early-boot IO */
 	init_serial();
-	KTRACE("64-bits entrypoint reached\n");
-	KTRACE("The Riku Operating System - MrXedac(c)/Mk.(c) 2017\n");
-	KTRACE("Initializing early-boot console\n");
+	printk("64-bits entrypoint reached\n");
+	printk("The Riku Operating System - MrXedac(c)/Mk.(c) 2017\n");
+	printk("Initializing early-boot console\n");
 	init_terminal();
   // BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
 
@@ -132,13 +144,13 @@ void main()
 	//__asm volatile("INT $0x14;");
 	/* Parse the multiboot info */
 	puts("\nNow parsing Multiboot2 header info.\n");
-	KTRACE("Parsing MB2I\n");
+	printk("Parsing MB2I\n");
 	parse_mbi((uintptr_t)info->mbi_addr | 0xFFFF800000000000);
 
 	puts("mmu init ");
 	mmu_init();
 	puts("complete\n");
-	KTRACE("GDT, IDT and MMU initialization complete\n");
+	printk("GDT, IDT and MMU initialization complete\n");
 	puts("kernel pml4t at ");
 	puthex((uintptr_t)kernel_cr3);
 	puts("\nkernel master table/pdpt at ");
@@ -153,7 +165,7 @@ void main()
 
 	puts("Early-boot complete.\n");
 
-	KTRACE("Preparing to enter boot stage 2\n");
+	printk("Preparing to enter boot stage 2\n");
 	/* Some tasking */
 	struct riku_task* dummyTask = (struct riku_task*)kalloc(sizeof(struct riku_task));
 	uintptr_t* usrstack = alloc_page();
@@ -161,7 +173,7 @@ void main()
 	puts("Riku dummy task at ");
 	puthex((uintptr_t)dummyTask);
 	puts("\n");
-	KTRACE("Stage 2 boot context RSP %x, USP %x\n", krnstack, usrstack);
+	printk("Stage 2 boot context RSP %x, USP %x\n", krnstack, usrstack);
 	/* First prepare task */
 	init_task(dummyTask, "Riku init", (uintptr_t*)((uintptr_t)(usrstack) | 0xFFFF800000000000), (uintptr_t*)((uintptr_t)(krnstack) | 0xFFFF800000000000), &late_init, (uintptr_t*)kernel_cr3);
 	switch_to_task(dummyTask);

@@ -44,7 +44,7 @@ void paging_init(uintptr_t* base, uint64_t length)
 				max_pages++;
 			}
 		}
-		KTRACE("[%x-%x] : Paging area\n", (uintptr_t)base, (uintptr_t)base + length);
+		printk("[%x-%x] : Paging area\n", (uintptr_t)base, (uintptr_t)base + length);
 	} else {
 		puts("skipped low-memory paging area\n");
 	}
