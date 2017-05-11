@@ -6,7 +6,7 @@
 
 static char* bf;
 static char buf[12];
-static unsigned int num;
+static uint64_t num;
 static char uc;
 static char zs;
 
@@ -130,7 +130,7 @@ void printk_internal(char *fmt, ...)
 					goto abort;
 				case 'u':
 				case 'd' :
-					num=va_arg(va, unsigned int);
+					num=va_arg(va, uint64_t);
 					if (ch=='d' && (int)num<0) {
 						num = -(int)num;
 						kconsole->putch(kconsole,'-');
@@ -140,7 +140,7 @@ void printk_internal(char *fmt, ...)
 				case 'x':
 				case 'X' :
 					uc= ch=='X';
-					num=va_arg(va, unsigned int);
+					num=va_arg(va, uint64_t);
 					printk_hex(num);
 					break;
 				case 'c' :

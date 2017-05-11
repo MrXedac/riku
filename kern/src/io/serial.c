@@ -58,7 +58,7 @@ void slputs(char* a)
 		write_serial(a[i++]);
 }
 
-void slputhex(int n)
+void slputhex(uint64_t n)
 {
 	int tmp;
 
@@ -67,7 +67,7 @@ void slputhex(int n)
 	char noZeroes = 1;
 
 	int i;
-	for (i = 28; i > 0; i -= 4)
+	for (i = 60; i > 0; i -= 4)
 	{
 		tmp = (n >> i) & 0xF;
 		if (tmp == 0 && noZeroes != 0)
@@ -99,7 +99,7 @@ void slputhex(int n)
 
 }
 
-void slputdec(int n)
+void slputdec(uint64_t n)
 {
 
 	if (n == 0)
@@ -109,7 +109,7 @@ void slputdec(int n)
 	}
 
 	int acc = n;
-	char c[32];
+	char c[64];
 	int i = 0;
 	while (acc > 0)
 	{
@@ -119,7 +119,7 @@ void slputdec(int n)
 	}
 	c[i] = 0;
 
-	char c2[32];
+	char c2[64];
 	c2[i--] = 0;
 	int j = 0;
 	while(i >= 0)

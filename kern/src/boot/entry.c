@@ -81,19 +81,19 @@ void late_init_tasks()
 	DRIVER_INIT(x86serial);
 	/* x86vga is responsible for console. */
 	DRIVER_INIT(x86vga);
-	
+
 	INIT_TASK("init_sysenter", init_sysenter);
-	
-	printk("Running SYSCALL test.\n");
+
+	/*printk("Running SYSCALL test.\n");*/
 	/* Set RCX to RSP, RDX to return RIP, RAX to system call id, and SYSENTER */
-	__asm volatile("MOV %%RSP, %%RCX; \
+	/*__asm volatile("MOV %%RSP, %%RCX; \
 					MOV %0, %%RDX; \
 					MOV	$0x3, %%RAX; \
 					SYSCALL;"
 				   :: "r"(&return_from_sysenter)
-				   : "rax", "rcx", "rdx");
-	
-	panic("Shouldn't be here.\n", 0);
+				   : "rax", "rcx", "rdx");*/
+
+	/*panic("Shouldn't be here.\n", 0);*/
 
 	if(!printk_enabled)
 		panic("Couldn't find a suitable device for printk().\n", 0);
@@ -108,6 +108,12 @@ void late_init()
 
 	/* At this point we have a working printk() if everything went fine */
 	printk("Entered boot stage 2\n");
+
+	/* Allright, let's build a proper environment for the init process */
+	uintptr_t init_vme = build_new_vme();
+	switch_cr3(init_vme);
+
+	printk("Switched to init vme\n");
 	for(;;);
 }
 

@@ -19,8 +19,8 @@ char read_serial();
 int is_transmit_empty();
 void write_serial(char a);
 void slputs(char* a);
-void slputdec(int n);
-void slputhex(int n);
+void slputdec(uint64_t n);
+void slputhex(uint64_t n);
 void slprintf(char *fmt, ...);
 void sprintdec(int n, char* buf);
 #endif

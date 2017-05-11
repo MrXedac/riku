@@ -13,4 +13,5 @@ uintptr_t tableRead(uintptr_t table, uint32_t index);
 
 void mmu_init();
 void switch_cr3(uintptr_t cr3);
+uintptr_t build_new_vme(); /* Builds a new virtual memory environment */
 #endif
