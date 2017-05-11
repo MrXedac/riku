@@ -114,6 +114,11 @@ void late_init()
 	switch_cr3(init_vme);
 
 	printk("Switched to init vme\n");
+
+	/* Grab init from Multiboot2, put it in an appropriate location and start in userland */
+	printk("Preparing to spawn init\n");
+	spawn_init(((struct rikuldr_info*)(PHYS(LDRINFO_ADDR)))->mbi_addr, init_vme);
+
 	for(;;);
 }
 

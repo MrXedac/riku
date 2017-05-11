@@ -26,5 +26,7 @@ void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* 
 /* Task switch */
 void switch_to_task(struct riku_task* task);
 void start_task();
+void spawn_init(uintptr_t mbi, uintptr_t vme);
+
 
 #endif

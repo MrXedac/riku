@@ -2,6 +2,8 @@
 #include "vm.h"
 #include "vga.h"
 #include "serial.h"
+#include "mem.h"
+#include <stdint.h>
 
 uint32_t addrIndex(uint32_t level, uintptr_t addr)
 {
@@ -89,11 +91,58 @@ uintptr_t build_new_vme()
 	/* Allocate a new PML4T */
 	uintptr_t pml4t = (uintptr_t)alloc_page();
 
+	/* Clear new PML4T */
+	memset((void*)pml4t, 0x0, PAGE_SIZE);
+
 	/* Put the kernel in the appropriate areas */
 	tableWriteWithFlags(pml4t, PML4T_UPPER, (uintptr_t)masterTable | FLAGS_PML4T);
 
 	/* Return our fresh, new pml4t */
 	return pml4t;
+}
+
+void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va)
+{
+	uintptr_t vme = PHYS(vmet);
+
+	/* Get PDPT */
+	uintptr_t pml4t_idx = addrIndex(4, va);
+	uintptr_t pdpt = tableRead(vme, pml4t_idx);
+	if(!pdpt)
+	{
+		pdpt = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pdpt), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(vme, pml4t_idx, (uintptr_t)pdpt | FLAGS_PML4T);
+	}
+
+	/* Same thing with PD */
+	uintptr_t pdpt_idx = addrIndex(3, va);
+	uintptr_t pd = tableRead(pdpt, pdpt_idx);
+	if(!pd)
+	{
+		pd = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pd), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(pdpt, pdpt_idx, (uintptr_t)pd | FLAGS_PML4T);
+	}
+
+	/* Same thing with PT */
+	uintptr_t pd_idx = addrIndex(2, va);
+	uintptr_t pt = tableRead(pd, pd_idx);
+	if(!pt)
+	{
+		pt = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pt), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(pd, pd_idx, (uintptr_t)pt | FLAGS_PML4T);
+	}
+
+	/* Map page into PT */
+	uintptr_t pt_idx = addrIndex(1, va);
+	tableWriteWithFlags(pt, pt_idx, (uintptr_t)phys | FLAGS_PML4T);
+}
+
+void vme_unmap(uintptr_t vme, uintptr_t va)
+{
+
 }
 
 void mmu_init()
