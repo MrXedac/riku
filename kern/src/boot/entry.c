@@ -16,6 +16,7 @@
 #include "sched.h"
 #include "driver.h"
 #include "printk.h"
+#include "sys.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -62,6 +63,12 @@ void dummy2()
 		puts("2");
 }
 
+void return_from_sysenter()
+{
+	printk("Returned from sysenter. Everything is fine.\n");
+	for(;;);
+}
+
 #define INIT_TASK(s, f) { printk("-> Init task \"%s\"\n", s); f(); }
 void late_init_tasks()
 {
@@ -74,6 +81,19 @@ void late_init_tasks()
 	DRIVER_INIT(x86serial);
 	/* x86vga is responsible for console. */
 	DRIVER_INIT(x86vga);
+	
+	INIT_TASK("init_sysenter", init_sysenter);
+	
+	printk("Running SYSCALL test.\n");
+	/* Set RCX to RSP, RDX to return RIP, RAX to system call id, and SYSENTER */
+	__asm volatile("MOV %%RSP, %%RCX; \
+					MOV %0, %%RDX; \
+					MOV	$0x3, %%RAX; \
+					SYSCALL;"
+				   :: "r"(&return_from_sysenter)
+				   : "rax", "rcx", "rdx");
+	
+	panic("Shouldn't be here.\n", 0);
 
 	if(!printk_enabled)
 		panic("Couldn't find a suitable device for printk().\n", 0);
