@@ -47,7 +47,13 @@ void panic(char* message, registers_t* regs)
     puts("cr2=");
     puthex(cr2);
     puts("\n");
-    
+		puts("errcode=");
+		puthex(regs->err_code);
+		puts("\n");
+		/*
+			0xB = 1011
+		*/
+
 	puts("Halting system.\n");
 	__asm volatile("CLI;");
 	for(;;);

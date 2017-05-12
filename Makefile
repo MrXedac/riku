@@ -14,3 +14,6 @@ $(IMAGE):
 
 run:
 	qemu-system-x86_64 -boot d -m 4096 -cdrom riku.iso -serial stdio
+
+debug:
+	qemu-system-x86_64 -boot d -m 4096 -cdrom riku.iso -serial stdio -S -s

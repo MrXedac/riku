@@ -16,9 +16,10 @@
 #define EARLY_PDPT_KERN	0x3000
 
 /* MMU flags */
-#define FLAG_PRESENT		0x1
-#define FLAG_RW				0x2
+#define FLAG_PRESENT		  0x1
+#define FLAG_RW				    0x2
 #define	FLAG_LARGE_PAGE		0x80
+#define FLAG_USER         0x4
 #define FLAGS_PML4T			(FLAG_PRESENT | FLAG_RW)
 #define FLAGS_PDPT_LARGE	(FLAG_PRESENT | FLAG_RW | FLAG_LARGE_PAGE)
 
@@ -42,6 +43,10 @@ uint64_t allocated_pages;
 uintptr_t* alloc_page();
 void free_page(uintptr_t *page);
 
+/* Gets physical address in higher half */
 #define PHYS(a) (a | 0xFFFF800000000000)
+
+/* Gets linear address (to use with vme_map) */
+#define LIN(a)  (a & 0x00007FFFFFFFFFFF)
 
 #endif

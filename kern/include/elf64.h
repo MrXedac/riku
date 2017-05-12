@@ -95,7 +95,7 @@ typedef struct Elf64_RelocationHeader Elf64_Rela;
 typedef struct Elf64_ProgramHeader Elf64_Phdr;
 
 void elf64_load_module(Elf64_Ehdr* hdr);
-void elf64_load_binary(Elf64_Ehdr* hdr, uintptr_t size, uintptr_t vme);
+uint64_t elf64_load_binary(Elf64_Ehdr* hdr, uintptr_t size, uintptr_t vme);
 
 /* Get the address of a symbol in the ELF64 kernel binary. Talk about a big function. */
 uintptr_t elf64_kernel_symbol_addr(const char* symname);

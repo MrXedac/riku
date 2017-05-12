@@ -3,63 +3,22 @@
 #include "idt64.h"
 #include "printk.h"
 #include "serial.h"
+#include "vfs/devfs.h"
+#include "mem.h"
 
 void syscall_entry();
 
-static void *syscall[SYSCALL_COUNT] =
+uint64_t console_raw_print(char* a)
 {
-	&slputs,
+	/*printk("raw console write requested, char at %x, prints %s\n", a, a);*/
+	console->write(console, a, strlen(a));
+	return 0;
+}
+
+void *syscall_table[SYSCALL_COUNT] =
+{
+	&console_raw_print,
 };
-
-void sysenter_entry()
-{
-	/* Before doing anything else, store our system call arguments somewhere safe with interrupts disabled */
-	uint64_t sysc_id, ret_addr;
-	__asm volatile("CLI;");
-	__asm volatile("MOV %%RAX, %0"
-				   : "=r"(sysc_id));
-	__asm volatile("MOV %%RCX, %0"
-				   : "=r"(ret_addr));
-
-	/* At this point, we should switch to the kernel stack (or keep using the user stack ? Good question here */
-
-	printk("SYSENTER called.\n");
-
-	/* Get system call id */
-	if(sysc_id > SYSCALL_COUNT)
-	{
-		printk("Invalid system call %d.\n", sysc_id);
-		goto sysret;
-	}
-
-
-sysret:
-	/* If we switched to a kernel stack, we should restore the user stack here, and push return RIP into RCX */
-
-	/* Return to userland/saved context */
-	__asm volatile("MOV %0, %%RCX; STI; SYSRET;" :: "r"(ret_addr));
-}
-
-void syscall_entry(uint64_t sysc_id)
-{
-	/* Get system call location */
-	void *location = syscall[sysc_id];
-
-	/* Pass arguments to system call and run call */
-	uint32_t ret;
-	/*__asm volatile("MOVQ %0, %%RDI; \
-					MOVQ %1, %%RSI; \
-					MOVQ %2, %%RDX; \
-					MOVQ %3, %%RCX; \
-					MOVQ %4, %%R8; \
-					MOVQ %5, %%R9; \
-					CALL *%6;"
-				   : "=a"(ret)
-				   : "r"(regs->rdi), "r"(regs->rsi), "r"(regs->rdx), "r"(regs->rcx), "r"(regs->rbx), "r"(location));
-
-	regs->rax = ret;*/
-	return;
-}
 
 void init_sysenter()
 {
@@ -76,9 +35,10 @@ void init_sysenter()
 				   WRMSR;");
 
 	/* Finally setup SYSENTER RIP */
+	extern void syscall_ep();
 	uint64_t rax, rdx;
-	rdx = ((uint64_t)(&sysenter_entry) >> 32) & 0x00000000FFFFFFFF;
-	rax = (uint64_t)(&sysenter_entry) & 0x00000000FFFFFFFF;
+	rdx = ((uint64_t)(&syscall_ep) >> 32) & 0x00000000FFFFFFFF;
+	rax = (uint64_t)(&syscall_ep) & 0x00000000FFFFFFFF;
 	printk("SYSENTER entry at %x:%x\n", rdx, rax);
 
 	__asm volatile("MOVQ $0x176, %%RCX; \
@@ -91,7 +51,7 @@ void init_sysenter()
 
 	/* Now configure AMD's SYSCALL/SYSRET */
 	__asm volatile("MOV $0xC0000081, %RCX; \
-				   MOV $0x001B0008, %RDX; \
+				   MOV $0x00100008, %RDX; \
 				   MOV $0xCAFEBABE, %RAX; \
 				   WRMSR;");
 
@@ -104,13 +64,26 @@ void init_sysenter()
 				   : "r"(rdx), "r"(rax)
 				   : "rax", "rdx", "rcx");
 
-	__asm volatile("MOVQ $0xC0000083, %%RCX; \
-				   MOVQ %0, %%RDX; \
-				   MOVQ %1, %%RAX; \
-				   WRMSR;"
-				   :
-				   : "r"(rdx), "r"(rax)
-				   : "rax", "rdx", "rcx");
+
+		 /* Clear IF in flags */
+	 	__asm volatile("MOV $0xC0000084, %%RCX; \
+	 					RDMSR; \
+	 					MOV %%RAX, %0; \
+	 					MOV %%RDX, %1"
+	 				   : "=r"(rax), "=r"(rdx)
+	 				   :: "rax", "rdx", "rcx");
+
+	 	printk("Flags MSR %x\n", rax);
+	 	rax |= 0x0000000000000200;
+	 	printk("Now %x\n", rax);
+
+	 	__asm volatile("MOV $0xC0000084, %%RCX; \
+	 					MOV %0, %%RAX; \
+	 					MOV %1, %%RDX; \
+	 					WRMSR;"
+	 				   :: "r"(rax), "r"(rdx)
+	 				   : "rax", "rdx", "rcx");
+
 
 	/* At last, enable SCE in MSR 0xC0000080 */
 	__asm volatile("MOV $0xC0000080, %%RCX; \
@@ -131,5 +104,5 @@ void init_sysenter()
 				   :: "r"(rax), "r"(rdx)
 				   : "rax", "rdx", "rcx");
 
-	printk("SYSENTER setup complete\n");
+	printk("SYSENTER setup complete %x\n", &console_raw_print);
 }

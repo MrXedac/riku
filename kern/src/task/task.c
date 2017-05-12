@@ -100,7 +100,7 @@ void switch_to_task(struct riku_task* task)
 }
 
 /* Parse the multiboot header to find some relevant data */
-void spawn_init(uintptr_t mbi, uintptr_t vme)
+uint64_t spawn_init(uintptr_t mbi, uintptr_t vme)
 {
 	struct multiboot_header* header = (struct multiboot_header*)PHYS(mbi);
 	struct multiboot_tag *tag;
@@ -116,9 +116,10 @@ void spawn_init(uintptr_t mbi, uintptr_t vme)
 			struct multiboot_tag_module* mod = (struct multiboot_tag_module*)tag;
 			printk("boot process module2 type %d, size %x, start %x, end %x, cmdline %s\n", mod->type, mod->size, mod->mod_start, mod->mod_end, mod->cmdline);
 			Elf64_Ehdr* hdr = (Elf64_Ehdr*)PHYS(((uintptr_t)(mod->mod_start)));
-			elf64_load_binary(hdr, mod->size, vme);
+			return elf64_load_binary(hdr, mod->size, vme);
 		}
 	}
+	return 0x0;
 }
 
 /* Change a task's VME */

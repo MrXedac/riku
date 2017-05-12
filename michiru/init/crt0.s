@@ -4,5 +4,11 @@
 [global start]
 [extern main]
 start:
-    call main
-    jmp $
+	; Perform system call
+;	mov rbx, hw
+;	mov rax, 0x1
+;	syscall
+	call main
+	jmp $
+
+;hw:	db	'Hello world\n\0'

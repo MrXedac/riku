@@ -23,19 +23,19 @@ GDT64:	                          ; Global Descriptor Table (64-bit).
 	db 10010010b                 ; Access (read/write).
 	db 00000000b
 	db 0
-	.UserCode: equ $ - GDT64         ; The code descriptor.
-	dw 0
-	dw 0
-	db 0
-	db 11111010b                 ; Access (exec/read).
-	db 00100000b
-	db 0
 	.UserData: equ $ - GDT64         ; The data descriptor.
 	dw 0
 	dw 0
 	db 0
 	db 11110010b                 ; Access (read/write).
 	db 00000000b
+	db 0
+	.UserCode: equ $ - GDT64         ; The code descriptor.
+	dw 0
+	dw 0
+	db 0
+	db 11111010b                 ; Access (exec/read).
+	db 00100000b
 	db 0
 	.TSS: equ $ - GDT64			; 16-bytes TSS entry
 	dw 0

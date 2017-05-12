@@ -118,11 +118,20 @@ void late_init()
 
 	/* Grab init from Multiboot2, put it in an appropriate location and start in userland */
 	printk("Preparing to spawn init\n");
-	spawn_init(((struct rikuldr_info*)(PHYS(LDRINFO_ADDR)))->mbi_addr, init_vme);
+	uint64_t rip = spawn_init(((struct rikuldr_info*)(PHYS(LDRINFO_ADDR)))->mbi_addr, init_vme);
 
-	printk("Starting init in kernel land - TODO : switch to userland!\n");
-	__asm volatile("MOV $0x100000, %RAX; CALL %RAX");
-	
+	/* Map user stack somewhere safe */
+	vme_map(init_vme, LIN(current_task->task_rsp), INIT_STACK, 1);
+
+	printk("Switching in userland (rip=%x) and dropping kernel boot context\n", rip);
+
+	/* __asm volatile("MOV $0x100000, %RAX; CALL %RAX"); */
+	/* We use SYSRET to switch to userland :
+	 * RCX = RIP
+	 * We also set a valid stack and DS */
+	extern void enter_userland(uint64_t rip, uint64_t rsp);
+	enter_userland(rip, INIT_STACK + PAGE_SIZE - sizeof(uintptr_t));
+
 	for(;;);
 }
 

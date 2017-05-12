@@ -40,7 +40,7 @@ void irq_handler(registers_t* regs)
 	{
 		outb(0xA0, 0x20);
 	}
-
+	/*printk("IRQ, RIP=%x, CS=%x, DS=%x, SS=%x\n", regs->rip, regs->cs, regs->ds, regs->ss);*/
 	outb(0x20, 0x20);
 
 	if(IRQHANDLERS[regs->int_no - 0x20]){
@@ -84,10 +84,21 @@ void isr_handler(registers_t* regs)
 		puthex(addr);
 		puts("\n");
 	}
+
+	if(regs->int_no == 0x1)
+	{
+		printk("BUG: fixing TF flag\n");
+		/* A weird thing with SYSRET i haven't fully understood yet sets TF in FLAGS registers to 1. Clear this */
+		extern void fix_tf();
+		fix_tf();
+		return;
+	}
+
 	if(regs->int_no == 254)
 		panic("riku emergency halt/debug panic", regs);
-	else
+	else if(regs->cs == 0x8)
 		panic("unhandled fault in kernel land", regs);
+	else panic("debug", regs);
 }
 
 

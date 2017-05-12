@@ -5,6 +5,8 @@
 
 uint8_t tasking_ready;
 
+#define INIT_STACK	0x1080000
+
 enum task_state { READY, ACTIVABLE, SLEEPING, TERMINATED };
 
 struct riku_task {
@@ -26,7 +28,7 @@ void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* 
 /* Task switch */
 void switch_to_task(struct riku_task* task);
 void start_task();
-void spawn_init(uintptr_t mbi, uintptr_t vme);
+uint64_t spawn_init(uintptr_t mbi, uintptr_t vme);
 void update_task_vme(struct riku_task* task, uintptr_t vme);
 
 

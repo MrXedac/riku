@@ -101,8 +101,14 @@ uintptr_t build_new_vme()
 	return pml4t;
 }
 
-void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va)
+void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va, uint8_t user)
 {
+	uintptr_t flags;
+	if(user)
+		flags = FLAGS_PML4T | FLAG_USER;
+	else
+		flags = FLAGS_PML4T;
+
 	uintptr_t vme = PHYS(vmet);
 
 	/* Get PDPT */
@@ -112,7 +118,7 @@ void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va)
 	{
 		pdpt = (uintptr_t)alloc_page();
 		memset((void*)PHYS(pdpt), 0x0, PAGE_SIZE);
-		tableWriteWithFlags(vme, pml4t_idx, (uintptr_t)pdpt | FLAGS_PML4T);
+		tableWriteWithFlags(vme, pml4t_idx, (uintptr_t)pdpt | flags);
 	}
 
 	/* Same thing with PD */
@@ -122,7 +128,7 @@ void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va)
 	{
 		pd = (uintptr_t)alloc_page();
 		memset((void*)PHYS(pd), 0x0, PAGE_SIZE);
-		tableWriteWithFlags(pdpt, pdpt_idx, (uintptr_t)pd | FLAGS_PML4T);
+		tableWriteWithFlags(pdpt, pdpt_idx, (uintptr_t)pd | flags);
 	}
 
 	/* Same thing with PT */
@@ -132,12 +138,12 @@ void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va)
 	{
 		pt = (uintptr_t)alloc_page();
 		memset((void*)PHYS(pt), 0x0, PAGE_SIZE);
-		tableWriteWithFlags(pd, pd_idx, (uintptr_t)pt | FLAGS_PML4T);
+		tableWriteWithFlags(pd, pd_idx, (uintptr_t)pt | flags);
 	}
 
 	/* Map page into PT */
 	uintptr_t pt_idx = addrIndex(1, va);
-	tableWriteWithFlags(pt, pt_idx, (uintptr_t)phys | FLAGS_PML4T);
+	tableWriteWithFlags(pt, pt_idx, (uintptr_t)phys | flags);
 }
 
 void vme_unmap(uintptr_t vme, uintptr_t va)

@@ -33,17 +33,17 @@ void gdt_init(uintptr_t gdt_addr, uintptr_t gptptr_addr)
 {
 	gdt  = (struct gdt_entry*)gdt_addr;
 	gp = (struct gdt_ptr*)gptptr_addr;
-	
+
 	/* Update the GDT pointer into higher memory */
 	gp->base = gp->base & 0x00000000FFFFFFFF; /* Get the 32-bits physical address in lower memory, removing potential garbage */
 	gp->base += 0xFFFF800000000000; /* Put it in higher-half kernel memory */
-	
+
 	/* Load the new GDT */
 	gdt_flush((uintptr_t)gp | 0xFFFF800000000000); /* Load the higher-half GDT pointer */
-	
+
 	write_tss(0x5, 0xFFFF800000500000);
 	tss_flush();
-	
+
 	/* Our GDT has already been setup by RikuLdr, do nothing */
 	return;
 }
@@ -58,7 +58,7 @@ void write_tss(int32_t num, uint64_t rsp0)
 {
 	uintptr_t base = (uintptr_t)((uintptr_t)&tss_entry);
 	uint32_t limit = sizeof(tss_entry);
-	
+
 	//gdt_set_gate(num, base, limit, 0xE9, 0x00);
 	struct gdt_extended_entry* tss = (struct gdt_extended_entry*)&gdt[num];
 	tss->base_low = (base & 0xFFFF);
@@ -70,11 +70,11 @@ void write_tss(int32_t num, uint64_t rsp0)
 	tss->flags = 0;
 	tss->base_rlyhigh = ((base & 0xFFFFFFFF00000000) >> 32) & 0xFFFFFFFF;
 	tss->sbz = 0x00000000;
-	
+
 	//memset(&tss_entry, 0, sizeof(tss_entry));
-	
+
 	tss_entry.rsp0 = rsp0;
-	
+
 	/*tss_entry.cs = 0x0B;
 	 tss_entry.ss = tss_entry.ds = tss_entry.es = tss_entry.fs = tss_entry.gs = 0x13;*/
 }
