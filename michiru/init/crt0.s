@@ -4,5 +4,5 @@
 [global start]
 [extern main]
 start:
-	call main
-	jmp $
+    call main
+    jmp $

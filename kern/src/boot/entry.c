@@ -119,6 +119,9 @@ void late_init()
 	printk("Preparing to spawn init\n");
 	spawn_init(((struct rikuldr_info*)(PHYS(LDRINFO_ADDR)))->mbi_addr, init_vme);
 
+	printk("Starting init in kernel land - TODO : switch to userland!\n");
+	__asm volatile("MOV $0x100000, %RAX; CALL %RAX");
+	
 	for(;;);
 }
 
