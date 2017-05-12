@@ -112,6 +112,7 @@ void late_init()
 	/* Allright, let's build a proper environment for the init process */
 	uintptr_t init_vme = build_new_vme();
 	switch_cr3(init_vme);
+	update_task_vme(current_task, init_vme);
 
 	printk("Switched to init vme\n");
 

@@ -33,9 +33,8 @@ void do_schedule()
 	if(current_task) {
 		if(current_task->next) {
 			switch_to_task(current_task->next);
-		} else if (current_task != task_list) {
-			/* Only switch if there are more than one task to schedule */
+		} else {
 			switch_to_task(task_list);
-		} else return;
+		}
 	}
 }

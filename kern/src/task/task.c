@@ -120,3 +120,10 @@ void spawn_init(uintptr_t mbi, uintptr_t vme)
 		}
 	}
 }
+
+/* Change a task's VME */
+void update_task_vme(struct riku_task* task, uintptr_t vme)
+{
+	task->vm_root = vme;
+	return;
+}
