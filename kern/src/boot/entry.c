@@ -17,6 +17,9 @@
 #include "driver.h"
 #include "printk.h"
 #include "sys.h"
+#include "vfs/openclose.h"
+#include "vfs/readwrite.h"
+#include "vfs/dup2.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -123,12 +126,13 @@ void late_init()
 	/* Map user stack somewhere safe */
 	vme_map(init_vme, LIN(current_task->task_rsp), INIT_STACK, 1);
 
+	/* Open stdin, stdout, stderr to devfs:/null, devfs:/vga0 and devfs:/vga0 */
+	uint32_t stdin = open("devfs:/null", 0x1);
+	uint32_t stdout = open("devfs:/vga0", 0x1);
+	uint32_t stderr = dup2(stdout);
+	printk("Files descriptor opened : %d, %d, %d\n", stdin, stdout, stderr);
 	printk("Switching in userland (rip=%x) and dropping kernel boot context\n", rip);
 
-	/* __asm volatile("MOV $0x100000, %RAX; CALL %RAX"); */
-	/* We use SYSRET to switch to userland :
-	 * RCX = RIP
-	 * We also set a valid stack and DS */
 	extern void enter_userland(uint64_t rip, uint64_t rsp);
 	enter_userland(rip, INIT_STACK + PAGE_SIZE - sizeof(uintptr_t));
 

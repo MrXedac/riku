@@ -12,6 +12,7 @@ struct riku_devfs_node* hardware_create_node(const char* name)
 	struct riku_devfs_node* ret = (struct riku_devfs_node*)kalloc(sizeof(struct riku_devfs_node)); /* Allocate node in heap */
 	memset(ret, 0x0, sizeof(struct riku_devfs_node)); /* Nullify node */
 	strcpy(ret->name, name); /* Write name */
+	ret->next = 0x0;
 
 	return ret;
 }
@@ -47,10 +48,9 @@ void probe_hardware()
 	printk("Beginning hardware probe.\n");
 	puts("Now beginning hardware probe.\n");
 
-	/* Create some space for nullDev. */
-	nullDev = (struct riku_devfs_node*)kalloc(sizeof(struct riku_devfs_node));
-	strcpy(nullDev->name, "null");
-	nullDev->next = 0;
+	/* Create some space for nullDev. In driver/special/nulldev.c */
+	extern void nulldev_init();
+	nulldev_init();
 
 	/* TODO : Once we have a working virtual filesystem
 	 * (and I should implement this rather quickly, eh),

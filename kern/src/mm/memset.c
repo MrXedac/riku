@@ -13,14 +13,14 @@ char *strcpy(char* dest, const char* source) {
 	int i = 0;
 	while ((dest[i] = source[i]) != '\0') {
 		i++;
-	} 
+	}
 	return dest;
 }
 
 void* memcpy(void* dest, const void* src, size_t count) {
 	char* dst8 = (char*)dest;
 	char* src8 = (char*)src;
-	
+
 	while (count--) {
 		*dst8++ = *src8++;
 	}
@@ -31,10 +31,10 @@ char *strcat(char *dest, const char *src)
 {
 	size_t i,j;
 	for (i = 0; dest[i] != '\0'; i++);
-	
+
 	for (j = 0; src[j] != '\0'; j++)
 		dest[i+j] = src[j];
-	
+
 	dest[i+j] = '\0';
 	return dest;
 }

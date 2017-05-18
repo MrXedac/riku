@@ -4,6 +4,10 @@
 #include "printk.h"
 #include "serial.h"
 #include "vfs/devfs.h"
+#include "vfs/openclose.h"
+#include "vfs/readwrite.h"
+#include "vfs/dup2.h"
+
 #include "mem.h"
 
 void syscall_entry();
@@ -18,6 +22,11 @@ uint64_t console_raw_print(char* a)
 void *syscall_table[SYSCALL_COUNT] =
 {
 	&console_raw_print,
+	&open,
+	&close,
+	&read,
+	&write,
+	&dup2,
 };
 
 void init_sysenter()

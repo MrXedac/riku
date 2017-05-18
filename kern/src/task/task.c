@@ -6,10 +6,13 @@
 #include "multiboot.h"
 #include "printk.h"
 #include "elf64.h"
+#include "mem.h"
 #include <stdint.h>
 
 void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* kernrsp, void (*entrypoint)(), uintptr_t* cr3)
 {
+	memset(task, 0x0, sizeof(struct riku_task));
+	
 	/* Store task name */
 	uint32_t i = 0;
 	while(i < 32 && name[i] != '\0') {
