@@ -8,7 +8,6 @@
  /* Writes data in buffer, count bytes to file descriptor fd */
 uint32_t write(int fd, char* buffer, uint32_t size)
 {
-  printk("Write syscall called, file descriptor %d, buffer at %x, size %d\n", fd, buffer, size);
   /* Check file descriptor bounds */
   if(fd >= MAX_FILES)
     return -ENOFILE;

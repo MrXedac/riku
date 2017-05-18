@@ -9,10 +9,20 @@
 #include "mem.h"
 #include <stdint.h>
 
+uint64_t next_pid = 0;
+
+uint64_t getpid()
+{
+	return current_task->pid;
+}
+
 void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* kernrsp, void (*entrypoint)(), uintptr_t* cr3)
 {
 	memset(task, 0x0, sizeof(struct riku_task));
-	
+
+	task->pid = next_pid;
+	next_pid++;
+
 	/* Store task name */
 	uint32_t i = 0;
 	while(i < 32 && name[i] != '\0') {

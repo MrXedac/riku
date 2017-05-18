@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 /* Opens a file/device descriptor at file, with mode mode */
-uint32_t open(const char* file, uint8_t mode)
+uint32_t open(const char* file, uint64_t mode)
 {
   /* Find devfs node name */
   /* FIXME : this is dirty as hell */

@@ -6,6 +6,7 @@
 #include "vfs/descriptor.h"
 
 uint8_t tasking_ready;
+uint64_t next_pid;
 
 #define INIT_STACK	0x1080000
 #define	NODE_READ		0x1
@@ -14,10 +15,8 @@ uint8_t tasking_ready;
 
 enum task_state { READY, ACTIVABLE, SLEEPING, TERMINATED };
 
-/* File descriptor structure */
-
-
 struct riku_task {
+	uint64_t pid;
 	char name[32]; /* Task name */
 	uintptr_t task_rsp, task_rbp; /* Interrupted RSP */
 	void (*entrypoint)(); /* Entrypoint function pointer */
@@ -39,6 +38,6 @@ void switch_to_task(struct riku_task* task);
 void start_task();
 uint64_t spawn_init(uintptr_t mbi, uintptr_t vme);
 void update_task_vme(struct riku_task* task, uintptr_t vme);
-
+uint64_t getpid();
 
 #endif

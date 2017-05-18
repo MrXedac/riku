@@ -7,7 +7,8 @@
 #include "vfs/openclose.h"
 #include "vfs/readwrite.h"
 #include "vfs/dup2.h"
-
+#include "vfs/putgetc.h"
+#include "task.h"
 #include "mem.h"
 
 void syscall_entry();
@@ -26,7 +27,9 @@ void *syscall_table[SYSCALL_COUNT] =
 	&close,
 	&read,
 	&write,
+	&putc,
 	&dup2,
+	&getpid,
 };
 
 void init_sysenter()
