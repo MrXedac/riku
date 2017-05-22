@@ -7,6 +7,6 @@ void main()
 	printf("Based on Riku kernel\n");
 	printf("---\n");
 	printf("Successfully entered userland.\n");
-
+    printf("Testing stuff: %x\n", 0xDEADBEEFCAFEBABE);
 	for(;;);
 }

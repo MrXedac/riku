@@ -167,7 +167,7 @@ void elf64_load_module(Elf64_Ehdr* hdr)
 
 void elf64_load_segment(Elf64_Ehdr* hdr, Elf64_Phdr* pTable, uintptr_t vme)
 {
-	uintptr_t size = pTable->p_filesz, offset = pTable->p_offset, vad = pTable->p_vaddr;
+	uintptr_t size = pTable->p_memsz, offset = pTable->p_offset, vad = pTable->p_vaddr;
 	printk("Loading segment from offset %x to vaddr %x, size %x\n", offset, vad, size);
 
 	/* Prepare VME for load */

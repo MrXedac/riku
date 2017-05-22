@@ -8,7 +8,7 @@
 
 uint32_t putc(int fd, char c)
 {
-  /* Check file descriptor bounds */
+    /* Check file descriptor bounds */
   if(fd >= MAX_FILES)
     return -ENOFILE;
 
