@@ -36,6 +36,12 @@ void disable_interrupts()
 
 void irq_handler(registers_t* regs)
 {
+	if(IRQHANDLERS[regs->int_no - 0x20]){
+		irq_t handler = IRQHANDLERS[regs->int_no - 0x20]; /* IRQs begin at 32 */
+		handler(regs);
+	} else {
+		printk("WARNING: unhandled interrupt %x\n", regs->int_no);
+	}
 	/* Clear master (and slave) PIC */
 	if (regs->int_no >= 40)
 	{
@@ -43,13 +49,6 @@ void irq_handler(registers_t* regs)
 	}
 	/*printk("IRQ, RIP=%x, CS=%x, DS=%x, SS=%x\n", regs->rip, regs->cs, regs->ds, regs->ss);*/
 	outb(0x20, 0x20);
-
-	if(IRQHANDLERS[regs->int_no - 0x20]){
-		irq_t handler = IRQHANDLERS[regs->int_no - 0x20]; /* IRQs begin at 32 */
-		handler(regs);
-	} else {
-		printk("WARNING: unhandled interrupt %x\n", regs->int_no);
-	}
 }
 
 void isr_handler(registers_t* regs)

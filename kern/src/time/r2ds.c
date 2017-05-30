@@ -29,7 +29,7 @@ void handle_timer(registers_t* regs)
 
 void do_schedule()
 {
-	/* printk("sched: cur=%x, next=%x, list=%x\n", current_task, current_task->next, task_list); */
+	//printk("sched: cur=%x, next=%x, list=%x\n", current_task, current_task->next, task_list); 
 	if(current_task) {
 		if(current_task->next) {
 			switch_to_task(current_task->next);

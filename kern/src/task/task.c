@@ -50,6 +50,8 @@ uint64_t fork()
 	forked_tsk->ppid = current_task->pid;
 
 	/* Correctly fix scheduling ring */
+	/* Just so I remember, there is a HUGE problem with scheduling, as the process has no "interrupt return" structure available, and therefore crashes everything.
+	 * I don't know yet how I'll fix this. Next thing to do */
 	//current_task->next = forked_tsk;
 
 	/* Use the newly-created VME for the task */
@@ -129,9 +131,6 @@ void start_task()
 /* Switches to another stack, given a stack and an interrupt context */
 void switch_to_task(struct riku_task* task)
 {
-	/* Disable interrupts */
-	__asm volatile("CLI");
-
 	/* Save current RSP into current task */
 	if(current_task)
 	{
@@ -155,8 +154,6 @@ void switch_to_task(struct riku_task* task)
 	{
 		start_task(current_task);
 	}
-
-	__asm volatile("STI");
 
 	/* Done ! The task switch should occur on interrupt return. */
 	return;
