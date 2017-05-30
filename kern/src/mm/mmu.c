@@ -5,6 +5,8 @@
 #include "mem.h"
 #include <stdint.h>
 
+uintptr_t pmt; /* Page Master Table address */
+
 uint32_t addrIndex(uint32_t level, uintptr_t addr)
 {
 	/* First check the index value */
@@ -144,11 +146,103 @@ void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va, uint8_t user)
 	/* Map page into PT */
 	uintptr_t pt_idx = addrIndex(1, va);
 	tableWriteWithFlags(pt, pt_idx, (uintptr_t)phys | flags);
+	pmt_inc(phys);
 }
 
 void vme_unmap(uintptr_t vme, uintptr_t va)
 {
 
+}
+
+/* Increase the page counter for a physical address into the Page Master Table */
+void pmt_inc(uintptr_t phys)
+{
+	uintptr_t ppmt = PHYS(pmt);
+
+	/* Get PDPT */
+	uintptr_t pml4t_idx = addrIndex(4, phys);
+	uintptr_t pdpt = tableRead(ppmt, pml4t_idx);
+	if(!pdpt)
+	{
+		pdpt = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pdpt), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(ppmt, pml4t_idx, (uintptr_t)pdpt);
+	}
+
+	/* Same thing with PD */
+	uintptr_t pdpt_idx = addrIndex(3, phys);
+	uintptr_t pd = tableRead(pdpt, pdpt_idx);
+	if(!pd)
+	{
+		pd = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pd), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(pdpt, pdpt_idx, (uintptr_t)pd);
+	}
+
+	/* Same thing with PT */
+	uintptr_t pd_idx = addrIndex(2, phys);
+	uintptr_t pt = tableRead(pd, pd_idx);
+	if(!pt)
+	{
+		pt = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pt), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(pd, pd_idx, (uintptr_t)pt);
+	}
+
+	/* Map page into PT */
+	uintptr_t pt_idx = addrIndex(1, phys);
+	uintptr_t count = tableRead(pt, pt_idx);
+	count++;
+	tableWriteWithFlags(pt, pt_idx, (uintptr_t)count);
+	printk("PMT: increased counter of page %x to %d\n", phys, count);
+}
+
+/* Decrease the page counter for a physical address into the Page Master Table */
+void pmt_dec(uintptr_t phys)
+{
+	uintptr_t ppmt = PHYS(pmt);
+
+	/* Get PDPT */
+	uintptr_t pml4t_idx = addrIndex(4, phys);
+	uintptr_t pdpt = tableRead(ppmt, pml4t_idx);
+	if(!pdpt)
+	{
+		pdpt = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pdpt), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(ppmt, pml4t_idx, (uintptr_t)pdpt);
+	}
+
+	/* Same thing with PD */
+	uintptr_t pdpt_idx = addrIndex(3, phys);
+	uintptr_t pd = tableRead(pdpt, pdpt_idx);
+	if(!pd)
+	{
+		pd = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pd), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(pdpt, pdpt_idx, (uintptr_t)pd);
+	}
+
+	/* Same thing with PT */
+	uintptr_t pd_idx = addrIndex(2, phys);
+	uintptr_t pt = tableRead(pd, pd_idx);
+	if(!pt)
+	{
+		pt = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pt), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(pd, pd_idx, (uintptr_t)pt);
+	}
+
+	/* Map page into PT */
+	uintptr_t pt_idx = addrIndex(1, phys);
+	uintptr_t count = tableRead(pt, pt_idx);
+	count--;
+	tableWriteWithFlags(pt, pt_idx, (uintptr_t)count);
+	printk("PMT: increased counter of page %x to %d\n", phys, count);
+	if(count == 0)
+	{
+		free_page((uintptr_t*)phys);
+		printk("PMT: counter fell to zero, freeing page\n");
+	}
 }
 
 void mmu_init()
@@ -171,5 +265,7 @@ void mmu_init()
 	printk("mmu: kernel cr3 %x, master table %x\n", kernel_cr3, masterTable);
 	/* Kernel PML4T should be ready now. Switch to it. */
 	switch_cr3((uintptr_t)kernel_cr3);
-
+	pmt = (uintptr_t)alloc_page();
+	memset((void*)pmt, 0x0, PAGE_SIZE);
+	printk("mmu: page master table at %x\n", pmt);
 }
