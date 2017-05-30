@@ -55,7 +55,7 @@ void irq_handler(registers_t* regs)
 void isr_handler(registers_t* regs)
 {
 	if(regs->int_no==14) {
-		puts("page fault : ");
+/*		puts("page fault : ");
 		uint64_t err_code = regs->err_code;
 		uint64_t present, rw, supervisor;
 		present = err_code & 0x00000001;
@@ -83,7 +83,7 @@ void isr_handler(registers_t* regs)
 						:"=r" (addr)
 						);
 		puthex(addr);
-		puts("\n");
+		puts("\n");*/
 		do_pagefault(regs);
 	} else {
 		if(regs->int_no == 254)

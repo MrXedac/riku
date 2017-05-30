@@ -26,5 +26,7 @@ void pmt_inc(uintptr_t phys); /* Increase the page counter for a physical addres
 void pmt_dec(uintptr_t phys); /* Decrease the page counter for a physical address into the Page Master Table */
 
 void do_pagefault(registers_t* regs);
+void set_vme_as_ro(uintptr_t vme);
+uintptr_t clone_vme(uintptr_t vme);
 
 #endif

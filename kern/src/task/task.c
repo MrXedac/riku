@@ -6,7 +6,9 @@
 #include "multiboot.h"
 #include "printk.h"
 #include "elf64.h"
+#include "heap.h"
 #include "mem.h"
+#include "vm.h"
 #include <stdint.h>
 
 uint64_t next_pid = 0;
@@ -23,6 +25,44 @@ uint64_t getppid()
 
 uint64_t fork()
 {
+	printk("Requested fork from current task %x\n", current_task);
+	/* First thing to do is to duplicate the current task's VME and set it as read-only */
+	uintptr_t new_vme = clone_vme(current_task->vm_root);
+	set_vme_as_ro(new_vme);
+
+	printk("Created new VME for forked task at %x\n", new_vme);
+	/* Now that our new VME is ready, we can safely set the current one as read-only */
+	set_vme_as_ro(current_task->vm_root);
+
+	/* Reload VME, invalidating TLB */
+	__asm volatile("MOV %0, %%CR3" :: "r"(current_task->vm_root));
+
+	printk("Current VME is now read-only\n");
+
+	/* Okay, now both VMEs are read-only, and we should get some copy-on-write stuff now. Create a new task structure for our forked task */
+	struct riku_task* forked_tsk = (struct riku_task*)kalloc(sizeof(struct riku_task));
+	memcpy(forked_tsk, current_task, sizeof(struct riku_task));
+
+	/* That being said, we have a few changes to make in both the current and new task in order to get things working */
+	/* Update PID and PPID */
+	forked_tsk->pid = next_pid;
+	next_pid++;
+	forked_tsk->ppid = current_task->pid;
+
+	/* Correctly fix scheduling ring */
+	//current_task->next = forked_tsk;
+
+	/* Use the newly-created VME for the task */
+	update_task_vme(forked_tsk, new_vme);
+
+	/* Increase file descriptor active clients */
+	for(uint64_t i = 0; i < MAX_FILES; i++)
+	{
+		if(forked_tsk->files[i])
+			forked_tsk->files[i]->clients++;
+	}
+
+	/* We "should" be good. Forking should be done now. */
 	return 0;
 }
 
