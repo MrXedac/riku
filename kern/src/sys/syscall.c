@@ -30,6 +30,8 @@ void *syscall_table[SYSCALL_COUNT] =
 	&putc,
 	&dup2,
 	&getpid,
+	&getppid,
+	&fork,
 };
 
 void init_sysenter()

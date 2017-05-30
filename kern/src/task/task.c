@@ -16,6 +16,16 @@ uint64_t getpid()
 	return current_task->pid;
 }
 
+uint64_t getppid()
+{
+	return current_task->ppid;
+}
+
+uint64_t fork()
+{
+	return 0;
+}
+
 void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* kernrsp, void (*entrypoint)(), uintptr_t* cr3)
 {
 	memset(task, 0x0, sizeof(struct riku_task));

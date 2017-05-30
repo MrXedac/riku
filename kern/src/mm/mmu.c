@@ -103,6 +103,55 @@ uintptr_t build_new_vme()
 	return pml4t;
 }
 
+void vme_right(uintptr_t vmet, uintptr_t va, uint8_t user, uint8_t rw)
+{
+	uintptr_t flags = 0x0;
+	if(rw && user)
+		flags = FLAGS_PML4T | FLAG_USER;
+	else if(rw)
+		flags = FLAGS_PML4T;
+	else
+		flags = FLAG_PRESENT;
+
+	uintptr_t vme = PHYS(vmet);
+
+	/* Get PDPT */
+	uintptr_t pml4t_idx = addrIndex(4, va);
+	uintptr_t pdpt = tableRead(vme, pml4t_idx);
+	if(!pdpt)
+	{
+		pdpt = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pdpt), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(vme, pml4t_idx, (uintptr_t)pdpt | flags);
+	}
+
+	/* Same thing with PD */
+	uintptr_t pdpt_idx = addrIndex(3, va);
+	uintptr_t pd = tableRead(pdpt, pdpt_idx);
+	if(!pd)
+	{
+		pd = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pd), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(pdpt, pdpt_idx, (uintptr_t)pd | flags);
+	}
+
+	/* Same thing with PT */
+	uintptr_t pd_idx = addrIndex(2, va);
+	uintptr_t pt = tableRead(pd, pd_idx);
+	if(!pt)
+	{
+		pt = (uintptr_t)alloc_page();
+		memset((void*)PHYS(pt), 0x0, PAGE_SIZE);
+		tableWriteWithFlags(pd, pd_idx, (uintptr_t)pt | flags);
+	}
+
+	/* Map page into PT */
+	uintptr_t pt_idx = addrIndex(1, va);
+	uintptr_t vad = tableRead(pt, pt_idx);
+	tableWriteWithFlags(pt, pt_idx, (uintptr_t)vad | flags);
+	printk("vme: updated flags of page %x to %x\n", vad, flags);
+}
+
 void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va, uint8_t user)
 {
 	uintptr_t flags;
@@ -149,9 +198,43 @@ void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va, uint8_t user)
 	pmt_inc(phys);
 }
 
-void vme_unmap(uintptr_t vme, uintptr_t va)
+void vme_unmap(uintptr_t vmet, uintptr_t va)
 {
+	/* First get physical address of faulty page */
 
+	uintptr_t vme = PHYS(vmet);
+
+	/* Get PDPT */
+	uintptr_t pml4t_idx = addrIndex(4, va);
+	uintptr_t pdpt = tableRead(vme, pml4t_idx);
+	if(!pdpt)
+	{
+		return;
+	}
+
+	/* Same thing with PD */
+	uintptr_t pdpt_idx = addrIndex(3, va);
+	uintptr_t pd = tableRead(pdpt, pdpt_idx);
+	if(!pd)
+	{
+		return;
+	}
+
+	/* Same thing with PT */
+	uintptr_t pd_idx = addrIndex(2, va);
+	uintptr_t pt = tableRead(pd, pd_idx);
+	if(!pt)
+	{
+		return;
+	}
+
+	/* Map page into PT */
+	uintptr_t pt_idx = addrIndex(1, va);
+	uintptr_t phys = tableRead(pt, pt_idx);
+	tableWriteWithFlags(pt, pt_idx, 0x0);
+
+	/* Decrease the page reference count */
+	pmt_dec(phys);
 }
 
 /* Increase the page counter for a physical address into the Page Master Table */
@@ -237,7 +320,7 @@ void pmt_dec(uintptr_t phys)
 	uintptr_t count = tableRead(pt, pt_idx);
 	count--;
 	tableWriteWithFlags(pt, pt_idx, (uintptr_t)count);
-	printk("PMT: increased counter of page %x to %d\n", phys, count);
+	printk("PMT: decreased counter of page %x to %d\n", phys, count);
 	if(count == 0)
 	{
 		free_page((uintptr_t*)phys);
@@ -268,4 +351,72 @@ void mmu_init()
 	pmt = (uintptr_t)alloc_page();
 	memset((void*)pmt, 0x0, PAGE_SIZE);
 	printk("mmu: page master table at %x\n", pmt);
+}
+
+void copy_and_remap_page(uintptr_t fault_addr)
+{
+	/* First get physical address of faulty page */
+
+	uintptr_t vme = PHYS((uintptr_t)current_cr3);
+
+	/* Get PDPT */
+	uintptr_t pml4t_idx = addrIndex(4, fault_addr);
+	uintptr_t pdpt = tableRead(vme, pml4t_idx);
+	if(!pdpt)
+	{
+		printk("BUG: page seemed to be mapped, but CR3 is inconsistent\n");
+		return;
+	}
+
+	/* Same thing with PD */
+	uintptr_t pdpt_idx = addrIndex(3, fault_addr);
+	uintptr_t pd = tableRead(pdpt, pdpt_idx);
+	if(!pd)
+	{
+		printk("BUG: page seemed to be mapped, but CR3 is inconsistent\n");
+		return;
+	}
+
+	/* Same thing with PT */
+	uintptr_t pd_idx = addrIndex(2, fault_addr);
+	uintptr_t pt = tableRead(pd, pd_idx);
+	if(!pt)
+	{
+		printk("BUG: page seemed to be mapped, but CR3 is inconsistent\n");
+		return;
+	}
+
+	/* Map page into PT */
+	uintptr_t pt_idx = addrIndex(1, fault_addr);
+	uintptr_t phys = tableRead(pt, pt_idx);
+
+	/* Now that we have both physical and virtual address, copy the page into a fresh new one */
+	uintptr_t target = (uintptr_t)alloc_page();
+	memcpy((void*)target, (void*)phys, PAGE_SIZE);
+
+	/* Page has been copied. Remove the mapping in the current CR3, and remap stuff in a read-write fashion */
+	vme_unmap((uintptr_t)current_cr3, fault_addr);
+	vme_map((uintptr_t)current_cr3, phys, fault_addr, 0x1);
+
+	printk("mmu: remapped page %x (phys %x) to new phys %x\n", fault_addr, phys, target);
+	/* It's all good ! */
+	return;
+}
+
+void do_pagefault(registers_t* regs)
+{
+	/* Get faulty address */
+	uintptr_t cr2;
+	__asm volatile("MOV %%CR2, %0" : "=r"(cr2));
+
+	/* Choose whether the fault is legitimate or not */
+	if((regs->err_code & PF_ERR_PRESENT) && (regs->err_code & PF_ERR_READONLY))
+	{
+		/* Perform copy-and-write operation */
+		copy_and_remap_page(cr2);
+		return;
+	} else {
+		printk("Unhandled page fault at %x flags %x\n", cr2, regs->err_code);
+		for(;;);
+	}
 }

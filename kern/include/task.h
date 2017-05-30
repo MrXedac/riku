@@ -17,6 +17,7 @@ enum task_state { READY, ACTIVABLE, SLEEPING, TERMINATED };
 
 struct riku_task {
 	uint64_t pid;
+	uint64_t ppid;
 	char name[32]; /* Task name */
 	uintptr_t task_rsp, task_rbp; /* Interrupted RSP */
 	void (*entrypoint)(); /* Entrypoint function pointer */
@@ -39,5 +40,7 @@ void start_task();
 uint64_t spawn_init(uintptr_t mbi, uintptr_t vme);
 void update_task_vme(struct riku_task* task, uintptr_t vme);
 uint64_t getpid();
+uint64_t getppid();
+uint64_t fork(); /* Forks a task into another one */
 
 #endif

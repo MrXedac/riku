@@ -2,6 +2,7 @@
 #include "ioport.h"
 #include "vga.h"
 #include "mem.h"
+#include "mmu.h"
 #include "task.h"
 #include "serial.h"
 #include <stdint.h>
@@ -83,22 +84,14 @@ void isr_handler(registers_t* regs)
 						);
 		puthex(addr);
 		puts("\n");
+		do_pagefault(regs);
+	} else {
+		if(regs->int_no == 254)
+			panic("riku emergency halt/debug panic", regs);
+		else if(regs->cs == 0x8)
+			panic("unhandled fault in kernel land", regs);
+		else panic("debug", regs);
 	}
-
-	if(regs->int_no == 0x1)
-	{
-		printk("BUG: fixing TF flag\n");
-		/* A weird thing with SYSRET i haven't fully understood yet sets TF in FLAGS registers to 1. Clear this */
-		extern void fix_tf();
-		fix_tf();
-		return;
-	}
-
-	if(regs->int_no == 254)
-		panic("riku emergency halt/debug panic", regs);
-	else if(regs->cs == 0x8)
-		panic("unhandled fault in kernel land", regs);
-	else panic("debug", regs);
 }
 
 
