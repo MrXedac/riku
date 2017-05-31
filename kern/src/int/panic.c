@@ -1,5 +1,6 @@
 #include "idt64.h"
 #include "vga.h"
+#include "task.h"
 #include <stdint.h>
 
 void panic(char* message, registers_t* regs)
@@ -54,6 +55,9 @@ void panic(char* message, registers_t* regs)
 			0xB = 1011
 		*/
 
+	puts("current_task: ");
+	putdec(current_task->pid);
+	puts("\n");
 	puts("Halting system.\n");
 	__asm volatile("CLI;");
 	for(;;);

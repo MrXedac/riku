@@ -23,8 +23,14 @@ uint64_t getppid()
 	return current_task->ppid;
 }
 
+extern void ret_from_fork();
+uintptr_t fork_stack;
+
 uint64_t fork()
 {
+	/* Keep R14 / Fork stack safe */
+	__asm volatile("MOV %%R14, %0":"=r"(fork_stack));
+	
 	printk("Requested fork from current task %x\n", current_task);
 	/* First thing to do is to duplicate the current task's VME and set it as read-only */
 	uintptr_t new_vme = clone_vme(current_task->vm_root);
@@ -52,7 +58,11 @@ uint64_t fork()
 	/* Correctly fix scheduling ring */
 	/* Just so I remember, there is a HUGE problem with scheduling, as the process has no "interrupt return" structure available, and therefore crashes everything.
 	 * I don't know yet how I'll fix this. Next thing to do */
-	//current_task->next = forked_tsk;
+	current_task->next = forked_tsk;
+	forked_tsk->entrypoint = &ret_from_fork;
+	forked_tsk->state = READY;
+	forked_tsk->task_rsp = fork_stack;
+	forked_tsk->task_rbp = fork_stack;
 
 	/* Use the newly-created VME for the task */
 	update_task_vme(forked_tsk, new_vme);
@@ -65,7 +75,7 @@ uint64_t fork()
 	}
 
 	/* We "should" be good. Forking should be done now. */
-	return 0;
+	return forked_tsk->pid;
 }
 
 void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* kernrsp, void (*entrypoint)(), uintptr_t* cr3)
@@ -118,19 +128,16 @@ void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* 
 
 void start_task()
 {
-	/* Kernel task */
-	if(current_task->vm_root == (uintptr_t)kernel_cr3)
-	{
-		/* Start task ! */
-		puts("Starting task.\n");
-		current_task->state = ACTIVABLE;
-		current_task->entrypoint();
-	}
+	/* Start task ! */
+	printk("Starting task.\n");
+
 }
 
 /* Switches to another stack, given a stack and an interrupt context */
 void switch_to_task(struct riku_task* task)
 {
+	__asm volatile("cli");
+	
 	/* Save current RSP into current task */
 	if(current_task)
 	{
@@ -152,7 +159,10 @@ void switch_to_task(struct riku_task* task)
 
 	if(current_task->state == READY)
 	{
-		start_task(current_task);
+		current_task->state = ACTIVABLE;
+		__asm volatile("MOV %0, %%RAX; \
+					   JMP *%%RAX"
+					   :: "r"(current_task->entrypoint));
 	}
 
 	/* Done ! The task switch should occur on interrupt return. */

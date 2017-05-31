@@ -325,7 +325,7 @@ void pmt_dec(uintptr_t phys)
 	if(count == 0)
 	{
 		printk("PMT: counter fell to zero, freeing page\n");
-		free_page((uintptr_t*)phys);
+		free_page((uintptr_t*)(PHYS(phys)));
 	}
 }
 
@@ -356,7 +356,7 @@ void mmu_init()
 
 void copy_and_remap_page(uintptr_t fault_addr)
 {
-	printk("copy-on-write request\n");
+	printk("copy-on-write request from task %d\n", current_task->pid);
 	/* First get physical address of faulty page */
 
 	uintptr_t vme = PHYS((uintptr_t)current_task->vm_root);
@@ -393,7 +393,7 @@ void copy_and_remap_page(uintptr_t fault_addr)
 	uintptr_t phys = tableRead(pt, pt_idx);
 
 	/* Now that we have both physical and virtual address, copy the page into a fresh new one */
-	uintptr_t target = (uintptr_t)alloc_page();
+	uintptr_t target = ((uintptr_t)alloc_page()) & 0x00007FFFFFFFFFFF; /* Ignore higher-half stuff for mapping purposes */
 	memcpy((void*)PHYS(target), (void*)PHYS(phys), PAGE_SIZE);
 
 	/* Page has been copied. Remove the mapping in the current CR3, and remap stuff in a read-write fashion */
@@ -420,7 +420,7 @@ void do_pagefault(registers_t* regs)
 		copy_and_remap_page(cr2);
 		return;
 	} else {
-		printk("Unhandled page fault at %x flags %x\n", cr2, regs->err_code);
+		printk("Unhandled page fault in task %d at %x flags %x rip %x\n", current_task->pid, cr2, regs->err_code, regs->rip);
 		for(;;);
 	}
 }

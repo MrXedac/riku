@@ -22,7 +22,21 @@ fix_tf:
   and qword [rsp], 0xFFFFFFFFFFFFFCFF
   popfq
   ret
+ 
+[extern fork_stack]
+[global ret_from_fork]
+ret_from_fork:
+ pop qword r11
+ or r11, 0x200 ; Re-enable interrupts
+ pop qword rcx
+ mov bx, 0x23
+ mov ds, bx
+ mov rax, 0
+ o64 sysret
+ jmp $
+ 
 
+ 
 [global syscall_ep]
 [extern syscall_table] ; This struct, defined in syscall.c, contains the syscall address table
 ; RAX = System call number
@@ -74,9 +88,11 @@ do_syscall:
   pop rsi
   pop rdi
 
+  mov r14, rsp ; Keep RSP in R14, in order to have a safe fork() return
+ 
   ; Call the appropriate kernel function
   call [rbx]
-
+ 
   ; At this point we returned from the C handler and RAX contains our syscall's result
 ret_from_call:
   pop qword r11

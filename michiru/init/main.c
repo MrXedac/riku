@@ -13,11 +13,12 @@ void main()
     	int coucou = 4;
 	printf("Var=%d\n", coucou);
 	int truc = fork();
-	printf("Forked! PID=%d\n", truc);
-	int* ptr = &coucou;
-	*ptr = 5;
-	int* ptr2 = (int*)0x100000;
-	*ptr2 = 0x32;
-	printf("Var=%d\n", coucou);
-	for(;;);
+	if(truc)
+    {
+        printf("I'm the parent process, my child has PID %d.\n", truc);
+    } else {
+        printf("I'm the child process!\n");
+    }
+	
+    for(;;);
 }
