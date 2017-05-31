@@ -96,6 +96,7 @@ do_syscall:
   ; At this point we returned from the C handler and RAX contains our syscall's result
 ret_from_call:
   pop qword r11
+  or r11, 0x200 ; Re-enable interrupts
   pop qword rcx
   mov bx, 0x23
   mov ds, bx

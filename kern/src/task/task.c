@@ -9,6 +9,7 @@
 #include "heap.h"
 #include "mem.h"
 #include "vm.h"
+#include "ioport.h"
 #include <stdint.h>
 
 uint64_t next_pid = 0;
@@ -58,7 +59,6 @@ uint64_t fork()
 	/* Correctly fix scheduling ring */
 	/* Just so I remember, there is a HUGE problem with scheduling, as the process has no "interrupt return" structure available, and therefore crashes everything.
 	 * I don't know yet how I'll fix this. Next thing to do */
-	current_task->next = forked_tsk;
 	forked_tsk->entrypoint = &ret_from_fork;
 	forked_tsk->state = READY;
 	forked_tsk->task_rsp = fork_stack;
@@ -74,6 +74,8 @@ uint64_t fork()
 			forked_tsk->files[i]->clients++;
 	}
 
+	current_task->next = forked_tsk;
+	
 	/* We "should" be good. Forking should be done now. */
 	return forked_tsk->pid;
 }
@@ -136,8 +138,6 @@ void start_task()
 /* Switches to another stack, given a stack and an interrupt context */
 void switch_to_task(struct riku_task* task)
 {
-	__asm volatile("cli");
-	
 	/* Save current RSP into current task */
 	if(current_task)
 	{
@@ -160,6 +160,7 @@ void switch_to_task(struct riku_task* task)
 	if(current_task->state == READY)
 	{
 		current_task->state = ACTIVABLE;
+		outb(0x20, 0x20);
 		__asm volatile("MOV %0, %%RAX; \
 					   JMP *%%RAX"
 					   :: "r"(current_task->entrypoint));
