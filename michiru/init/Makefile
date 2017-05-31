@@ -1,6 +1,5 @@
-CC=gcc
-LD=ld
-AS=nasm
+include ../../toolchain.mk
+
 LIBC=../../libc/
 
 CSOURCES=$(wildcard *.c)

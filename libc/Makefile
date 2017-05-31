@@ -1,6 +1,4 @@
-CC=gcc
-AR=ar
-AS=gcc
+include ../toolchain.mk
 
 # Directories
 SRCDIR=src
@@ -13,7 +11,7 @@ ASOURCES=$(wildcard $(SRCDIR)/*.S)
 AOBJ=$(ASOURCES:.S=.o)
 
 # C compiler flags
-CFLAGS=-c -ffreestanding -nostdlib -Wall -Werror -Wextra -fno-builtin -Wno-unused-parameter -Wno-unused-variable -O2 -fno-caller-saves
+CFLAGS=-c -ffreestanding -nostdlib -Wall -Werror -Wextra -fno-builtin -Wno-unused-parameter -Wno-unused-variable -O2 -fno-caller-saves -std=gnu99
 CFLAGS+=-I$(INCDIR)
 
 ASFLAGS=-c -I. -I./include -fomit-frame-pointer --freestanding -nostdlib -fno-stack-protector
