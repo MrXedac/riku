@@ -11,6 +11,11 @@
 uint8_t x86vga_cursor_x = 0;
 uint8_t x86vga_cursor_y = 0;
 
+uint8_t backColour = 0;
+uint8_t foreColour = 15;
+
+uint8_t ansiColors[8] = {0x0, 0x4, 0x2, 0xE, 0x1, 0x5, 0x3, 0xF};
+
 void x86vga_move_cursor()
 {
 	uint16_t cursorLocation = x86vga_cursor_y * 80 + x86vga_cursor_x;
@@ -42,10 +47,83 @@ void x86vga_scroll(struct riku_devfs_node* self)
 	}
 }
 
+uint8_t ansiMode = 0;
+char ansiBuffer[16];
+int ansiIndex = 0;
+
+void applyAnsi(char* buf)
+{
+	// printk("Got control sequence %s\n", buf);
+	/* Foreground color control */
+	if(buf[0] == '3')
+	{
+		/* FIXME: correct ANSI codes */
+		foreColour = ansiColors[buf[1] - '0'];
+	} else if(buf[0] == '4') /* Background color control */
+	{
+		backColour = ansiColors[buf[1] - '0'];
+	} else if(buf[0] == '0') { /* Not implemented yet */
+		backColour = 0;
+		foreColour = 15;
+	}
+}
+
+void parseAnsi()
+{
+	if(ansiBuffer[0] != '[')
+	{
+		/* Wrong format! */
+		printk("Wrong ANSI control sequence format: %c\n", ansiBuffer[0]);
+		ansiMode = 0;
+		ansiIndex = 0;
+		return;
+	} else {
+		/* The remaining stuff is the ANSI stuff */
+		int curIndex = 1;
+		int cseqBegin = 1;
+		do {
+			/* Separator, we must parse current ANSI code */
+			if(ansiBuffer[curIndex] == ';')
+			{
+				ansiBuffer[curIndex] = '\0';
+				applyAnsi(&(ansiBuffer[cseqBegin]));
+				cseqBegin = curIndex + 1;
+			}
+			curIndex++;
+		} while(curIndex < ansiIndex);
+
+		/* End of ANSI sequence; parse current code as well */
+		applyAnsi(&(ansiBuffer[cseqBegin]));
+	}
+}
+
 int x86vga_putch(struct riku_devfs_node* self, char c)
 {
-	uint8_t backColour = 0;
-	uint8_t foreColour = 15;
+	/* Parse ANSI mode */
+	if(ansiMode)
+	{
+		/* ANSI end */
+		if(c == 'm')
+		{
+			ansiMode = 0;
+			parseAnsi();
+			return 0;
+		} else {
+			/* Add ANSI control character to buffer */
+			ansiBuffer[ansiIndex] = c;
+			ansiIndex++;
+			return 0;
+		}
+	}
+
+	/* Enter ANSI mode is ANSI control sequence is written */
+	if(c == 0x1B)
+	{
+		memset(ansiBuffer, 0x0, 16);
+		ansiIndex = 0;
+		ansiMode = 1;
+		return 0;
+	}
 
 	uint8_t  attributeByte = (backColour << 4) | (foreColour & 0x0F);
 
