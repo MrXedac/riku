@@ -14,6 +14,7 @@ CSOURCES+=$(wildcard $(SRC_DIR)/vfs/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/bin/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/time/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/sys/*.c)
+CSOURCES+=$(wildcard $(SRC_DIR)/fs/*.c)
 
 # Drivers
 CSOURCES+=$(wildcard $(SRC_DIR)/driver/serial/*.c)
