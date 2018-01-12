@@ -28,6 +28,9 @@ typedef int (*writechar_t)(struct riku_devfs_node* self, char c);
 typedef int (*read_t)(struct riku_devfs_node* self, const char* buffer, uint32_t count);
 typedef int (*readchar_t)(struct riku_devfs_node* self, char* buffer);
 
+/* Seek function, to put the reader at the given address */
+typedef int (*seek_t)(struct riku_devfs_node* self, uint64_t position);
+
 /* Describes a device resource range */
 struct riku_devfs_resource {
 	uintptr_t begin; /* Resource begin */
@@ -37,12 +40,14 @@ struct riku_devfs_resource {
 
 struct riku_devfs_node {
 	char name[16]; /* Device node name */
+	uint64_t position;
 	struct riku_devfs_resource resources[6]; /* PCI devices has a maximum of 6 BAR in PCI configuration space. We align on this. */
 	/* TODO : Device handlers here */
 	write_t write;
 	read_t read;
 	writechar_t putch;
 	readchar_t getch;
+	seek_t seek;
 	struct riku_devfs_node* next; /* Next node in device space */
 };
 

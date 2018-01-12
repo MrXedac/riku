@@ -37,9 +37,6 @@ void main(uintptr_t* mboot_info)
 	/* Initialize some stuff related to early-boot IO */
 	init_terminal();
 
-    extern void fixvga();
-    fixvga();
-
 	/* Show we are alive ! */
 	puts("Riku Loader - The Riku Operating System\n");
 	puts("MBI at ");
@@ -51,6 +48,10 @@ void main(uintptr_t* mboot_info)
 	puts("\n");
 	vm_init();
 	fill_ldrinfo(mboot_info);
+    	
+	extern void fixvga();
+	fixvga();
+
 	enter_long_mode((uintptr_t)mboot_info);
 	for(;;);
 }
