@@ -36,6 +36,10 @@ int null_read(struct riku_devfs_node* self, const char* buf, uint32_t count)
 void nulldev_init()
 {
   /* Allocate node */
+  struct riku_devfs_node* devfs_node = hardware_create_node("devices");
+  if(devfs_node)
+    devfsVirtPtr = devfs_node;
+    
   struct riku_devfs_node* null = hardware_create_node("null");
   if(null)
   {

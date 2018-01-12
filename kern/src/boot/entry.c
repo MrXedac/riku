@@ -21,6 +21,8 @@
 #include "vfs/readwrite.h"
 #include "vfs/dup2.h"
 #include "fs_vfat.h"
+#include "vfs/mount.h"
+#include "vfs/fs.h"
 
 /* Early-boot console init */
 void init_terminal()
@@ -73,6 +75,27 @@ void return_from_sysenter()
 	for(;;);
 }
 
+void init_vfs()
+{
+	printk("Initializing virtual filesystem. Mounting devfs properly.\n");
+	/* Declare devfs filesystem driver */
+	extern struct riku_filesystem fs_devfs;
+	extern struct riku_devfs_node* devfsVirtPtr;
+
+	mount_internal(devfsVirtPtr, &fs_devfs);
+
+	/* Try the devfs mountpoint */
+	struct riku_fileinfo devfs_dir, devfs_node;
+	/* TODO : implement generic readdir, opendir and stuff... right now we'll call the driver directly */
+	fs_devfs.opendir(&mounts[0], "/", &devfs_dir);
+
+	printk("Contents for mountpoint A:/ (devfs):\n")
+	while(!fs_devfs.readdir(&mounts[0], &devfs_dir, 0, &devfs_node))
+	{
+		printk("-> A:/%s\n", ((struct riku_devfs_node*)(devfs_node.extended))->name);
+	}
+}
+
 #define INIT_TASK(s, f) { printk("-> Init task \"%s\"\n", s); f(); }
 void late_init_tasks()
 {
@@ -87,6 +110,8 @@ void late_init_tasks()
 	DRIVER_INIT(x86vga);
 
 	INIT_TASK("init_sysenter", init_sysenter);
+
+	INIT_TASK("init_vfs", init_vfs);
 
 	/*printk("Running SYSCALL test.\n");*/
 	/* Set RCX to RSP, RDX to return RIP, RAX to system call id, and SYSENTER */

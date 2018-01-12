@@ -6,6 +6,9 @@
 
 #define MAX_MOUNTS  26
 
+#define DEVICE  self->device;
+#define FS      self->fs;
+
 enum Riku_Mount_State { FREE, MOUNTED, RESERVED };
 struct riku_filesystem;
 

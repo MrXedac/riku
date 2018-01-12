@@ -65,12 +65,12 @@ void probe_hardware()
 	puts("Probing PCI.\n");
 	probe_pci();
 
-	printk("Probed devices: ");
+	/*printk("Probed devices: ");
 	struct riku_devfs_node* devnode = nullDev;
 	while(devnode != 0x0)
 	{
 		printk("devfs:/%s\t", devnode->name);
 		devnode = devnode->next;
 	}
-	printk("\n");
+	printk("\n");*/
 }
