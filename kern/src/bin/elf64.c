@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 #include "elf64.h"
 #include "serial.h"
 #include "idt64.h"

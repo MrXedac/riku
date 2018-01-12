@@ -20,6 +20,7 @@
 #include "vfs/openclose.h"
 #include "vfs/readwrite.h"
 #include "vfs/dup2.h"
+#include "fs_vfat.h"
 
 /* Early-boot console init */
 void init_terminal()

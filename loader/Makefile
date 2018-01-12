@@ -12,7 +12,7 @@ COBJ=$(sort $(CSOURCES:.c=.o))
 AOBJ=$(sort $(ASOURCES:.s=.o))
 
 # Toolchain flags
-CFLAGS=-m32 -Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -g -Wno-unused-variable -fPIC 
+CFLAGS=-m32 -Wall -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -g -Wno-unused-variable -fPIC -fno-stack-protector 
 LDFLAGS=-melf_i386 -z max-page-size=0x1000
 ASFLAGS=-felf
 
