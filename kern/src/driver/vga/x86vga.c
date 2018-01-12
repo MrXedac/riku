@@ -16,6 +16,21 @@ uint8_t foreColour = 15;
 
 uint8_t ansiColors[8] = {0x0, 0x4, 0x2, 0xE, 0x1, 0x5, 0x3, 0xF};
 
+void x86vga_swap(struct riku_devfs_node* self, uint8_t x, uint8_t y)
+{
+    /* Current cursor location */
+    uint16_t* location = (uint16_t*)self->resources[0].begin + (y*80 + x);
+
+    uint8_t attr = (*location >> 8) & 0xFF, fore, back;
+    fore = (attr & 0xF0) >> 4;
+    back = (attr & 0x0F);
+    uint8_t newattr = (back << 4) | fore;
+    uint16_t swapAttr = ((uint16_t)newattr << 8) & 0xFF00;
+    swapAttr = swapAttr | (*location & 0x00FF); /* Keep character */
+    //printk("swap %d:%d : Location: %x -> %x\n", x, y, *location, swapAttr);
+    *location = swapAttr;
+}
+
 void x86vga_move_cursor()
 {
 	uint16_t cursorLocation = x86vga_cursor_y * 80 + x86vga_cursor_x;
@@ -99,6 +114,7 @@ void parseAnsi()
 
 int x86vga_putch(struct riku_devfs_node* self, char c)
 {
+    uint8_t curX = x86vga_cursor_x, curY = x86vga_cursor_y; /* Current X and Y before character put */
 	/* Parse ANSI mode */
 	if(ansiMode)
 	{
@@ -153,9 +169,14 @@ int x86vga_putch(struct riku_devfs_node* self, char c)
 
 	else if(c >= ' ')
 	{
+        /* This does not require character inversion as we erase the block cursor */
 		location = (uint16_t*)self->resources[0].begin + (x86vga_cursor_y*80 + x86vga_cursor_x);
 		*location = c | attribute;
-		x86vga_cursor_x++;
+        x86vga_cursor_x++;
+        x86vga_scroll(self);
+        x86vga_move_cursor();
+        x86vga_swap(self, x86vga_cursor_x, x86vga_cursor_y);
+        return 0;
 	}
 
 	if (x86vga_cursor_x >= 80)
@@ -164,8 +185,10 @@ int x86vga_putch(struct riku_devfs_node* self, char c)
 		x86vga_cursor_y ++;
 	}
 
-	x86vga_scroll(self);
-	x86vga_move_cursor();
+    x86vga_swap(self, curX, curY);
+	x86vga_scroll(self); /* Scroll if required */
+	x86vga_move_cursor(); /* Move logical cursor */
+    x86vga_swap(self, x86vga_cursor_x, x86vga_cursor_y); /* Build block cursor */
 	return 0;
 }
 
@@ -184,6 +207,8 @@ void x86vga_cls(struct riku_devfs_node* self)
 	x86vga_cursor_x = 0;
 	x86vga_cursor_y = 0;
 	x86vga_move_cursor();
+    printk("built initial vga cursor\n");
+    x86vga_swap(self, x86vga_cursor_x, x86vga_cursor_y);
 }
 
 int x86vga_puts(struct riku_devfs_node* self, const char *c, uint32_t count)

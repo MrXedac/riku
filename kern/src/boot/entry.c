@@ -150,7 +150,7 @@ void main()
 	printk("The Riku Operating System - MrXedac(c)/Mk.(c) 2017\n");
 	printk("Initializing early-boot console\n");
 	init_terminal();
-  // BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
+   // BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
 
 	/* Show we are alive ! */
 	puts("Welcome to the Riku Operating System\n");

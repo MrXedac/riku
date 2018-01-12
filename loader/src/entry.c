@@ -2,6 +2,7 @@
 #include "vga.h"
 #include "vm.h"
 #include "ldrinfo.h"
+#include "ioport.h"
 
 extern void enter_long_mode(uintptr_t mboot_ptr);
 
@@ -9,6 +10,10 @@ extern void enter_long_mode(uintptr_t mboot_ptr);
 void init_terminal()
 {
 	cls();
+
+    /* Disables cursor */
+   	outb(0x3D4, 0x0A);
+	outb(0x3D5, 0x20);
 }
 
 /* Fill in the loader info structure */
@@ -31,6 +36,9 @@ void main(uintptr_t* mboot_info)
 {
 	/* Initialize some stuff related to early-boot IO */
 	init_terminal();
+
+    extern void fixvga();
+    fixvga();
 
 	/* Show we are alive ! */
 	puts("Riku Loader - The Riku Operating System\n");
