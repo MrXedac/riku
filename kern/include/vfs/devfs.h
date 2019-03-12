@@ -61,5 +61,6 @@ struct riku_devfs_node *nullDev; /* The NULL device. Reads NULL, writes NULL. A 
 struct riku_devfs_node *console;
 struct riku_devfs_node *kconsole;
 struct riku_devfs_node *devfsVirtPtr; /* "Virtual" pointer to devfs, which implements nothing. For cosmetic issues. */
+struct riku_devfs_node *ramfsVirtPtr;
 
 #endif

@@ -11,5 +11,6 @@ int strcmp(const char* s1, const char* s2);
 void* memcpy(void* dest, const void* src, size_t count);
 char *strcpy(char* dest, const char* source);
 void* memset(void* bufptr, int value, size_t size);
+int memcmp (const char* str1, const char* str2, size_t count);
 
 #endif

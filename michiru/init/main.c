@@ -7,7 +7,7 @@ void main()
 	printf("Michiru Operating System\n");
 	printf("Based on Riku kernel\n");
 	printf("---\n");
-	printf("Successfully entered userland.\n");
+    printf("Successfully entered userland.\n");
     printf("Testing stuff: %x\n", 0xDEADBEEFCAFEBABE);
 
     	int coucou = 4;
@@ -29,6 +29,5 @@ void main()
 	printf("\tWhite: \033[37;40mWHITE\033[0m\n");
 	printf("Done. If we're alive until now, then everything is fine ~\n");
     }
-	
     for(;;);
 }

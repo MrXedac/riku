@@ -23,6 +23,9 @@
 #include "fs_vfat.h"
 #include "vfs/mount.h"
 #include "vfs/fs.h"
+#include <string.h>
+
+uintptr_t initramfs_begin = 0x0;
 
 /* Early-boot console init */
 void init_terminal()
@@ -80,9 +83,17 @@ void init_vfs()
 	printk("Initializing virtual filesystem. Mounting devfs properly.\n");
 	/* Declare devfs filesystem driver */
 	extern struct riku_filesystem fs_devfs;
+    extern struct riku_filesystem fs_ustarfs;
 	extern struct riku_devfs_node* devfsVirtPtr;
 
+    /* Find initramfs devnode */
+    struct riku_devfs_node* ramfsVirtPtr = devfs_find_node("initramfs");
+
+    /* Mount /dev as A: */
 	mount_internal(devfsVirtPtr, &fs_devfs);
+
+    /* Mount /dev/initramfs as B: */
+    mount_internal(ramfsVirtPtr, &fs_ustarfs);
 
 	/* Try the devfs mountpoint */
 	struct riku_fileinfo devfs_dir, devfs_node;
@@ -94,6 +105,20 @@ void init_vfs()
 	{
 		printk("-> A:/%s\n", ((struct riku_devfs_node*)(devfs_node.extended))->name);
 	}
+
+	printk("Contents for mountpoint B:/ (initramfs):\n")
+    struct riku_fileinfo ramfs_dir, ramfs_node;
+    memset(&ramfs_dir, 0, sizeof(ramfs_dir));
+    while(!fs_ustarfs.readdir(&mounts[1], &ramfs_dir, 0, &ramfs_node))
+    {
+        /* Extended -> ptr in ustar */
+        /* While we don't have a fs_stat yet to find name, size etc, do it manually : ptr refers to name, ptr + 512 = pointer to data */
+        char* name = (char*)ramfs_node.extended;
+        uintptr_t data = (uintptr_t)ramfs_node.extended + 512;
+        printk("-> B:/%s\n", name, data);
+        if(!strcmp(name, "banner"))
+            printk("%s", (char*)data);
+    }
 }
 
 #define INIT_TASK(s, f) { printk("-> Init task \"%s\"\n", s); f(); }
@@ -108,6 +133,7 @@ void late_init_tasks()
 	DRIVER_INIT(x86serial);
 	/* x86vga is responsible for console. */
 	DRIVER_INIT(x86vga);
+    DRIVER_INIT(initramfs);
 
 	INIT_TASK("init_sysenter", init_sysenter);
 
@@ -132,6 +158,10 @@ void late_init_tasks()
  * We can initialize the "later" boot tasks, and then spawn our init task. */
 void late_init()
 {
+    /* Find initramfs */
+    initramfs_begin = find_initramfs(((struct rikuldr_info*)(PHYS(LDRINFO_ADDR)))->mbi_addr);
+    printk("ramfs: found initramfs at %x\n", initramfs_begin);
+
 	/* Some day I'll put something really extensible here. Right now I don't care, so... */
 	late_init_tasks();
 
@@ -147,7 +177,23 @@ void late_init()
 
 	/* Grab init from Multiboot2, put it in an appropriate location and start in userland */
 	printk("Preparing to spawn init\n");
-	uint64_t rip = spawn_init(((struct rikuldr_info*)(PHYS(LDRINFO_ADDR)))->mbi_addr, init_vme);
+    uintptr_t init_addr = 0x0, init_size = 0x0;
+
+    /* Find init in initramfs; TODO : use correct API instead of doing everything by hand */
+    extern struct riku_filesystem fs_ustarfs;
+    struct riku_fileinfo ramfs_dir, ramfs_node;
+    memset(&ramfs_dir, 0, sizeof(ramfs_dir));
+    while(!fs_ustarfs.readdir(&mounts[1], &ramfs_dir, 0, &ramfs_node))
+    {
+        char* name = (char*)ramfs_node.extended;
+        extern int oct2bin(unsigned char*, int);
+
+        init_size = (uintptr_t)oct2bin(ramfs_node.extended + 0x7c, 11);
+        if(!strcmp(name, "init"))
+            init_addr = (uintptr_t)ramfs_node.extended + 512;
+    }
+	
+    uint64_t rip = spawn_init(init_addr, init_size, init_vme);
 
 	/* Map user stack somewhere safe */
 	vme_map(init_vme, LIN(current_task->task_rsp), INIT_STACK, 1);
@@ -176,7 +222,7 @@ void main()
 	printk("The Riku Operating System - MrXedac(c)/Mk.(c) 2017\n");
 	printk("Initializing early-boot console\n");
 	init_terminal();
-   // BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
+    // BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
 
 	/* Show we are alive ! */
 	puts("Welcome to the Riku Operating System\n");

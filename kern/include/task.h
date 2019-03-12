@@ -37,7 +37,8 @@ void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* 
 /* Task switch */
 void switch_to_task(struct riku_task* task);
 void start_task();
-uint64_t spawn_init(uintptr_t mbi, uintptr_t vme);
+uint64_t spawn_init(uintptr_t init_addr, uintptr_t init_size, uintptr_t vme);
+uintptr_t find_initramfs(uintptr_t mbi);
 void update_task_vme(struct riku_task* task, uintptr_t vme);
 uint64_t getpid();
 uint64_t getppid();
