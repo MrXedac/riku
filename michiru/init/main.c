@@ -17,7 +17,8 @@ void main()
     {
         printf("I'm the parent process, my child has PID %d.\n", truc);
     } else {
-        printf("I'm the child process!\n");
+        
+        printf("I'm the child process! Recompilation okay.\n");
     	printf("ANSI test : \n");
 	printf("\tBlack: \033[30;40mBLACK\033[0m\n");
 	printf("\tRed: \033[31;40mRED\033[0m\n");
@@ -28,6 +29,16 @@ void main()
 	printf("\tCyan: \033[36;40mCYAN\033[0m\n");
 	printf("\tWhite: \033[37;40mWHITE\033[0m\n");
 	printf("Done. If we're alive until now, then everything is fine ~\n");
+    printf("opening file...\n");
+    int f = open("B:/motd", 0x0);
+    printf("f=%d\n", f);
+    char buffer[512]; /* Big bad buffer lol */
+    read(f, buffer, 512);
+    printf("%s", buffer);
+    printf("\nBoot banner:\n");
+    int f2 = open("B:/banner", 0x0);
+    read(f2, buffer, 512);
+    printf("%s", buffer);
     }
     for(;;);
 }

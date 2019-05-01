@@ -1,6 +1,7 @@
 #include "vfs/putgetc.h"
 #include "vfs/devfs.h"
 #include "vfs/descriptor.h"
+#include "vfs/readwrite.h"
 #include "task.h"
 #include "printk.h"
 #include "errno.h"
@@ -19,7 +20,5 @@ uint32_t putc(int fd, char c)
   if(desc->state != OPENED)
     return -ECLOSED;
 
-  desc->device->putch(desc->device, c);
-
-  return 0;
+  return write(fd, &c, 1);
 }

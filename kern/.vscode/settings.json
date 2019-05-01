@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "devfs.h": "c",
+        "errno.h": "c"
+    }
+}

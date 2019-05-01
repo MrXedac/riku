@@ -192,15 +192,15 @@ void late_init()
         if(!strcmp(name, "init"))
             init_addr = (uintptr_t)ramfs_node.extended + 512;
     }
-	
+	printk("init binary at %x\n", init_addr);
     uint64_t rip = spawn_init(init_addr, init_size, init_vme);
 
 	/* Map user stack somewhere safe */
 	vme_map(init_vme, LIN(current_task->task_rsp), INIT_STACK, 1);
 
 	/* Open stdin, stdout, stderr to devfs:/null, devfs:/vga0 and devfs:/vga0 */
-	uint32_t stdin = open("devfs:/null", 0x1);
-	uint32_t stdout = open("devfs:/vga0", 0x1);
+	uint32_t stdin = open("A:/null", 0x1);
+	uint32_t stdout = open("A:/vga0", 0x1);
 	uint32_t stderr = dup2(stdout);
 	printk("Files descriptor opened : %d, %d, %d\n", stdin, stdout, stderr);
 	printk("Switching in userland (rip=%x) and dropping kernel boot context\n", rip);

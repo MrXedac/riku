@@ -58,7 +58,8 @@ int devfs_readdir(struct riku_mountpoint* self, struct riku_fileinfo* desc, uint
 
 int devfs_write(struct riku_mountpoint* self, struct riku_fileinfo* file, const char*  buffer, uint64_t length, uint64_t offset)
 {
-  printk("devfs_write\n");
+  struct riku_devfs_node* node = (struct riku_devfs_node*)file->extended;
+  node->write(node, buffer, length);
     return 0;
 }
 
@@ -70,8 +71,12 @@ int devfs_read(struct riku_mountpoint* self, struct riku_fileinfo* file, char*  
 
 int devfs_open(struct riku_mountpoint* self, const char* file, struct riku_fileinfo* result)
 {
-  printk("devfs_open\n");
-    return 0;
+  /* Special case with devfs and ustarfs : return devnode as extended */
+  struct riku_devfs_node *tmp = devfs_find_node((char*)file);
+  if(tmp) {
+      result->extended = (void*)tmp;
+      return 0;
+  } else return -ENOENT;
 }
 
 int devfs_close(struct riku_mountpoint* self, struct riku_fileinfo* file)

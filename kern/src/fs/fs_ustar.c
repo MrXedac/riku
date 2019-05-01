@@ -73,14 +73,42 @@ int ustarfs_write(struct riku_mountpoint* self, struct riku_fileinfo* file, cons
 
 int ustarfs_read(struct riku_mountpoint* self, struct riku_fileinfo* file, char*  buffer, uint64_t length, uint64_t offset)
 {
-    printk("ustarfs_read\n");
-    return 0;
+    unsigned char* ptr = (unsigned char*)file->extended;
+    int filesize = oct2bin(ptr + 0x7c, 11);
+    int trueLength;
+    
+    /* Compute maximum size of data */
+    if(offset > filesize) return 0;
+    
+    if(offset + length > filesize)
+        trueLength = filesize - offset;
+    else
+        trueLength = length;
+
+    unsigned char* data = ptr + 512;
+    memcpy(buffer, data, trueLength);
+    
+    return trueLength;
 }
 
 int ustarfs_open(struct riku_mountpoint* self, const char* file, struct riku_fileinfo* result)
 {
-    printk("ustarfs_open\n");
-    return 0;
+    struct riku_fileinfo ramfs_dir, ramfs_node;
+    memset(&ramfs_dir, 0, sizeof(ramfs_dir));
+    while(!ustarfs_readdir(self, &ramfs_dir, 0, &ramfs_node))
+    {
+        /* Extended -> ptr in ustar */
+        /* While we don't have a fs_stat yet to find name, size etc, do it manually : ptr refers to name, ptr + 512 = pointer to data */
+        char* name = (char*)ramfs_node.extended;
+        uintptr_t data = (uintptr_t)ramfs_node.extended + 512;
+        if(!strcmp(name, (char*)file))
+        {
+            /* File found - no additional operation required. Set address of data in extended ptr, and return */
+            result->extended = (void*)name; /* Base address of file in archive */
+            return 0;
+        }
+    }
+    return -ENOENT; /* Nothing found ? Return failure */
 }
 
 int ustarfs_close(struct riku_mountpoint* self, struct riku_fileinfo* file)
