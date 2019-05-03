@@ -43,7 +43,7 @@ void x86vga_move_cursor()
 void x86vga_scroll(struct riku_devfs_node* self)
 {
 
-	uint8_t attributeByte = (1 /*blue*/ << 4) | (15 /*white*/ & 0x0F);
+	uint8_t attributeByte = (0 /*black*/ << 4) | (15 /*white*/ & 0x0F);
 	uint16_t blank = 0x20 /* space */ | (attributeByte << 8);
   uint16_t* vmem = (uint16_t*)self->resources[0].begin;
 
@@ -173,6 +173,11 @@ int x86vga_putch(struct riku_devfs_node* self, char c)
 		location = (uint16_t*)self->resources[0].begin + (x86vga_cursor_y*80 + x86vga_cursor_x);
 		*location = c | attribute;
         x86vga_cursor_x++;
+				if(x86vga_cursor_x == 80)
+				{
+					x86vga_cursor_x = 0;
+					x86vga_cursor_y++;
+				}
         x86vga_scroll(self);
         x86vga_move_cursor();
         x86vga_swap(self, x86vga_cursor_x, x86vga_cursor_y);

@@ -135,6 +135,9 @@ void late_init_tasks()
 	DRIVER_INIT(x86vga);
     DRIVER_INIT(initramfs);
 
+	/* ps2kb is responsible for default input */
+	DRIVER_INIT(ps2kb);
+
 	INIT_TASK("init_sysenter", init_sysenter);
 
 	INIT_TASK("init_vfs", init_vfs);
@@ -154,10 +157,23 @@ void late_init_tasks()
 		panic("Couldn't find a suitable device for printk().\n", 0);
 }
 
+void kidle()
+{
+	for(;;)
+	{
+		__asm volatile("sti");
+	}
+}
+
 /* When we enter this function, we should have a proper page allocator, interrupt handling and working threading.
  * We can initialize the "later" boot tasks, and then spawn our init task. */
 void late_init()
 {
+	struct riku_task* idleTask = (struct riku_task*)kalloc(sizeof(struct riku_task));
+	uintptr_t* idlestack = alloc_page();
+	uintptr_t* idlekrnstack = alloc_page();
+ 	init_task(idleTask, "Riku idle", (uintptr_t*)((uintptr_t)(idlestack) | 0xFFFF800000000000), (uintptr_t*)((uintptr_t)(idlekrnstack) | 0xFFFF800000000000), &kidle, (uintptr_t*)kernel_cr3);
+	
     /* Find initramfs */
     initramfs_begin = find_initramfs(((struct rikuldr_info*)(PHYS(LDRINFO_ADDR)))->mbi_addr);
     printk("ramfs: found initramfs at %x\n", initramfs_begin);
@@ -199,7 +215,7 @@ void late_init()
 	vme_map(init_vme, LIN(current_task->task_rsp), INIT_STACK, 1);
 
 	/* Open stdin, stdout, stderr to devfs:/null, devfs:/vga0 and devfs:/vga0 */
-	uint32_t stdin = open("A:/null", 0x1);
+	uint32_t stdin = open("A:/kb0", 0x1);
 	uint32_t stdout = open("A:/vga0", 0x1);
 	uint32_t stderr = dup2(stdout);
 	printk("Files descriptor opened : %d, %d, %d\n", stdin, stdout, stderr);
@@ -210,6 +226,8 @@ void late_init()
 
 	for(;;);
 }
+
+
 
 /* Loader entry-point. */
 void main()
@@ -288,8 +306,11 @@ void main()
 	printk("Preparing to enter boot stage 2\n");
 	/* Some tasking */
 	struct riku_task* dummyTask = (struct riku_task*)kalloc(sizeof(struct riku_task));
+	struct riku_task* idleTask = (struct riku_task*)kalloc(sizeof(struct riku_task));
 	uintptr_t* usrstack = alloc_page();
 	uintptr_t* krnstack = alloc_page();
+	uintptr_t* idlestack = alloc_page();
+	uintptr_t* idlekrnstack = alloc_page();
 	puts("Riku dummy task at ");
 	puthex((uintptr_t)dummyTask);
 	puts("\n");

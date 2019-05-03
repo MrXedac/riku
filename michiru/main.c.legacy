@@ -1,40 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
-#define SHELL_COMMANDS 2
-
-typedef struct {
-    char name[16];
-    char desc[48];
-    void (*ptr)(void);
-} shell_command_t;
-
-void ish_help();
-void ish_about();
-
-shell_command_t commands[SHELL_COMMANDS] =
-{
-    {"help", "Displays help.", ish_help},
-    {"about", "Displays about info about Riku.", ish_about},
-};
-
-void ish_help()
-{
-    int i;
-    for(i=0;i<SHELL_COMMANDS; i++)
-        printf("%s\t%s\n", commands[i].name, commands[i].desc);
-}
-
-void ish_about()
-{
-    printf("Michiru Operating System\n");
-    printf("Based on the Riku Kernel.\n");
-    printf("\t(c)MrXedac, 2016-2019. All Rights Reserved.\n");
-    printf("\nIn development stage.\n");
-}
-
 
 void shell()
 {
@@ -60,17 +26,7 @@ void shell()
                 }   
             }
         }
-        int i;
-        for(i = 0; i < SHELL_COMMANDS; i++)
-        {
-            if(!strcmp(buffer, commands[i].name)) {
-                commands[i].ptr();
-               break;
-                
-            }
-        }
-        if(i == SHELL_COMMANDS)
-            printf("Unknown command '%s'.\n", buffer);
+        printf("Command: %s\n", buffer);
     }
 }
 
@@ -80,7 +36,17 @@ void main()
     printf("Based on Riku kernel\n");
     printf("---\n");
     printf("Successfully entered userland.\n");
+    printf("Testing stuff: %x\n", 0xDEADBEEFCAFEBABE);
 
+    int coucou = 4;
+    printf("Var=%d\n", coucou);
+    int truc = fork();
+    if(truc)
+    {
+        printf("I'm the parent process, my child has PID %d.\n", truc);
+    } else {
+
+        printf("I'm the child process! Recompilation okay.\n");
         printf("ANSI test : \n");
         printf("\tBlack: \033[30;40mBLACK\033[0m\n");
         printf("\tRed: \033[31;40mRED\033[0m\n");
@@ -103,5 +69,6 @@ void main()
         printf("%s", buffer);
 
         shell();
+    }
     for(;;);
 }

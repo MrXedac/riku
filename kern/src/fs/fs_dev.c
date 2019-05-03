@@ -65,8 +65,8 @@ int devfs_write(struct riku_mountpoint* self, struct riku_fileinfo* file, const 
 
 int devfs_read(struct riku_mountpoint* self, struct riku_fileinfo* file, char*  buffer, uint64_t length, uint64_t offset)
 {
-  printk("devfs_read\n");
-    return 0;
+  struct riku_devfs_node* node = (struct riku_devfs_node*)file->extended;
+  return node->read(node, buffer, length);
 }
 
 int devfs_open(struct riku_mountpoint* self, const char* file, struct riku_fileinfo* result)

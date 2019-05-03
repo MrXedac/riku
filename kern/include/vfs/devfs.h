@@ -60,6 +60,7 @@ void hardware_add_resource(struct riku_devfs_node* node, enum riku_resource_type
 struct riku_devfs_node *nullDev; /* The NULL device. Reads NULL, writes NULL. A typical /dev/null. */
 struct riku_devfs_node *console;
 struct riku_devfs_node *kconsole;
+struct riku_devfs_node *kinput;
 struct riku_devfs_node *devfsVirtPtr; /* "Virtual" pointer to devfs, which implements nothing. For cosmetic issues. */
 struct riku_devfs_node *ramfsVirtPtr;
 

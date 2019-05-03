@@ -421,6 +421,15 @@ void do_pagefault(registers_t* regs)
 		return;
 	} else {
 		printk("Unhandled page fault in task %d at %x flags %x rip %x\n", current_task->pid, cr2, regs->err_code, regs->rip);
+		uint64_t err_code = regs->err_code;
+		uint64_t present, rw, supervisor;
+		present = err_code & 0x00000001;
+		rw = err_code & 0x00000002;
+		supervisor = err_code & 0x00000004;
+		printk("page is %s, tried to %s from %s land\n", 
+			present?"present":"missing",
+			rw?"write":"read",
+			supervisor?"user":"kernel");
 		for(;;);
 	}
 }
