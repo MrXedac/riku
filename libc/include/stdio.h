@@ -22,9 +22,9 @@ struct rlibc_file {
 typedef struct rlibc_file FILE;
 
 /* Defined in stream.c */
-FILE f_stdin;
-FILE f_stdout;
-FILE f_stderr;
+extern FILE f_stdin;
+extern FILE f_stdout;
+extern FILE f_stderr;
 
 #define stdin (&f_stdin)
 #define stdout (&f_stdout)
