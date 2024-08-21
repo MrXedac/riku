@@ -213,6 +213,8 @@ void late_init()
 
 	/* Map user stack somewhere safe */
 	vme_map(init_vme, LIN(current_task->task_rsp), INIT_STACK, 1);
+	current_task->task_rsp = INIT_STACK + PAGE_SIZE - sizeof(uintptr_t);
+	current_task->task_rbp = INIT_STACK + PAGE_SIZE - sizeof(uintptr_t);
 
 	/* Open stdin, stdout, stderr to devfs:/null, devfs:/vga0 and devfs:/vga0 */
 	uint32_t stdin = open("A:/kb0", 0x1);
@@ -240,7 +242,7 @@ void main()
 	printk("The Riku Operating System - MrXedac(c)/Mk.(c) 2017\n");
 	printk("Initializing early-boot console\n");
 	init_terminal();
-    // BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
+    //BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
 
 	/* Show we are alive ! */
 	puts("Welcome to the Riku Operating System\n");

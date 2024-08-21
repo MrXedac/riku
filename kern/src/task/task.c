@@ -27,12 +27,24 @@ uint64_t getppid()
 
 extern void ret_from_fork();
 uintptr_t fork_stack;
+uintptr_t fork_rbp;
 
 uint64_t fork()
 {
     /* Keep R14 / Fork stack safe */
     __asm volatile("MOV %%R14, %0":"=r"(fork_stack));
+    __asm volatile("MOV %%R15, %0":"=r"(fork_rbp));
 
+    printk("RSP %x, RBP %x\n", fork_stack, fork_rbp);
+    uintptr_t* forkedKernRsp = alloc_page();
+
+    /* Duplicate stack */
+    /*uintptr_t offset = fork_rbp - fork_stack;
+    uintptr_t* forkedStack = alloc_page();
+
+    printk("New stack at %x\n", forkedStack);
+    memcpy((uintptr_t*)PHYS((uintptr_t)forkedStack), (uintptr_t*)INIT_STACK, 0x1000);
+*/
     printk("Requested fork from current task %x\n", current_task);
     /* First thing to do is to duplicate the current task's VME and set it as read-only */
     uintptr_t new_vme = clone_vme(current_task->vm_root);
@@ -63,9 +75,13 @@ uint64_t fork()
     forked_tsk->entrypoint = &ret_from_fork;
     forked_tsk->state = READY;
     forked_tsk->task_rsp = fork_stack;
-    forked_tsk->task_rbp = fork_stack;
+    forked_tsk->task_rbp = fork_rbp;
 
     /* Use the newly-created VME for the task */
+    //printk("new stack page at %x\n", LIN((uintptr_t)forkedStack));
+    vme_map(new_vme, LIN((uintptr_t)forkedKernRsp), 0x0000001000000000, 1);
+    forked_tsk->kernel_rsp = 0x0000001000000000 + 0x1000 - sizeof(uintptr_t);
+
     update_task_vme(forked_tsk, new_vme);
 
     /* Increase file descriptor active clients */
@@ -78,6 +94,7 @@ uint64_t fork()
     current_task->next = forked_tsk;
 
     /* We "should" be good. Forking should be done now. */
+    printk("forking done");
     return forked_tsk->pid;
 }
 

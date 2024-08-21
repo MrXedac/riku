@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SHELL_COMMANDS 2
+#define SHELL_COMMANDS 3
 
 typedef struct {
     char name[16];
@@ -13,11 +13,13 @@ typedef struct {
 
 void ish_help();
 void ish_about();
+void ish_coucou();
 
 shell_command_t commands[SHELL_COMMANDS] =
 {
     {"help", "Displays help.", ish_help},
     {"about", "Displays about info about Riku.", ish_about},
+    {"coucou", "Displays the COUCOU.", ish_coucou}
 };
 
 void ish_help()
@@ -25,6 +27,11 @@ void ish_help()
     int i;
     for(i=0;i<SHELL_COMMANDS; i++)
         printf("%s\t%s\n", commands[i].name, commands[i].desc);
+}
+
+void ish_coucou()
+{
+	printf("coucou le monde\n");
 }
 
 void ish_about()
@@ -102,6 +109,13 @@ void main()
         read(f2, buffer, 512);
         printf("%s", buffer);
 
-        shell();
+        int childPid = fork();
+        if(childPid == 0)
+        {
+            printf("Processus enfant. Lancement du shell.\n");
+            shell();
+        } else {
+            printf("Processus parent. yolo\n");
+        }
     for(;;);
 }

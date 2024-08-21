@@ -420,7 +420,7 @@ void do_pagefault(registers_t* regs)
 		copy_and_remap_page(cr2);
 		return;
 	} else {
-		printk("Unhandled page fault in task %d at %x flags %x rip %x\n", current_task->pid, cr2, regs->err_code, regs->rip);
+		printk("Unhandled page fault in task %d at %x flags %x rip %x rsp %x\n", current_task->pid, cr2, regs->err_code, regs->rip, regs->rsp);
 		uint64_t err_code = regs->err_code;
 		uint64_t present, rw, supervisor;
 		present = err_code & 0x00000001;

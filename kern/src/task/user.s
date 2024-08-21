@@ -89,7 +89,8 @@ do_syscall:
   pop rdi
 
   mov r14, rsp ; Keep RSP in R14, in order to have a safe fork() return
- 
+  mov r15, rbp ; Same for RBP
+  
   ; Call the appropriate kernel function
   call [rbx]
  
