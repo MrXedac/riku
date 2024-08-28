@@ -137,6 +137,9 @@ void late_init_tasks()
 
 	/* ps2kb is responsible for default input */
 	DRIVER_INIT(ps2kb);
+	
+	/* ata_pio is broken yet */
+	// DRIVER_INIT(ata_pio);
 
 	INIT_TASK("init_sysenter", init_sysenter);
 
@@ -211,10 +214,16 @@ void late_init()
 	printk("init binary at %x\n", init_addr);
     uint64_t rip = spawn_init(init_addr, init_size, init_vme);
 
-	/* Map user stack somewhere safe */
-	vme_map(init_vme, LIN(current_task->task_rsp), INIT_STACK, 1);
+	/* Map user stack and kernel stack somewhere safe */
+	printk("user rsp %x, kern rsp %x\n", LIN(current_task->task_rsp), LIN(current_task->kernel_rsp));
+	
+	uintptr_t* fresh_user_stack = alloc_page();
+	vme_map(init_vme, LIN((uintptr_t)fresh_user_stack), INIT_STACK, 1);
+	vme_map(init_vme, LIN(current_task->kernel_rsp), INIT_KERN_STACK, 0);
+	
 	current_task->task_rsp = INIT_STACK + PAGE_SIZE - sizeof(uintptr_t);
 	current_task->task_rbp = INIT_STACK + PAGE_SIZE - sizeof(uintptr_t);
+	current_task->kernel_rsp = INIT_KERN_STACK + PAGE_SIZE - sizeof(uintptr_t);
 
 	/* Open stdin, stdout, stderr to devfs:/null, devfs:/vga0 and devfs:/vga0 */
 	uint32_t stdin = open("A:/kb0", 0x1);

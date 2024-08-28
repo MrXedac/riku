@@ -1,7 +1,12 @@
+user_rsp: dq
+user_rbp: dq
+
 [global enter_userland]
 ; RIP is in RDI
 ; RSP in in RSI
 enter_userland:
+  mov rax, cr3
+  mov cr3, rax
   mov rcx, rdi
   mov rsp, rsi
   mov rbp, rsp
@@ -32,6 +37,10 @@ ret_from_fork:
  mov bx, 0x23
  mov ds, bx
  mov rax, 0
+ pop qword r12
+ pop qword r10
+ mov rbp, r12
+ mov rsp, r10
  o64 sysret
  jmp $
  
@@ -49,11 +58,22 @@ ret_from_fork:
 ; R9 = Arg6
 ; R11 = RFLAGS
 syscall_ep:
+  cli
+
+  mov qword r10, rsp
+  mov qword r12, rbp
+
+  mov qword rsp, 0x2080FF0
+  mov qword rbp, rsp
+
+  push qword r10 ; RSP
+  push qword r12 ; RBP
   push qword rcx ; RIP
   push qword r11 ; RFLAGS
   mov cx, 0x10
   mov ds, cx
-  cmp rax, 0xA ; Remember to change this whenever a system call is added
+
+  cmp rax, 0xC ; Remember to change this whenever a system call is added
   jle do_syscall
   ; If we end up here, we selected an invalid system call. Return -1 (-ENOSYSC)
   mov rax, -1
@@ -101,6 +121,12 @@ ret_from_call:
   pop qword rcx
   mov bx, 0x23
   mov ds, bx
+
+  pop qword r12
+  pop qword r10
+  mov rbp, r12
+  mov rsp, r10
+
   o64 sysret
 
 [global enter_userland_iret]

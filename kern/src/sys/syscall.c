@@ -32,6 +32,8 @@ void *syscall_table[SYSCALL_COUNT] =
 	&getpid,
 	&getppid,
 	&fork,
+	&execve,
+	&exit
 };
 
 void init_sysenter()
@@ -45,7 +47,7 @@ void init_sysenter()
 	/* Setup SYSENTER RSP */
 	__asm volatile("MOV $0x175, %RCX; \
 				   MOV $0x00000000FFFF8000, %RDX; \
-				   MOV $0x0000000000500000, %RAX; \
+				   MOV $0x0000000002080FFF, %RAX; \
 				   WRMSR;");
 
 	/* Finally setup SYSENTER RIP */

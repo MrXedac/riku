@@ -9,7 +9,6 @@
  /* Writes data in buffer, count bytes to file descriptor fd */
 uint32_t write(int fd, char* buffer, uint32_t size)
 {
-
   /* Check file descriptor bounds */
   if(fd >= MAX_FILES)
     return -ENOFILE;

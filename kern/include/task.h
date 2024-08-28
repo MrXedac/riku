@@ -8,10 +8,12 @@
 uint8_t tasking_ready;
 uint64_t next_pid;
 
-#define INIT_STACK	0x1080000
+#define INIT_STACK		0x1080000
+#define INIT_KERN_STACK	0x2080000
 #define	NODE_READ		0x1
 #define NODE_WRITE	0x2
 #define MAX_FILES		16
+#define INIT_HEAP	0x20000000
 
 enum task_state { READY, ACTIVABLE, SLEEPING, TERMINATED };
 
@@ -26,6 +28,7 @@ struct riku_task {
 	struct riku_task *next; /* Next task into linked list */
 	enum task_state state; /* Task state */
 	struct riku_descriptor* files[MAX_FILES]; /* Pointers to descriptors associated to task (in kernel heap) */
+	uintptr_t heap; /* Heap base address */
 };
 
 struct riku_task *current_task;
@@ -43,5 +46,10 @@ void update_task_vme(struct riku_task* task, uintptr_t vme);
 uint64_t getpid();
 uint64_t getppid();
 uint64_t fork(); /* Forks a task into another one */
+void exit(); /* Exits current process */
+const char** environ(); /* Pointer to environment variables */
+int execve(char* name, char** argv, char** env);
+int isatty(int descriptor);
+uintptr_t sbrk(int incr); /* Increases process heap */
 
 #endif

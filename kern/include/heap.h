@@ -5,8 +5,8 @@
 
 extern uintptr_t __end;
 
-#define HEAP_BEGIN			(((uintptr_t)&__end | 0xFFFF800000000000))
-#define HEAP_END			(((uintptr_t)&__end | 0xFFFF800000000000) + 0x400000)
+#define HEAP_BEGIN			((((uintptr_t)&__end + 0x4000000) | 0xFFFF800000000000))
+#define HEAP_END			((((uintptr_t)&__end + 0x4000000) | 0xFFFF800000000000) + 0x400000)
 #define HEAP_HEADER_MAGIC	0xCAFEABCD
 #define HEAP_FOOTER_MAGIC	0xBEEFDCBA
 

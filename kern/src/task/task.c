@@ -11,9 +11,15 @@
 #include "vm.h"
 #include "ioport.h"
 #include "fs_vfat.h"
+#include "vfs/devfs.h"
+#include "vfs/fs.h"
 #include <stdint.h>
 
 uint64_t next_pid = 0;
+uintptr_t user_rsp = 0;
+uintptr_t user_rbp = 0;
+
+const char *__env[1] = { 0 };
 
 uint64_t getpid()
 {
@@ -23,6 +29,86 @@ uint64_t getpid()
 uint64_t getppid()
 {
     return current_task->ppid;
+}
+
+void exit() 
+{
+    /* Set task as terminated, kernel should free tasks when scheduling */
+    current_task->state = TERMINATED;
+
+    printk("terminated task %s\n", current_task->name);
+    switch_to_task(current_task->next);
+    return;
+}
+
+const char** environ()
+{
+    /* TODO : add environment in task structure */
+    return __env;
+}
+
+int execve(char* name, char** argv, char** env)
+{
+    printk("execve: running %s\n", name);
+    /* Find init in initramfs; TODO : use correct API instead of doing everything by hand */
+    extern struct riku_filesystem fs_ustarfs;
+    struct riku_fileinfo ramfs_dir, ramfs_node;
+    memset(&ramfs_dir, 0, sizeof(ramfs_dir));
+    uintptr_t init_addr = 0x0, init_size = 0x0;
+    while(!fs_ustarfs.readdir(&mounts[1], &ramfs_dir, 0, &ramfs_node))
+    {
+        char* entryname = (char*)ramfs_node.extended;
+        extern int oct2bin(unsigned char*, int);
+
+        init_size = (uintptr_t)oct2bin(ramfs_node.extended + 0x7c, 11);
+        if(!strcmp(entryname, name))
+            init_addr = (uintptr_t)ramfs_node.extended + 512;
+    }
+
+    if(init_addr == 0x0) return -1;
+
+	printk("%s binary at %x\n", name, init_addr);
+    uint64_t rip = spawn_init(init_addr, init_size, current_task->vm_root);
+
+	/* Map user stack somewhere safe */
+    uintptr_t* stack = alloc_page();
+    vme_unmap(current_task->vm_root, INIT_STACK);
+    vme_map(current_task->vm_root, LIN((uintptr_t)stack), INIT_STACK, 1);
+
+	current_task->task_rsp = INIT_STACK + PAGE_SIZE - sizeof(uintptr_t);
+	current_task->task_rbp = INIT_STACK + PAGE_SIZE - sizeof(uintptr_t);
+    
+    strcpy(current_task->name, name);
+
+    /* Drop kernel context, restart from userland */
+	extern void enter_userland(uint64_t rip, uint64_t rsp);
+	enter_userland(rip, INIT_STACK + PAGE_SIZE - sizeof(uintptr_t));
+
+    return 0;
+}
+
+int isatty(int descriptor)
+{
+    return 1; /* Let's consider everything is a terminal */
+    /* TODO : add support for files ! */
+}
+
+uintptr_t sbrk(int incr)
+{
+    if(current_task->heap == 0x0) current_task->heap = INIT_HEAP;
+
+    uintptr_t heap = current_task->heap;
+
+    int size = incr;
+    while(size <= PAGE_SIZE)
+    {
+        uintptr_t* newpage = alloc_page();
+        vme_map(current_task->vm_root, PHYS((uintptr_t)newpage), current_task->heap, 1);
+        size -= PAGE_SIZE;
+        current_task->heap += PAGE_SIZE;
+    }
+
+    return heap;
 }
 
 extern void ret_from_fork();
@@ -37,12 +123,12 @@ uint64_t fork()
 
     printk("RSP %x, RBP %x\n", fork_stack, fork_rbp);
     uintptr_t* forkedKernRsp = alloc_page();
-
+    printk("New stack at %x\n", forkedKernRsp);
     /* Duplicate stack */
     /*uintptr_t offset = fork_rbp - fork_stack;
     uintptr_t* forkedStack = alloc_page();
 
-    printk("New stack at %x\n", forkedStack);
+    
     memcpy((uintptr_t*)PHYS((uintptr_t)forkedStack), (uintptr_t*)INIT_STACK, 0x1000);
 */
     printk("Requested fork from current task %x\n", current_task);
@@ -79,9 +165,11 @@ uint64_t fork()
 
     /* Use the newly-created VME for the task */
     //printk("new stack page at %x\n", LIN((uintptr_t)forkedStack));
-    vme_map(new_vme, LIN((uintptr_t)forkedKernRsp), 0x0000001000000000, 1);
-    forked_tsk->kernel_rsp = 0x0000001000000000 + 0x1000 - sizeof(uintptr_t);
-
+    //
+    //forked_tsk->kernel_rsp = 0x0000001000000000 + 0x1000 - sizeof(uintptr_t);
+    memcpy((uintptr_t*)PHYS((uintptr_t)forkedKernRsp), (uintptr_t*)(fork_stack & 0xFFFFFFFFFFFFF000), PAGE_SIZE);
+    printk("copied kernel stack into %x from %x\n", (uintptr_t*)PHYS((uintptr_t)forkedKernRsp), (uintptr_t*)(fork_stack & 0xFFFFFFFFFFFFF000));
+    vme_map(new_vme, LIN((uintptr_t)forkedKernRsp), 0x2080000, 0);
     update_task_vme(forked_tsk, new_vme);
 
     /* Increase file descriptor active clients */
@@ -141,6 +229,7 @@ void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* 
     }
 
     task->vm_root = (uintptr_t)cr3;
+    task->heap = 0x0; /* Did not SBRK anything yet */
 
     /* We're done */
     return;
@@ -156,6 +245,10 @@ void start_task()
 /* Switches to another stack, given a stack and an interrupt context */
 void switch_to_task(struct riku_task* task)
 {
+    /* Ignore terminated tasks */
+    struct riku_task* target = task;
+    while(target->state == TERMINATED) target = target->next;
+
     /* Save current RSP into current task */
     if(current_task)
     {
@@ -164,16 +257,16 @@ void switch_to_task(struct riku_task* task)
                 : "=r" (current_task->task_rsp), "=r" (current_task->task_rbp));
     }
 
-    tss_set_kern_stack(task->kernel_rsp);
+    tss_set_kern_stack(target->kernel_rsp);
 
     /* Switch contexts */
-    current_task = task;
+    current_task = target;
 
     /* Switch CR3 and RSP */
     __asm volatile("MOV %0, %%CR3; \
             MOV %1, %%RSP; \
             MOV %2, %%RBP"
-            :: "r" (task->vm_root), "r" (task->task_rsp), "r" (task->task_rbp));
+            :: "r" (target->vm_root), "r" (target->task_rsp), "r" (target->task_rbp));
 
     if(current_task->state == READY)
     {

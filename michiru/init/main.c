@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define SHELL_COMMANDS 3
 
@@ -42,6 +43,19 @@ void ish_about()
     printf("\nIn development stage.\n");
 }
 
+void spawn(char* name)
+{
+    int childpid = fork();
+    if(childpid > 0)
+    {
+        /* Child : execve into child process */
+        if(execve(name, (char**)0, (char**)0) != 0)
+        {
+            printf("%s: could not spawn process\n", name);
+            exit();
+        }
+    } else return;
+}
 
 void shell()
 {
@@ -77,7 +91,7 @@ void shell()
             }
         }
         if(i == SHELL_COMMANDS)
-            printf("Unknown command '%s'.\n", buffer);
+            spawn(buffer);
     }
 }
 
@@ -109,13 +123,6 @@ void main()
         read(f2, buffer, 512);
         printf("%s", buffer);
 
-        int childPid = fork();
-        if(childPid == 0)
-        {
-            printf("Processus enfant. Lancement du shell.\n");
-            shell();
-        } else {
-            printf("Processus parent. yolo\n");
-        }
+        shell();
     for(;;);
 }

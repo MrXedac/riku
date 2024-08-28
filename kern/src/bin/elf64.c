@@ -177,14 +177,17 @@ void elf64_load_segment(Elf64_Ehdr* hdr, Elf64_Phdr* pTable, uintptr_t vme)
 	{
 		uintptr_t pg = (uintptr_t)alloc_page();
 		memset((void*)PHYS(pg), 0x0, PAGE_SIZE);
+		vme_unmap(PHYS(vme), vad + curOffset);
 		vme_map(PHYS(vme), pg, vad + curOffset, 1);
+		memcpy((void*)PHYS(pg), (void*)((uintptr_t)hdr + offset + curOffset), PAGE_SIZE);
+		printk("Copied section from %x to %x.\n", (uintptr_t)hdr + offset + curOffset, PHYS(pg));
 		printk("Added mapping from %x to %x\n", pg, vad + curOffset);
 		curOffset += PAGE_SIZE;
 	}
 
 	/* Now that our VME is ready, load the section */
-	memcpy((void*)vad, (void*)((uintptr_t)hdr + offset), size);
-	printk("Copied section from %x to %x.\n", (uintptr_t)hdr + offset, vad);
+	//memcpy((void*)vad, (void*)((uintptr_t)hdr + offset), size);
+	
 }
 
 uint64_t elf64_load_binary(Elf64_Ehdr* hdr, uintptr_t size, uintptr_t vme)

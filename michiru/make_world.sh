@@ -1,4 +1,4 @@
-MODULES=init
+MODULES="init hello"
 CURDIR=`pwd`
 for mod in $MODULES
 do

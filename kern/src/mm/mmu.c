@@ -236,6 +236,7 @@ void vme_unmap(uintptr_t vmet, uintptr_t va)
 
 	/* Decrease the page reference count */
 	pmt_dec(phys);
+	printk("unmapped page %x\n", va);
 }
 
 /* Increase the page counter for a physical address into the Page Master Table */
@@ -319,6 +320,11 @@ void pmt_dec(uintptr_t phys)
 	/* Map page into PT */
 	uintptr_t pt_idx = addrIndex(1, phys);
 	uintptr_t count = tableReadWithFlags(pt, pt_idx);
+	if(count == 0) {
+		printk("PMT: counter already 0\n");
+		return;
+	}
+
 	count--;
 	tableWriteWithFlags(pt, pt_idx, (uintptr_t)count);
 	printk("PMT: decreased counter of page %x to %d\n", phys, count);
@@ -395,6 +401,7 @@ void copy_and_remap_page(uintptr_t fault_addr)
 	/* Now that we have both physical and virtual address, copy the page into a fresh new one */
 	uintptr_t target = ((uintptr_t)alloc_page()) & 0x00007FFFFFFFFFFF; /* Ignore higher-half stuff for mapping purposes */
 	memcpy((void*)PHYS(target), (void*)PHYS(phys), PAGE_SIZE);
+	printk("mmu: copied into %x from %x\n", PHYS(target), PHYS(phys));
 
 	/* Page has been copied. Remove the mapping in the current CR3, and remap stuff in a read-write fashion */
 	vme_unmap((uintptr_t)current_task->vm_root, fault_addr);
@@ -402,7 +409,7 @@ void copy_and_remap_page(uintptr_t fault_addr)
 
 	printk("mmu: remapped page %x (phys %x) to new phys %x\n", fault_addr, phys, target);
 
-	__asm volatile("MOV %0, %%CR3" :: "r"(current_task->vm_root));
+	__asm volatile("MOV %0, %%RAX; MOV %%RAX, %%CR3" :: "r"(current_task->vm_root));
 	/* It's all good ! */
 	return;
 }
