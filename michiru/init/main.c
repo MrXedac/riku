@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define SHELL_COMMANDS 4
+#define SHELL_COMMANDS 5
 
 typedef struct {
     char name[16];
@@ -16,14 +16,21 @@ void ish_help();
 void ish_about();
 void ish_ansi();
 void ish_read();
+void ish_exit();
 
 shell_command_t commands[SHELL_COMMANDS] =
 {
     {"help", "Displays help.", ish_help},
     {"about", "Displays about info about Riku.", ish_about},
     {"ansi", "Performs an ANSI test.", ish_ansi},
-    {"read", "Reads a file.", ish_read}
+    {"read", "Reads a file.", ish_read},
+    {"exit", "Exits shell.", ish_exit}
 };
+
+void ish_exit()
+{
+    exit(0);
+}
 
 void ish_ansi()
 {

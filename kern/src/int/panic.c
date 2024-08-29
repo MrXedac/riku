@@ -38,24 +38,20 @@ void panic(char* message, registers_t* regs)
 		puts("\tds=");
 		puthex(regs->ds);
 		puts("\n");
-	} else {
-		puts("\t<no register data found>\n");
-	}
-
-    uintptr_t cr2;
-    __asm volatile("MOV %%CR2, %0"
-            : "=r" (cr2));
-    puts("cr2=");
-    puthex(cr2);
-    puts("\n");
+		
+		uintptr_t cr2;
+		__asm volatile("MOV %%CR2, %0"
+				: "=r" (cr2));
+		puts("cr2=");
+		puthex(cr2);
+		puts("\n");
 		puts("errcode=");
 		puthex(regs->err_code);
 		puts("\n");
-		/*
-			0xB = 1011
-		*/
-
-	puts("current_task: ");
+	} else {
+		puts("\t<no register data found>\n");
+	}
+	puts("current_task pid: ");
 	putdec(current_task->pid);
 	puts("\n");
 	puts("Halting system.\n");
