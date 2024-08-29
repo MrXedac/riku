@@ -7,6 +7,7 @@
 #include "serial.h"
 #include "ioport.h"
 #include "printk.h"
+#include "mbr.h"
 
 #define ATA0_IO_BASE    0x1F0
 #define ATA0_CTRL_BASE  0x3F6
@@ -32,6 +33,13 @@
 #define DRIVER_IO_PORT(self, x)   (self->resources[0].begin + x)
 #define DRIVER_CTRL_PORT(self, x) (self->resources[1].begin + x)
 
+void ata_wait_for_ready(struct riku_devfs_node* self)
+{
+    uint8_t result = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
+    while((result & ATA_STATUS_BSY) == ATA_STATUS_BSY) result = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
+    while((result & ATA_STATUS_DRQ) == 0x0 && (result & ATA_STATUS_ERR) == 0x0) result = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
+}
+
 void ata_delay(struct riku_devfs_node *self)
 {
     inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
@@ -48,7 +56,7 @@ int ata_seek(struct riku_devfs_node* self, uint64_t position)
     outb(DRIVER_IO_PORT(self, ATA_SECTOR_NUMBER), (unsigned char)position);
     outb(DRIVER_IO_PORT(self, ATA_CYL_LOW), (unsigned char)(position >> 8));    
     outb(DRIVER_IO_PORT(self, ATA_CYL_HIGH), (unsigned char)(position >> 16));
-
+    
     return 0;
 }
 
@@ -56,7 +64,7 @@ int ata_read(struct riku_devfs_node* self, const char* buffer, uint32_t count)
 {
     outb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND), 0x20);
     uint8_t status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
-    while((status & ATA_STATUS_DRQ) == 0x0) status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
+    while((status & ATA_STATUS_DRQ) == 0x0 || (status & ATA_STATUS_BSY) == ATA_STATUS_BSY) status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
     
     uint16_t* buf = (uint16_t*)buffer;
     for(int i = 0; i < count * 256; i++)
@@ -71,7 +79,7 @@ int ata_write(struct riku_devfs_node* self, const char* buffer, uint32_t count)
 {
     outb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND), 0x30);
     uint8_t status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
-    while((status & ATA_STATUS_DRQ) == 0x0) status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
+    while((status & ATA_STATUS_DRQ) == 0x0 || (status & ATA_STATUS_BSY) == ATA_STATUS_BSY) status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
     
     uint16_t* buf = (uint16_t*)buffer;
     for(int i = 0; i < count * 256; i++)
@@ -138,9 +146,10 @@ void ata_pio_init()
       node->seek = ata_seek;
       node->read = ata_read;
       node->write = ata_write;
+      node->type = StorageDevice;
 
       /* ATA tests */
-      char buffer[512];
+      /*char buffer[512];
       memset(buffer, 0, 512);
 
       ata_seek(node, 0);
@@ -149,16 +158,16 @@ void ata_pio_init()
       printk("%s", buffer);
       memset(buffer, 0, 512);
 
-      strcpy(buffer, "RIKU");
+      strcpy(buffer, "RIKU TEST STRING");
 
         // Write 1 sector
-        printk("sector 1\n");
-        ata_seek(node, 1);
+      printk("sector 1\n");
+      ata_seek(node, 1);
       ata_write(node, buffer, 1);
       printk("sector 0\n");
       ata_seek(node, 0);
       printk("write\n");
-      ata_write(node, buffer, 1);
+      ata_write(node, buffer, 1);*/
 
       devfs_add(node);
   }

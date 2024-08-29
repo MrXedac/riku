@@ -308,6 +308,7 @@ void x86vga_init()
     devfs_add(vgat);
     vgat->write = &x86vga_puts;
     vgat->putch = &x86vga_putch;
+	vgat->type = HIDDevice;
 
     if(!console)
     {

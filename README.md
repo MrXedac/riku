@@ -16,22 +16,30 @@ In order to compile and run Riku, some standard development environment is requi
 - nasm (my favourite assembler)
 - qemu-system-x86_64 (a virtual machine to run the kernel on is always a good thing)
 - GNU make (yep)
+- libtool (for KConfig)
 - Tons of coffee (don't tell me you don't need this, I won't believe you)
 
-Also, I know the Makefile are still a bit crappy, but I'm too lazy to do a clean thing. Feel free to make it cleaner by contributing!
-
 # HowTo : Compile
+## Userland
 First you need to compile userland.
 
-You can compile rLibC by entering the "libc" directory and running "make."
+You can compile rLibC by entering the "libc" directory and running "make".
 
-The userland can then be compiled by entering the "michiru" directory and running make in every sub-directory.
+The userland can then be compiled by entering the "michiru" directory and running make in every sub-directory. 
+You can also run the `./make_world.sh` script in the "michiru" directory instead.
 
-This should be modified soon, as I'll be integrating a "cpio-as-rootfs" component in Riku asap.
+## Kernel configuration
+Compile (only once) KConfig by running `./bootstrap`, `./configure` and `make` in the `kconfig/` subfolder.
 
-Right now, you can spawn a single /init binary by putting it in the "boot/boot/bin" directory.
+Configure the kernel by running `make menuconfig` and `make config`.
 
+## Kernel compilation
 Compiling the kernel then should be as easy as running "make all".
 
 # HowTo : Run
-The compilation toolchain should generate a "riku.iso" file, loadable through QEMU.
+## Hard drive image
+Create a hard drive image by running `make img` (which is a shortcut to `qemu-img create -f raw 4G`).
+This image can be manipulated by mounting it as a loopback device on Linux hosts, by running `make mount` (or `make umount` to unmount it).
+
+## QEMU emulator
+Run Riku in QEMU by running `make run`, or `make debug` to run QEMU alongside GDB for debugging.

@@ -46,7 +46,7 @@ int opendir(const char* path, struct riku_fileinfo* buffer)
 
 int readdir(struct riku_fileinfo* dir, uint32_t offset, struct riku_fileinfo* buffer)
 {
-    if(dir->flags != 0x1) return -1;
+    if(dir->flags != FLAGS_DIRECTORY) return -1;
 
     struct riku_mountpoint* mount = (struct riku_mountpoint*)dir->extended;
     

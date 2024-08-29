@@ -37,3 +37,7 @@
 
 # Toolchain define
 toolchain.mk
+.config
+.config.old
+hda.img
+include/

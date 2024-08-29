@@ -221,6 +221,7 @@ void ps2kb_init()
       kb_node->putch = 0;
       kb_node->read = ps2kb_read;
       kb_node->write = 0;
+      kb_node->type = HIDDevice;
       devfs_add(kb_node);
 
       /* Registers the keyboard interrupt handler and prepares the stream */

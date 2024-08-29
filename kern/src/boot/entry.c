@@ -24,6 +24,7 @@
 #include "vfs/mount.h"
 #include "vfs/fs.h"
 #include <string.h>
+#include "kconfig.h"
 
 uintptr_t initramfs_begin = 0x0;
 
@@ -139,7 +140,12 @@ void late_init_tasks()
 	DRIVER_INIT(ps2kb);
 	
 	/* ata_pio is broken yet */
-	// DRIVER_INIT(ata_pio);
+	#ifdef CONFIG_ENABLE_ATA
+	DRIVER_INIT(ata_pio);
+	#ifdef CONFIG_ENABLE_MBR
+	DRIVER_INIT(mbr);
+	#endif
+	#endif
 
 	INIT_TASK("init_sysenter", init_sysenter);
 
@@ -208,7 +214,7 @@ void late_init()
         extern int oct2bin(unsigned char*, int);
 
         init_size = (uintptr_t)oct2bin(ramfs_node.extended + 0x7c, 11);
-        if(!strcmp(name, "init"))
+        if(!strcmp(name, CONFIG_INIT_PROCESS))
             init_addr = (uintptr_t)ramfs_node.extended + 512;
     }
 	printk("init binary at %x\n", init_addr);
@@ -251,7 +257,10 @@ void main()
 	printk("The Riku Operating System - MrXedac(c)/Mk.(c) 2017\n");
 	printk("Initializing early-boot console\n");
 	init_terminal();
-    //BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
+    
+	#ifdef CONFIG_ENABLE_BOCHS_VGA
+	BgaSetVideoMode(BGA_WIDTH, BGA_HEIGHT, 32, 1, 1);
+	#endif
 
 	/* Show we are alive ! */
 	puts("Welcome to the Riku Operating System\n");

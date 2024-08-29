@@ -1,0 +1,59 @@
+= Movidius Intel specific extensions
+
+The usual syntax of the kcnf files is described at the original
+https://www.kernel.org/doc/Documentation/kbuild/kconfig-language.txt[location]
+
+Movidius added two features to the original `kconfig` system:
+
+. Source files can now be included by the relative path
+. Add SHAVE modules configuration support
+
+
+== `Source` statement change
+
+The original `source` statement required the full path to the included file.
+That was a problem in the MDK context, as that defeated the modular
+structure and would have required manual adjustments of the MDK code after
+tarball unzipping or GIT clone. To circumvent these problems, we choose to
+patch the source code and now the `source` statement has this syntax:
+
+
+  source:
+
+    "source" <absolute path|relative path>
+
+  This reads the specified configuration file. The file is always parsed. The
+  path to the included configuration file can be either absolute or relative.
+  If relative, the base directory is the directory of the configuration file
+  containing this `source` statement.
+
+== SHAVE Modules Support
+
+The SHAVE support in MDK requires several configuration settings to be
+repeated for each application. This can be cumbersome and error-prone so we
+choose to add a new statement that acts as a macro for the needed
+configuration entries.
+
+Using the same notations as the one in the original kconfig documentation,
+this will be expressed as this:
+
+  "shaveapp" <symbol>
+
+For instance, an entry for the BoxFilterAsm SHAVE Dynamic Loaded module would
+be:
+
+  shaveapp BoxFilterAsm
+
+Upon parsing this declaration, `kconfig-frontends` will look-up for a
+configuration file dedicated to this application. This file's name is composed
+using the shaveapp name and the effect will be the same as a kconfig source
+statement looking like this:
+
+```
+  source shaveapp-BoxFilterAsm.kcnf
+```
+
+That file should be present before the invocation of the kconfig tool and is
+typically provided by the build system. Please refer to the build system
+documentation for more information about these files.
+

@@ -3,6 +3,7 @@
 #include "vfs/devfs.h"
 #include "errno.h"
 #include "printk.h"
+#include "string.h"
 #include <stdint.h>
 
 int devfs_init(struct riku_mountpoint* self)
@@ -22,9 +23,32 @@ int devfs_opendir(struct riku_mountpoint* self, const char* directory, struct ri
 
   desc->diroff = 0x0;
   desc->flags = FLAGS_DIRECTORY;
-  desc->extended = (void*)devfsVirtPtr;
+  desc->extended = (void*)self;
   /* Right now, we only have files in devfs - simplify this and don't use opendir, only use readdir */
   return 0;
+}
+
+int devfs_readdir_type(struct riku_devfs_node* node)
+{
+  switch(node->type)
+  {
+    case HIDDevice:
+      return 0x1;
+      break;
+    case StorageDevice:
+      return 0x2;
+      break;
+    case NetworkDevice:
+      return 0x3;
+      break;
+    case SpecialDevice:
+      return 0x4;
+      break;  
+    case UnknownDevice:
+    default:
+      return 0x5;
+      break;
+  }
 }
 
 int devfs_readdir(struct riku_mountpoint* self, struct riku_fileinfo* desc, uint32_t offset, struct riku_fileinfo* result)
@@ -53,6 +77,9 @@ int devfs_readdir(struct riku_mountpoint* self, struct riku_fileinfo* desc, uint
 
   /* Put node into FileInfo structure */
   result->extended = (void*)tmp;
+  strcpy(result->name, tmp->name);
+  result->type = devfs_readdir_type(tmp);
+  result->size = 0x0;
   return 0;
 }
 

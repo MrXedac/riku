@@ -32,7 +32,7 @@ int ustarfs_opendir(struct riku_mountpoint* self, const char* directory, struct 
 {
     /* TODO : add support for subdirectories */
     desc->handle = 0x0;
-    desc->flags = 0x1; // Directory
+    desc->flags = FLAGS_DIRECTORY; // Directory
     desc->diroff = 0x0;
     desc->state = 0x0;
     desc->cache = 0x0;

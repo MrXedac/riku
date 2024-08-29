@@ -10,6 +10,7 @@
  * implemented this way. */
 
 enum riku_resource_type { PORTIO, MMIO, UNKNOWN };
+enum riku_device_type { HIDDevice, StorageDevice, NetworkDevice, SpecialDevice, UnknownDevice };
 struct riku_devfs_node;
 
 /* For device write functions
@@ -40,6 +41,7 @@ struct riku_devfs_resource {
 
 struct riku_devfs_node {
 	char name[16]; /* Device node name */
+	enum riku_device_type type;
 	uint64_t position;
 	struct riku_devfs_resource resources[6]; /* PCI devices has a maximum of 6 BAR in PCI configuration space. We align on this. */
 	/* TODO : Device handlers here */

@@ -39,6 +39,7 @@ void x86serial_init()
       hardware_add_resource(serial, PORTIO, 0x3F8, 0x3F8 + 5);
       serial->write = &serial_write;
       serial->putch = &ser_putch;
+      serial->type = HIDDevice;
       devfs_add(serial);
 
       if(!kconsole)

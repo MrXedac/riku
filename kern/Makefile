@@ -18,6 +18,7 @@ CSOURCES+=$(wildcard $(SRC_DIR)/fs/*.c)
 
 # Drivers
 CSOURCES+=$(wildcard $(SRC_DIR)/driver/ata/*.c)
+CSOURCES+=$(wildcard $(SRC_DIR)/driver/mbr/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/driver/serial/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/driver/vga/*.c)
 CSOURCES+=$(wildcard $(SRC_DIR)/driver/special/*.c)

@@ -1,10 +1,21 @@
 IMAGE=riku.iso
 MAKE=make
+CONF=./kconfig/frontends/conf/conf
+MCONF=./kconfig/frontends/mconf/mconf
+KCONFIG_AUTOHEADER=kern/include/kconfig.h
 
-.PHONY: $(IMAGE) run img
+.PHONY: $(IMAGE) run img mount umount menuconfig config
 
 all: $(IMAGE)
 	echo "Done !"
+
+menuconfig:
+	$(MCONF) KConfig
+
+config:
+	mkdir -p include/
+	mkdir -p include/config 
+	KCONFIG_AUTOHEADER=$(KCONFIG_AUTOHEADER) $(CONF) --silentoldconfig KConfig
 
 $(IMAGE):
 	cd kern && $(MAKE) clean && $(MAKE) all
@@ -21,3 +32,9 @@ run:
 
 debug:
 	qemu-system-x86_64 -boot d -m 4096 -cdrom riku.iso -hda hda.img -serial stdio -S -s
+
+mount:
+	sudo losetup -Pf hda.img
+
+umount:
+	sudo losetup -d /dev/loop0

@@ -47,6 +47,7 @@ void nulldev_init()
       null->putch = &null_putch;
       null->getch = &null_getch;
       null->read = &null_read;
+      null->type = SpecialDevice;
 
       nullDev = null;
   }

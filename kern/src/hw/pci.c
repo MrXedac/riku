@@ -80,6 +80,8 @@ uint8_t pci_idx = 0;
 
 void register_pci_device(uint8_t bus, uint8_t slot, uint16_t vendor)
 {
+	enum riku_device_type type = UnknownDevice;
+
 	char* vendorstr = getVendorName(vendor);
 	
 	// Get device id
@@ -117,6 +119,7 @@ void register_pci_device(uint8_t bus, uint8_t slot, uint16_t vendor)
 		/* pciconf contains the command register for the PCI device. Write bus mastering bit and write it on the bus */
 		pciconf = pciconf | 0x0004; /* Set bit 2 (Bus Master) into command register */
 		pci_config_write_word(bus,slot, 0, 4, pciconf);
+		type = NetworkDevice;
 	}
 	
 	uint16_t pci_hdr_type = pciConfigReadWord(bus, slot, 0, 14);
@@ -142,6 +145,7 @@ void register_pci_device(uint8_t bus, uint8_t slot, uint16_t vendor)
 	
 	/* Create temporary PCI device info */
 	struct riku_devfs_node* n = hardware_create_node(devname);
+	n->type = type;
 	
 	uint8_t tmp = 0;
 	for(tmp=0; tmp<6; tmp++)
@@ -164,6 +168,7 @@ void register_pci_device(uint8_t bus, uint8_t slot, uint16_t vendor)
 			if(class_id == 0x03 && i == 0)
 			{
 				printk("Found VGA linear framebuffer...\n");
+				type = HIDDevice;
 				/*extern uintptr_t vgaframebuffer;
 				vgaframebuffer = (uintptr_t)(bar & 0xFFFFFFF0);*/
 			}

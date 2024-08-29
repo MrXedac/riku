@@ -1,0 +1,32 @@
+# Device driver configuration
+
+menu "Boot configuration"
+	config INIT_PROCESS
+	string
+	prompt "First (init) process name in initramfs"
+	default "init"
+	help
+	Defines the name of the first process to spawn when Riku boots.
+endmenu
+
+menu "Driver configuration"
+	config ENABLE_ATA
+	bool
+	default true
+	prompt "Enable ATA PIO device driver"
+
+	config ENABLE_MBR
+	bool
+	default true
+	prompt "Enable probing of partitions on MBR partition tables"
+	depends on ENABLE_ATA
+
+	config ENABLE_BOCHS_VGA
+	bool
+	prompt "Enable graphical terminal for QEMU/Bochs"
+	default false
+	help
+	Enables graphical VESA output for QEMU/Bochs emulators.
+	This is known to cause issues with processes right now.
+endmenu
+

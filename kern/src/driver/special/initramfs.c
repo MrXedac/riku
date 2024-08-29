@@ -45,6 +45,7 @@ void initramfs_init()
       initramfs->getch = &initramfs_getch;
       initramfs->read = &initramfs_read;
       initramfs->resources[0].begin = initramfs_begin; 
+      initramfs->type = SpecialDevice;
       devfs_add(initramfs);
   }
   return;
