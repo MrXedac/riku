@@ -25,7 +25,7 @@ $(IMAGE):
 	grub-mkrescue -o riku.iso boot/
 
 img:
-	qemu-img create -f raw hda.img 4G 
+	qemu-img create -f raw hda.img 4G
 
 run:
 	qemu-system-x86_64 -boot d -m 4096 -cdrom riku.iso -hda hda.img -serial stdio 

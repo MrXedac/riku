@@ -130,6 +130,12 @@ void init_vfs()
     }
 
 	printk("Contents for mountpoint C:/ (ext2fs/system):\n");
+	if((!mounts[2].device) || (!mounts[2].fs)) 
+	{
+		printk("\t<no drive mounted>\n");
+		return;
+	};
+	
 	struct riku_fileinfo sysfs_dir, sysfs_node;
 	memset(&sysfs_dir, 0, sizeof(sysfs_dir));
 	fs_ext2fs.opendir(&mounts[2], "", &sysfs_dir);
