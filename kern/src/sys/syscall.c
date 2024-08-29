@@ -8,6 +8,7 @@
 #include "vfs/readwrite.h"
 #include "vfs/dup2.h"
 #include "vfs/putgetc.h"
+#include "vfs/dir.h"
 #include "task.h"
 #include "mem.h"
 
@@ -33,7 +34,10 @@ void *syscall_table[SYSCALL_COUNT] =
 	&getppid,
 	&fork,
 	&execve,
-	&exit
+	&exit,
+	&wait,
+	&opendir,
+	&readdir
 };
 
 void init_sysenter()

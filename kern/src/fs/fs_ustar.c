@@ -5,6 +5,7 @@
 #include "printk.h"
 #include <stdint.h>
 #include <string.h>
+#include "elf64.h"
 
 int oct2bin(unsigned char *str, int size) {
     int n = 0;
@@ -29,7 +30,27 @@ int ustarfs_init(struct riku_mountpoint* self)
 
 int ustarfs_opendir(struct riku_mountpoint* self, const char* directory, struct riku_fileinfo* desc)
 {
+    /* TODO : add support for subdirectories */
+    desc->handle = 0x0;
+    desc->flags = 0x1; // Directory
+    desc->diroff = 0x0;
+    desc->state = 0x0;
+    desc->cache = 0x0;
+    desc->extended = (void*)self;
+    strcpy(desc->name, directory);
+    desc->type = 0x0;
+
     return 0;
+}
+
+int ustarfs_identify(unsigned char* ptr)
+{
+    if(ptr[0] == '\x7f' && 
+		ptr[1] == 'E' && 
+		ptr[2] == 'L' && 
+		ptr[3] == 'F') return 0x2;
+    
+    else return 0x1;
 }
 
 int ustarfs_readdir(struct riku_mountpoint* self, struct riku_fileinfo* desc, uint32_t offset, struct riku_fileinfo* result)
@@ -56,6 +77,9 @@ int ustarfs_readdir(struct riku_mountpoint* self, struct riku_fileinfo* desc, ui
         memset(name, 0, sizeof(name));
         strcpy(name, (const char*)ptr);
         result->extended = (void*)ptr;
+        strcpy(result->name, name);
+        result->size = oct2bin(ptr + 0x7c, 11);
+        result->type = ustarfs_identify(ptr+512); // File
     } else return ENMFIL;
 
     /* If we're readdir'ing through a descriptor, increment directory offset */

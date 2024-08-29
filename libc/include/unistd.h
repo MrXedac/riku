@@ -3,5 +3,6 @@
 
 int execve(char* name, char** argv, char** env);
 void exit();
+int wait(int pid);
 
 #endif

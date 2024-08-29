@@ -178,7 +178,7 @@ void elf64_load_segment(Elf64_Ehdr* hdr, Elf64_Phdr* pTable, uintptr_t vme)
 		uintptr_t pg = (uintptr_t)alloc_page();
 		memset((void*)PHYS(pg), 0x0, PAGE_SIZE);
 		vme_unmap(PHYS(vme), vad + curOffset);
-		vme_map(PHYS(vme), pg, vad + curOffset, 1);
+		vme_map(PHYS(vme), LIN(pg), vad + curOffset, 1);
 		memcpy((void*)PHYS(pg), (void*)((uintptr_t)hdr + offset + curOffset), PAGE_SIZE);
 		printk("Copied section from %x to %x.\n", (uintptr_t)hdr + offset + curOffset, PHYS(pg));
 		printk("Added mapping from %x to %x\n", pg, vad + curOffset);
@@ -194,19 +194,28 @@ uint64_t elf64_load_binary(Elf64_Ehdr* hdr, uintptr_t size, uintptr_t vme)
 {
 	printk("ELF64 binary entrypoint: %x\n", hdr->e_entry);
 
-	/* Parse sections and map stuff at the right place */
-	uintptr_t phentsize = hdr->e_phentsize;
-	uintptr_t phcount = hdr->e_phnum;
-	Elf64_Phdr* pTable;
-	printk("%d program header entries, size %x\n", phcount, phentsize);
-	for(uintptr_t cur = 0; cur < phcount; cur++)
-	{
-		pTable = (Elf64_Phdr*)((uintptr_t)hdr + (uintptr_t)(hdr->e_phoff) + cur * phentsize);
-		if(pTable->p_type == 1) elf64_load_segment(hdr, pTable, vme);
-	}
+	if(hdr->e_ident[0] == '\x7f' && 
+		hdr->e_ident[1] == 'E' && 
+		hdr->e_ident[2] == 'L' && 
+		hdr->e_ident[3] == 'F')
+		{
+			/* Parse sections and map stuff at the right place */
+			uintptr_t phentsize = hdr->e_phentsize;
+			uintptr_t phcount = hdr->e_phnum;
+			Elf64_Phdr* pTable;
+			printk("%d program header entries, size %x\n", phcount, phentsize);
+			for(uintptr_t cur = 0; cur < phcount; cur++)
+			{
+				pTable = (Elf64_Phdr*)((uintptr_t)hdr + (uintptr_t)(hdr->e_phoff) + cur * phentsize);
+				if(pTable->p_type == 1) elf64_load_segment(hdr, pTable, vme);
+			}
 
-	printk("Loaded every loadable segment. Binary loaded\n");
-	return hdr->e_entry;
+			printk("Loaded every loadable segment. Binary loaded\n");
+			return hdr->e_entry;
+		} else {
+			return -1;
+		}
+
 }
 
 uintptr_t elf64_kernel_symbol_addr(const char* symname)

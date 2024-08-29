@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define SHELL_COMMANDS 3
+#define SHELL_COMMANDS 4
 
 typedef struct {
     char name[16];
@@ -14,14 +14,64 @@ typedef struct {
 
 void ish_help();
 void ish_about();
-void ish_coucou();
+void ish_ansi();
+void ish_read();
 
 shell_command_t commands[SHELL_COMMANDS] =
 {
     {"help", "Displays help.", ish_help},
     {"about", "Displays about info about Riku.", ish_about},
-    {"coucou", "Displays the COUCOU.", ish_coucou}
+    {"ansi", "Performs an ANSI test.", ish_ansi},
+    {"read", "Reads a file.", ish_read}
 };
+
+void ish_ansi()
+{
+    printf("ANSI test : \n");
+    printf("\tBlack: \033[30;40mBLACK\033[0m\n");
+    printf("\tRed: \033[31;40mRED\033[0m\n");
+    printf("\tGreen: \033[32;40mGREEN\033[0m\n");
+    printf("\tYellow: \033[33;40mYELLOW\033[0m\n");
+    printf("\tBlue: \033[34;40mBLUE\033[0m\n");
+    printf("\tMagenta: \033[35;40mMAGENTA\033[0m\n");
+    printf("\tCyan: \033[36;40mCYAN\033[0m\n");
+    printf("\tWhite: \033[37;40mWHITE\033[0m\n");
+    printf("Done. If we're alive until now, then everything is fine.\n");
+}
+
+void ish_read()
+{
+    char buffer[32];
+    int idx = 0;
+    memset(buffer, 0, sizeof(buffer));
+    memcpy(buffer, "B:/", 3);
+    idx = 3;
+    printf("filename>");
+    char c = 0;
+
+    /* Read input */
+    while(c != '\n')
+    {
+        read(0, &c, 1);
+        if(c)
+        {
+            printf("%c", c);
+            if(c != '\n') {
+                buffer[idx] = c;
+                idx++;
+            }   
+        }
+    }
+    buffer[idx]='\0';
+
+    printf("opening file...\n");
+    int f = open(buffer, 0x0);
+    printf("f=%d\n", f);
+    char content_buffer[512]; /* Big bad buffer lol */
+    memset(content_buffer, 0x0, 512);
+    read(f, content_buffer, 512);
+    printf("%s", content_buffer);
+}
 
 void ish_help()
 {
@@ -30,31 +80,31 @@ void ish_help()
         printf("%s\t%s\n", commands[i].name, commands[i].desc);
 }
 
-void ish_coucou()
-{
-	printf("coucou le monde\n");
-}
-
 void ish_about()
 {
-    printf("Michiru Operating System\n");
+    printf("Riku Operating System\n");
     printf("Based on the Riku Kernel.\n");
-    printf("\t(c)MrXedac, 2016-2019. All Rights Reserved.\n");
+    printf("\t(c)MrXedac, 2016-2024. All Rights Reserved.\n");
     printf("\nIn development stage.\n");
 }
 
 void spawn(char* name)
 {
     int childpid = fork();
-    if(childpid > 0)
+    if(childpid == 0)
     {
         /* Child : execve into child process */
-        if(execve(name, (char**)0, (char**)0) != 0)
+        int ret = execve(name, (char**)0, (char**)0);
+        if(ret != 0)
         {
-            printf("%s: could not spawn process\n", name);
-            exit();
+            if(ret == -10) printf("file is not an executable binary\n");
+            exit(-1);
         }
-    } else return;
+            
+    } else {
+        int returncode = wait(childpid);
+        printf("process exited with return code %d\n", returncode);
+    };
 }
 
 void shell()
@@ -65,7 +115,7 @@ void shell()
     {
         memset(buffer, 0, sizeof(buffer));
         idx = 0;
-        printf("michiru>");
+        printf("rsh>");
         char c = 0;
 
         /* Read input */
@@ -97,32 +147,10 @@ void shell()
 
 void main()
 {
-    printf("Michiru Operating System\n");
-    printf("Based on Riku kernel\n");
+    printf("rsh/riku shell\n");
+    printf("ver0.1\n");
     printf("---\n");
-    printf("Successfully entered userland.\n");
 
-        printf("ANSI test : \n");
-        printf("\tBlack: \033[30;40mBLACK\033[0m\n");
-        printf("\tRed: \033[31;40mRED\033[0m\n");
-        printf("\tGreen: \033[32;40mGREEN\033[0m\n");
-        printf("\tYellow: \033[33;40mYELLOW\033[0m\n");
-        printf("\tBlue: \033[34;40mBLUE\033[0m\n");
-        printf("\tMagenta: \033[35;40mMAGENTA\033[0m\n");
-        printf("\tCyan: \033[36;40mCYAN\033[0m\n");
-        printf("\tWhite: \033[37;40mWHITE\033[0m\n");
-        printf("Done. If we're alive until now, then everything is fine ~\n");
-        printf("opening file...\n");
-        int f = open("B:/motd", 0x0);
-        printf("f=%d\n", f);
-        char buffer[512]; /* Big bad buffer lol */
-        read(f, buffer, 512);
-        printf("%s", buffer);
-        printf("\nBoot banner:\n");
-        int f2 = open("B:/banner", 0x0);
-        read(f2, buffer, 512);
-        printf("%s", buffer);
-
-        shell();
-    for(;;);
+    shell();
+    exit(0);
 }

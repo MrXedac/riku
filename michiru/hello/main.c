@@ -28,5 +28,5 @@ void main()
     printf("Hello world!\n");
     printf("Doing some Fibonacci (n=10)\n");
     fibonacci(10);
-    exit();
+    exit(2);
 }

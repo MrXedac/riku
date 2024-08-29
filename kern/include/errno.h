@@ -10,4 +10,5 @@
 #define EFSERR  7 /* Filesystem or device mismatch */
 #define ENMFIL  8 /* No more files in directory */
 #define EWRPTR  9 /* Wrong pointer */
+#define EBINFMT 10 /* Binary format not recognized */
 #endif

@@ -2,8 +2,9 @@
 #include <syscall.h>
 #include <stdint.h>
 
-void exit(int exitcode) 
+int wait(int pid) 
 {
   uint64_t ret;
-  SYSCALL1(ret, (uint64_t)0xC, (uint64_t)exitcode);
+  SYSCALL1(ret, (uint64_t)0xD, (uint64_t)pid);
+  return ret;
 }

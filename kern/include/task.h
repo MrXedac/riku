@@ -29,6 +29,8 @@ struct riku_task {
 	enum task_state state; /* Task state */
 	struct riku_descriptor* files[MAX_FILES]; /* Pointers to descriptors associated to task (in kernel heap) */
 	uintptr_t heap; /* Heap base address */
+	struct riku_task* waiting_on; /* Task this task is waiting completion */
+	int exit_code; /* Exit code of the task */
 };
 
 struct riku_task *current_task;
@@ -51,5 +53,6 @@ const char** environ(); /* Pointer to environment variables */
 int execve(char* name, char** argv, char** env);
 int isatty(int descriptor);
 uintptr_t sbrk(int incr); /* Increases process heap */
+int wait(int pid);
 
 #endif

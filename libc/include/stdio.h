@@ -2,10 +2,15 @@
 #define __STDIO__
 
 #include <stdint.h>
+#include <fileinfo.h>
 
 /* size_t and signed size_t defines */
 typedef int64_t ssize_t;
 typedef uint64_t size_t;
+
+/* VFS defines */
+typedef unsigned long ino_t;
+typedef unsigned long off_t;
 
 /* Standard kernel I/O */
 int open (const char *filename, int flags);
@@ -35,5 +40,9 @@ FILE * fopen(const char* file, const char* mode);
 void fclose(FILE * file);
 int printf ( const char * format, ... );
 int putc ( int character, FILE * stream );
+
+int closedir(struct riku_fileinfo* dir);
+int opendir(const char* path, struct riku_fileinfo* buffer);
+int readdir(struct riku_fileinfo* dir, uint32_t offset, struct riku_fileinfo* buffer);
 
 #endif

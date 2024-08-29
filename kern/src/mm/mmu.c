@@ -155,6 +155,7 @@ void vme_right(uintptr_t vmet, uintptr_t va, uint8_t user, uint8_t rw)
 
 void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va, uint8_t user)
 {
+	printk("vme: map %x to %x\n", phys, va);
 	uintptr_t flags;
 	if(user)
 		flags = FLAGS_PML4T | FLAG_USER;

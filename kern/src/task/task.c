@@ -9,6 +9,7 @@
 #include "heap.h"
 #include "mem.h"
 #include "vm.h"
+#include "errno.h"
 #include "ioport.h"
 #include "fs_vfat.h"
 #include "vfs/devfs.h"
@@ -31,12 +32,35 @@ uint64_t getppid()
     return current_task->ppid;
 }
 
-void exit() 
+void wake_up_tasks()
+{
+    /* Iterate on all tasks and wake suspended ones */
+    struct riku_task* task = current_task;
+    printk("task %d waking up pending tasks\n", current_task->pid);
+    do {
+        task = task->next;
+        if(task == 0x0)
+        {
+            printk("null task next pointer, bug?\n");
+            return;
+        } 
+        
+        if(task != 0x0 && task->waiting_on == current_task)
+        {
+            task->waiting_on = (void*)0x0;
+            task->state = ACTIVABLE;
+        }
+    } while(task != current_task);
+}
+
+void exit(int exitcode) 
 {
     /* Set task as terminated, kernel should free tasks when scheduling */
+    current_task->exit_code = exitcode;
     current_task->state = TERMINATED;
 
     printk("terminated task %s\n", current_task->name);
+    wake_up_tasks();
     switch_to_task(current_task->next);
     return;
 }
@@ -69,6 +93,12 @@ int execve(char* name, char** argv, char** env)
 
 	printk("%s binary at %x\n", name, init_addr);
     uint64_t rip = spawn_init(init_addr, init_size, current_task->vm_root);
+
+    if(rip == -1)
+    {
+        printk("file is not ELF64 binary\n");
+        return -EBINFMT;
+    }
 
 	/* Map user stack somewhere safe */
     uintptr_t* stack = alloc_page();
@@ -109,6 +139,39 @@ uintptr_t sbrk(int incr)
     }
 
     return heap;
+}
+
+int wait(int pid)
+{
+    /* Make current task sleep until task is finished */
+    struct riku_task* task = current_task;
+    do {
+        task = task->next;
+        if(task->pid == pid)
+        {
+            printk("sched: task pid %d waiting on task pid %d\n", current_task->pid, task->pid);
+            current_task->waiting_on = task;
+            current_task->state = SLEEPING;
+            break;
+        }
+    } while(task != current_task);
+
+    /* Schedule */
+    if(task->state == TERMINATED) {
+        printk("task %d already terminated with exit code %d, resuming\n", pid, task->exit_code);
+        current_task->state = ACTIVABLE;
+        current_task->waiting_on = (void*)0x0;
+        return task->exit_code;
+    }
+
+    /* Switch to another context */
+    switch_to_task(current_task->next);
+
+    /* TODO : BUG ? Send ack signal to PIC */
+    outb(0x20, 0x20);
+
+    /* Returned from schedule, task should have finished, grab exit code */
+    return task->exit_code;
 }
 
 extern void ret_from_fork();
@@ -219,13 +282,11 @@ void init_task(struct riku_task* task, char* name, uintptr_t* stack, uintptr_t* 
         task->next = current_task->next;
         current_task->next = task;
 
-        puts("Registered task ");
-        puts(name);
-        puts(" into task list.\n");
+        printk("Registered task %s into task list\n", name);
     } else {
         /* Build task list */
         task_list = task;
-        task->next = 0;
+        task->next = task;
     }
 
     task->vm_root = (uintptr_t)cr3;
@@ -245,9 +306,9 @@ void start_task()
 /* Switches to another stack, given a stack and an interrupt context */
 void switch_to_task(struct riku_task* task)
 {
-    /* Ignore terminated tasks */
+    /* Ignore terminated or sleeping tasks */
     struct riku_task* target = task;
-    while(target->state == TERMINATED) target = target->next;
+    while(target->state == TERMINATED || target->state == SLEEPING) target = target->next;
 
     /* Save current RSP into current task */
     if(current_task)
@@ -278,6 +339,7 @@ void switch_to_task(struct riku_task* task)
     }
 
     /* Done ! The task switch should occur on interrupt return. */
+    outb(0x20, 0x20);
     return;
 }
 
