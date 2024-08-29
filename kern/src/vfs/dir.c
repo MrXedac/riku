@@ -36,11 +36,13 @@ int opendir(const char* path, struct riku_fileinfo* buffer)
   /* Only continue if we have a valid device descriptor and filesystem */
   if((!mounts[drvOffset].device) || (!mounts[drvOffset].fs)) return -ENOFILE;
 
-  /* Allocate result structure */
-  int ret = mounts[drvOffset].fs->opendir(&mounts[drvOffset], path, buffer);
+  /* Allocate result structure - path+3 eliminates 'C:/' */
+  int ret = mounts[drvOffset].fs->opendir(&mounts[drvOffset], (path+3), buffer);
   
+  printk("return %d\n", ret);
   /* ret = 0 : open success, else open failed */
   if(ret) return -ENOENT;
+
   return 0;
 }
 

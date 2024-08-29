@@ -66,7 +66,7 @@ int devfs_readdir(struct riku_mountpoint* self, struct riku_fileinfo* desc, uint
   {
     tmp = tmp->next;
     if(!tmp)
-      return ENMFIL;
+      return -ENMFIL;
 
     i++;
   }

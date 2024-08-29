@@ -21,6 +21,7 @@ uint32_t write(int fd, char* buffer, uint32_t size)
     return -ECLOSED;
 
   desc->fs->write(desc->mountpoint, desc->fileinfo, buffer, size, desc->offset);
+  desc->offset += size;
 
   return 0;
 }
@@ -40,6 +41,7 @@ uint32_t read(int fd, char* buffer, uint32_t size)
     return -ECLOSED;
 
   desc->fs->read(desc->mountpoint, desc->fileinfo, buffer, size, desc->offset);
+  desc->offset += size;
 
   return 0;
 }

@@ -31,10 +31,10 @@ void main()
     {
         int ret;
         printf("name\ttype\t\n-------------------------\n");
-        while(ret != 0x8) // ENMFIL
+        while(ret != -0x8) // ENMFIL
         {
             ret = readdir(&dir, 0, &file);
-            if(ret == 0x8) break;
+            if(ret == -0x8) break;
 
             printf("\033[36;40m%s\033[0m\t", file.name);
 

@@ -128,6 +128,15 @@ void init_vfs()
         if(!strcmp(name, "banner"))
             printk("%s", (char*)data);
     }
+
+	printk("Contents for mountpoint C:/ (ext2fs/system):\n");
+	struct riku_fileinfo sysfs_dir, sysfs_node;
+	memset(&sysfs_dir, 0, sizeof(sysfs_dir));
+	fs_ext2fs.opendir(&mounts[2], "", &sysfs_dir);
+	while(!fs_ext2fs.readdir(&mounts[2], &sysfs_dir, 0, &sysfs_node))
+	{
+		printk("-> C:/%s\n", sysfs_node.name);
+	}
 }
 
 #define INIT_TASK(s, f) { printk("-> Init task \"%s\"\n", s); f(); }

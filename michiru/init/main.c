@@ -24,7 +24,7 @@ shell_command_t commands[SHELL_COMMANDS] =
     {"about", "Displays about info about Riku.", ish_about},
     {"ansi", "Performs an ANSI test.", ish_ansi},
     {"read", "Reads a file.", ish_read},
-    {"exit", "Exits shell.", ish_exit}
+    {"exit", "Exits shell.", ish_exit},
 };
 
 void ish_exit()
@@ -51,8 +51,6 @@ void ish_read()
     char buffer[32];
     int idx = 0;
     memset(buffer, 0, sizeof(buffer));
-    memcpy(buffer, "B:/", 3);
-    idx = 3;
     printf("filename>");
     char c = 0;
 

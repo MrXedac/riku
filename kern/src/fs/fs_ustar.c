@@ -69,7 +69,7 @@ int ustarfs_readdir(struct riku_mountpoint* self, struct riku_fileinfo* desc, ui
         if (!memcmp((const char*)ptr + 257, "ustar", 5)) {
             int filesize = oct2bin(ptr + 0x7c, 11);
             ptr += (((filesize + 511) / 512) + 1) * 512;
-        } else return ENMFIL;
+        } else return -ENMFIL;
 
         i++;
     }
@@ -80,7 +80,7 @@ int ustarfs_readdir(struct riku_mountpoint* self, struct riku_fileinfo* desc, ui
         strcpy(result->name, name);
         result->size = oct2bin(ptr + 0x7c, 11);
         result->type = ustarfs_identify(ptr+512); // File
-    } else return ENMFIL;
+    } else return -ENMFIL;
 
     /* If we're readdir'ing through a descriptor, increment directory offset */
     if(desc)

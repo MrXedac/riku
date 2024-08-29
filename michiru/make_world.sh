@@ -1,4 +1,4 @@
-MODULES="init hello ls lsdev"
+MODULES="init hello ls lsdev lssys"
 CURDIR=`pwd`
 for mod in $MODULES
 do

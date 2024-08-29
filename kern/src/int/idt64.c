@@ -40,7 +40,9 @@ void irq_handler(registers_t* regs)
 		irq_t handler = IRQHANDLERS[regs->int_no - 0x20]; /* IRQs begin at 32 */
 		handler(regs);
 	} else {
-		printk("WARNING: unhandled interrupt %x\n", regs->int_no);
+		// this ATA PIO interrupt is bothering me rn
+		if(regs->int_no != 0x2E)
+			printk("WARNING: unhandled interrupt %x\n", regs->int_no);
 	}
 
 	/* Clear master (and slave) PIC */

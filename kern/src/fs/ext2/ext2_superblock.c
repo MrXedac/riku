@@ -32,18 +32,31 @@ int ext2_check_superblock(struct riku_devfs_node* device)
         fsinfo->block_group_count = block_group_count;
         fsinfo->sectors_per_block = fsinfo->block_size / 512; /* A sector on drive is 512 bytes right now */
 
+        if(superblock->version_major >= 1) fsinfo->inode_size = superblock->extended.inode_struct_size;
+        else fsinfo->inode_size = 128;
+
         device->extended = (void*)fsinfo;
 
-        printk("ext2: block size %d, inode count %d, block count %d, blocks per group %d, inodes per block group %d, block group count %d\n",
+        printk("ext2: block size %d, inode count %d, block count %d, blocks per group %d, inodes per block group %d, block group count %d, inode size %d, %d sectors per block\n",
             superblock->block_size << 11,
             superblock->inode_count,
             superblock->block_count,
             superblock->block_per_block_group,
             superblock->inodes_per_block_group,
-            fsinfo->block_group_count
+            fsinfo->block_group_count,
+            fsinfo->inode_size,
+            fsinfo->sectors_per_block
         );
 
-        struct ext2_block_group_descriptor* desc = (struct ext2_block_group_descriptor*)kalloc(sizeof(struct ext2_block_group_descriptor));
+        /*int dirInode = ext2_find_inode(device, 2, "some_dir/some_deeper_dir", 1);
+        printk("some_deeper_dir inode %d\n", dirInode);
+
+        dirInode = ext2_find_inode(device, 2, "", 1);
+        printk("root inode %d\n", dirInode);
+
+        dirInode = ext2_find_inode(device, 2, "some_dir/some_deeper_dir/other.txt", 0);
+        printk("file inode %d\n", dirInode);*/
+        /*struct ext2_block_group_descriptor* desc = (struct ext2_block_group_descriptor*)kalloc(sizeof(struct ext2_block_group_descriptor));
         ext2_read_block_group_descriptor(device, 30, desc);
         printk("block group 30 descriptor: usage bitmap %d, inode usage bitmap %d, inode table address %d, %d unallocated blocks, %d unallocated inodes, %d directories\n",
             desc->block_usage_bitmap_address,
@@ -51,7 +64,7 @@ int ext2_check_superblock(struct riku_devfs_node* device)
             desc->inode_table_address,
             desc->unallocated_blocks,
             desc->unallocated_inodes,
-            desc->directory_count);
+            desc->directory_count);*/
 
         return 0;
     }

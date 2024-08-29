@@ -59,6 +59,7 @@ uint32_t open(const char* file, uint64_t mode)
       desc->mountpoint = &mounts[drvOffset];
       desc->clients = 1;
       desc->extended = retInfo->extended; /* Set extended here :D */
+      desc->offset = 0x0;
 
       current_task->files[i] = desc;
       return i;
