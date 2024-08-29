@@ -12,6 +12,7 @@ struct riku_descriptor {
   struct riku_devfs_node* device; /* Associated devfs node */
   struct riku_filesystem* fs; /* FS associated to the descriptor */
   struct riku_fileinfo* fileinfo;
+  uint64_t offset;  /* Offset to seek */
   uint32_t clients; /* Amount of tasks associated to this descriptor */
   void* extended; /* Some extended, untyped data for special filesystems */
 };

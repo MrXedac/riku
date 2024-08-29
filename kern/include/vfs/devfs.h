@@ -51,6 +51,8 @@ struct riku_devfs_node {
 	readchar_t getch;
 	seek_t seek;
 	struct riku_devfs_node* next; /* Next node in device space */
+	struct riku_devfs_node* parent; /* Parent, if node is a subset of an existing device (e.g. partition) */
+	void* extended; /* Extended info for device or filesystem */
 };
 
 struct riku_devfs_node *devfs_last_node();

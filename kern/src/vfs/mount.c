@@ -35,6 +35,7 @@ uint32_t mount_internal(struct riku_devfs_node* device, struct riku_filesystem* 
     /* Failure. Rollback. */
     mounts[index].device = 0x0;
     mounts[index].fs = 0x0;
+    printk("vfs: mounting failed, filesystem is corrupted\n");
     return EFSERR;
   } else {
     /* Filesystem managed to mount device, success */

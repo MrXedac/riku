@@ -85,6 +85,7 @@ void init_vfs()
 	/* Declare devfs filesystem driver */
 	extern struct riku_filesystem fs_devfs;
     extern struct riku_filesystem fs_ustarfs;
+	extern struct riku_filesystem fs_ext2fs;
 	extern struct riku_devfs_node* devfsVirtPtr;
 
     /* Find initramfs devnode */
@@ -95,6 +96,13 @@ void init_vfs()
 
     /* Mount /dev/initramfs as B: */
     mount_internal(ramfsVirtPtr, &fs_ustarfs);
+
+	/* Attempt to mount ata0p1 as C: */
+	struct riku_devfs_node* root_device = devfs_find_node("ata0a");
+	if(root_device != 0x0)
+	{
+		mount_internal(root_device, &fs_ext2fs);
+	}
 
 	/* Try the devfs mountpoint */
 	struct riku_fileinfo devfs_dir, devfs_node;

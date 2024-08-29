@@ -52,7 +52,6 @@ void ata_delay(struct riku_devfs_node *self)
 int ata_seek(struct riku_devfs_node* self, uint64_t position)
 {
     outb(DRIVER_IO_PORT(self, ATA_DRIVE_HEAD), 0xE0 | ((position >> 24) & 0x0F));
-    outb(DRIVER_IO_PORT(self, ATA_SECTOR_COUNT), 0x1);
     outb(DRIVER_IO_PORT(self, ATA_SECTOR_NUMBER), (unsigned char)position);
     outb(DRIVER_IO_PORT(self, ATA_CYL_LOW), (unsigned char)(position >> 8));    
     outb(DRIVER_IO_PORT(self, ATA_CYL_HIGH), (unsigned char)(position >> 16));
@@ -62,14 +61,25 @@ int ata_seek(struct riku_devfs_node* self, uint64_t position)
 
 int ata_read(struct riku_devfs_node* self, const char* buffer, uint32_t count)
 {
+    outb(DRIVER_IO_PORT(self, ATA_SECTOR_COUNT), count);
     outb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND), 0x20);
     uint8_t status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
     while((status & ATA_STATUS_DRQ) == 0x0 || (status & ATA_STATUS_BSY) == ATA_STATUS_BSY) status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
     
     uint16_t* buf = (uint16_t*)buffer;
-    for(int i = 0; i < count * 256; i++)
+    for(int i = 0; i < count; i++)
     {
-        *(buf + i) = inw(DRIVER_IO_PORT(self, ATA_IO_DATA));
+        for(int j = 0; j < 256; j++)
+            *(buf + (i * 256) + j) = inw(DRIVER_IO_PORT(self, ATA_IO_DATA));
+
+        if(i < count - 1) { 
+            // 400ns delay...
+            ata_delay(self);
+
+            // Poll until next set of data is available
+            status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
+            while((status & ATA_STATUS_DRQ) == 0x0 || (status & ATA_STATUS_BSY) == ATA_STATUS_BSY) status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
+        }
     }
 
     return count;
@@ -77,6 +87,7 @@ int ata_read(struct riku_devfs_node* self, const char* buffer, uint32_t count)
 
 int ata_write(struct riku_devfs_node* self, const char* buffer, uint32_t count)
 {
+    outb(DRIVER_IO_PORT(self, ATA_SECTOR_COUNT), count);
     outb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND), 0x30);
     uint8_t status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));
     while((status & ATA_STATUS_DRQ) == 0x0 || (status & ATA_STATUS_BSY) == ATA_STATUS_BSY) status = inb(DRIVER_IO_PORT(self, ATA_STATUS_COMMAND));

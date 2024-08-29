@@ -12,19 +12,48 @@
 // Maximum 2 drives with 4 partitions, max. 8... should be "safe" for now
 char curLetter = 'a';
 
+int mbr_lba_begin(struct riku_devfs_node* self)
+{
+    return self->resources[0].begin;
+}
+
 int mbr_seek(struct riku_devfs_node* self, uint64_t position)
 {
+    if(self->parent == 0x0)
+    {
+        printk("%s: no device underlying\n", self->name);
+        return -1;
+    }
+
+    int lba_begin = mbr_lba_begin(self);
+    struct riku_devfs_node* ata = self->parent;
+
+    ata->seek(ata, lba_begin + position);
     return 0;
 }
 
 int mbr_read(struct riku_devfs_node* self, const char* buffer, uint32_t count)
 {
-    return 0;
+    if(self->parent == 0x0)
+    {
+        printk("%s: no device underlying\n", self->name);
+        return -1;
+    }
+
+    struct riku_devfs_node* ata = self->parent;
+    return ata->read(ata, buffer, count);
 }
 
 int mbr_write(struct riku_devfs_node* self, const char* buffer, uint32_t count)
 {
-    return 0;
+    if(self->parent == 0x0)
+    {
+        printk("%s: no device underlying\n", self->name);
+        return -1;
+    }
+
+    struct riku_devfs_node* ata = self->parent;
+    return ata->write(ata, buffer, count);
 }
 
 int partition_size_mb(struct mbr_partition_entry* entry)
@@ -32,7 +61,7 @@ int partition_size_mb(struct mbr_partition_entry* entry)
     return (entry->sector_count * 512) / 1024 / 1024; // megabytes
 }
 
-void mbr_init_entry(struct mbr_partition_entry* entry)
+void mbr_init_entry(struct mbr_partition_entry* entry, struct riku_devfs_node* ata_device)
 {
     if(entry->lba_start > 0)
     {
@@ -43,8 +72,13 @@ void mbr_init_entry(struct mbr_partition_entry* entry)
         devName[5] = '\0';
 
         struct riku_devfs_node* node = hardware_create_node(devName);
+        node->parent = ata_device;
         hardware_add_resource(node, UNKNOWN, entry->lba_start, entry->lba_start + entry->sector_count);
         node->type = StorageDevice;
+        
+        node->seek = mbr_seek;
+        node->read = mbr_read;
+        node->write = mbr_write;
         devfs_add(node);
         curLetter++;
     }
@@ -67,16 +101,10 @@ void mbr_init()
 
     struct mbr_header* mbr = (struct mbr_header*)buffer;
 
-    mbr_init_entry(&mbr->first_entry);
-    mbr_init_entry(&mbr->second_entry);
-    mbr_init_entry(&mbr->third_entry);
-    mbr_init_entry(&mbr->fourth_entry);
-
-/*
-    node->seek = ata_seek;
-    node->read = ata_read;
-    node->write = ata_write;
-
-    devfs_add(node);*/
-  return;
+    mbr_init_entry(&mbr->first_entry, drive);
+    mbr_init_entry(&mbr->second_entry, drive);
+    mbr_init_entry(&mbr->third_entry, drive);
+    mbr_init_entry(&mbr->fourth_entry, drive);
+    
+    return;
 }

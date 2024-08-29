@@ -20,7 +20,7 @@ uint32_t write(int fd, char* buffer, uint32_t size)
   if(desc->state != OPENED)
     return -ECLOSED;
 
-  desc->fs->write(desc->mountpoint, desc->fileinfo, buffer, size, 0x0);
+  desc->fs->write(desc->mountpoint, desc->fileinfo, buffer, size, desc->offset);
 
   return 0;
 }
@@ -39,7 +39,7 @@ uint32_t read(int fd, char* buffer, uint32_t size)
   if(desc->state != OPENED)
     return -ECLOSED;
 
-  desc->fs->read(desc->mountpoint, desc->fileinfo, buffer, size, 0x0);
+  desc->fs->read(desc->mountpoint, desc->fileinfo, buffer, size, desc->offset);
 
   return 0;
 }
