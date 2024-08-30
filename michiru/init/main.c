@@ -99,7 +99,28 @@ void spawn(char* name)
     if(childpid == 0)
     {
         /* Child : execve into child process */
-        int ret = execve(name, (char**)0, (char**)0);
+        char* params[6];
+        char* line = name;
+        int count = 0;
+        char c;
+        int i = 0;
+        do {
+            c = name[i];
+
+            if(c == ' '){
+                name[i] = '\0';
+                params[count] = line;
+
+                line = name + i + 1;
+                count++;
+            }
+            i++;
+        } while(c != '\0');
+
+        params[count] = line;
+        params[count+1] = 0x0;
+
+        int ret = execve(name, params, params);
         if(ret != 0)
         {
             if(ret == -10) printf("file is not an executable binary\n");

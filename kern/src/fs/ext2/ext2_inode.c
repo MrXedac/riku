@@ -82,6 +82,7 @@ int ext2_find_inode(struct riku_devfs_node* device, int rootInode, const char* d
             nameBuffer[i] = '\0';
             folder = nameBuffer;
             remaining = &nameBuffer[i+1];
+            //printk("ext2_find_inode: folder %s, remaining %s\n", folder, remaining);
             break;
         }
     }
@@ -98,13 +99,17 @@ int ext2_find_inode(struct riku_devfs_node* device, int rootInode, const char* d
     while(root_dir->size != 0)
     {
         char* inode_name = (char*)root_dir + sizeof(struct ext2_direntry);
+        *(inode_name + root_dir->name_length_lower) = '\0';
+        //printk("inode name: %s\n", inode_name);
         if(strcmp(inode_name, folder) == 0 && (dirFlag == 0 || (root_dir->type & EXT2_DIRENTRY_TYPE_DIR) == EXT2_DIRENTRY_TYPE_DIR))
         {
             if(*remaining == '\0') // End of traversal
             {
+                //printk("found: %d\n", root_dir->inode);
                 inode = root_dir->inode;
             } else {
                 /* Found it, recursive traversal */
+                //printk("found folder: %d\n", root_dir->inode);
                 inode = ext2_find_inode(device, root_dir->inode, remaining, dirFlag);
             }
             break;
@@ -116,6 +121,14 @@ int ext2_find_inode(struct riku_devfs_node* device, int rootInode, const char* d
     kfree((void*)datablock);
 
     return inode;
+}
+
+int ext2_direntry_flags_to_riku_flags(uint8_t flags)
+{
+    if(flags & EXT2_DIRENTRY_TYPE_FILE) return 0x1;
+    if(flags & EXT2_DIRENTRY_TYPE_DIR) return 0x2;
+
+    return 0x0;
 }
 
 int ext2_get_direntry(struct riku_devfs_node* device, int dirInode, int offset, struct riku_fileinfo* result)
@@ -139,8 +152,12 @@ int ext2_get_direntry(struct riku_devfs_node* device, int dirInode, int offset, 
         if(index == offset)
         {
             strcpy(result->name, inode_name);
-            result->size = root_dir->size;
-            result->type = root_dir->type;
+
+            // Get size
+            ext2_read_inode(device, root_dir->inode, root);
+
+            result->size = root->size_lower; 
+            result->type = ext2_direntry_flags_to_riku_flags(root_dir->type);
 
             break;
         }

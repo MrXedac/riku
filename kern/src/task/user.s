@@ -1,9 +1,14 @@
 [global enter_userland]
 ; RIP is in RDI
 ; RSP in in RSI
+; ARGV is in RDX
+; ARGC is in RCX
 enter_userland:
   mov rax, cr3
   mov cr3, rax
+  ; Put argc and argv in R12 and R13
+  mov r12, rcx
+  mov r13, rdx
   mov rcx, rdi
   mov rsp, rsi
   mov rbp, rsp
@@ -11,9 +16,9 @@ enter_userland:
   mov ds, ax
   mov rax, 0
   mov rbx, 0
-  mov rdx, 0
   mov rsi, 0
-  mov rdi, 0
+  mov rdi, rdx
+  mov rdx, 0
   mov r11, 0x200
   o64 sysret
 

@@ -103,6 +103,38 @@ int execve(char* name, char** argv, char** env)
         return -EBINFMT;
     }
 
+    /* Binary spawned, move argv somewhere safe */
+    /* Map heap, put argv in it */
+    current_task->heap = INIT_HEAP + 0x1000;
+    uintptr_t* argv_page = alloc_page();
+    vme_unmap(current_task->vm_root, INIT_HEAP);
+    vme_map(current_task->vm_root, LIN((uintptr_t)argv_page), INIT_HEAP, 1);
+    printk("mapped new heap, user argv at %x\n", argv);
+    int argv_index = 0;
+    int offset = 0;
+    char** argvptr = (char**)INIT_HEAP;
+    while(argv[argv_index] != 0)
+    {
+        strcpy((char*)INIT_HEAP + offset, argv[argv_index]);
+        offset += strlen(argv[argv_index]) + 1; /* Add null termination byte to offset... */
+        argv_index++;
+    }
+
+    /* Build new argv structure */
+    argv_index = 0;
+    uintptr_t* argv_ptr = (uintptr_t*)INIT_HEAP + offset;
+    uintptr_t* argv_ptr_for_userland = argv_ptr;
+    int base_offset = 0;
+    int argc = 0;
+    while(argv[argv_index] != 0)
+    {
+        *argv_ptr = (uintptr_t)(INIT_HEAP + base_offset);
+        argv_ptr++;
+        base_offset += (strlen(argv[argv_index]) + 1);
+        argv_index++;
+        argc++;
+    }
+
 	/* Map user stack somewhere safe */
     uintptr_t* stack = alloc_page();
     vme_unmap(current_task->vm_root, INIT_STACK);
@@ -110,12 +142,12 @@ int execve(char* name, char** argv, char** env)
 
 	current_task->task_rsp = INIT_STACK + PAGE_SIZE - sizeof(uintptr_t);
 	current_task->task_rbp = INIT_STACK + PAGE_SIZE - sizeof(uintptr_t);
-    
+
     strcpy(current_task->name, name);
 
     /* Drop kernel context, restart from userland */
-	extern void enter_userland(uint64_t rip, uint64_t rsp);
-	enter_userland(rip, INIT_STACK + PAGE_SIZE - sizeof(uintptr_t));
+	extern void enter_userland(uint64_t rip, uint64_t rsp, uint64_t argv, uint64_t argc);
+	enter_userland(rip, INIT_STACK + PAGE_SIZE - sizeof(uintptr_t), (uint64_t)argv_ptr_for_userland, argc);
 
     return 0;
 }

@@ -7,6 +7,7 @@
 #include <string.h>
 #include "elf64.h"
 #include "heap.h"
+#include "idt64.h"
 #include "fs/ext2/ext2.h"
 
 int ext2fs_init(struct riku_mountpoint* self)
@@ -53,29 +54,55 @@ int ext2fs_write(struct riku_mountpoint* self, struct riku_fileinfo* file, const
     return 0;
 }
 
+/* TODO : add offset support */
 int ext2fs_read(struct riku_mountpoint* self, struct riku_fileinfo* file, char*  buffer, uint64_t length, uint64_t offset)
 {
     struct ext2_info* info = (struct ext2_info*)self->device->extended;
     char* inodeData = (char*)kalloc(info->inode_size);
     struct ext2_inode* inode = (struct ext2_inode*)inodeData;
 
-    ext2_read_inode(self->device, file->handle, inode);
+    if(offset + length > 12 * info->block_size) {
+        panic("ext2: attempting to read too much data", (void*)0);
+    }
 
-    int dataPage = inode->direct_block_pointers[0];
+    ext2_read_inode(self->device, file->handle, inode);
 
     int size = inode->size_lower;
     int lengthToRead = length;
     if(offset + length > size)
         lengthToRead = size - offset;
+    int blocksToRead = offset + lengthToRead;
 
-    printk("size %d, offset %d, length %d, lengthToRead %d\n", size, offset, length, lengthToRead);
+    int curBlockIndex = 0;   
+    int curOffset = offset;
+    int curLength = length;
+    int curLengthToRead = lengthToRead;
+
+    if(lengthToRead > info->block_size) curLengthToRead = info->block_size;
+
+    while(blocksToRead > 0)
+    {
+        int dataPage = inode->direct_block_pointers[curBlockIndex];
+
+        printk("size %d, offset %d, length %d, lengthToRead %d\n", size, offset, length, curLengthToRead);
+        
+        char* block = (char*)kalloc(info->sectors_per_block * 512);
+        ext2_read_block(self->device, dataPage, block);
+
+        memcpy(buffer + (curBlockIndex * info->block_size), block, curLengthToRead);
+        kfree((void*)block);
+
+        /* Decrease block size from length */
+        blocksToRead -= info->block_size;
+        
+        /* If less than a block to read, read only remaining data */
+        if(blocksToRead <= info->block_size) curLengthToRead = blocksToRead;
+
+        /* Next index */
+        curBlockIndex++;
+    }
     kfree((void*)inodeData);
-
-    char* block = (char*)kalloc(info->sectors_per_block * 512);
-    ext2_read_block(self->device, dataPage, block);
-
-    memcpy(buffer, block + offset, lengthToRead);
-    kfree((void*)block);
+    
     return lengthToRead;
 }
 
@@ -83,7 +110,10 @@ int ext2fs_open(struct riku_mountpoint* self, const char* file, struct riku_file
 { 
     struct ext2_info* info = (struct ext2_info*)self->device->extended;
     int inodeNumber = ext2_find_inode(self->device, 2, file, 0);
-    if(inodeNumber == -1) return -ENOENT;
+    if(inodeNumber == -1) {
+        printk("couldnt find file at %s\n", file);
+        return -ENOENT;
+    } 
 
     result->handle = inodeNumber;
     result->flags = 0x0; // Directory
