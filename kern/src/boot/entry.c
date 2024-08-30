@@ -246,7 +246,7 @@ void late_init()
 	{
 		uintptr_t* page = alloc_page();
 
-		printk("vme_map: %x to %x\n",LIN((uintptr_t)page), map_addr);
+		//printk("vme_map: %x to %x\n",LIN((uintptr_t)page), map_addr);
 		vme_map(init_vme, LIN((uintptr_t)page), map_addr, 1);
 
 		curSize -= PAGE_SIZE;

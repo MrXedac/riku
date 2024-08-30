@@ -115,7 +115,9 @@ int devfs_close(struct riku_mountpoint* self, struct riku_fileinfo* file)
 }
 
 struct riku_filesystem fs_devfs =
-{
+{    
+  .name = "devfs",
+  .fullname = "devfs virtual filesystem",
   .init = devfs_init,
   .opendir = devfs_opendir,
   .readdir = devfs_readdir,

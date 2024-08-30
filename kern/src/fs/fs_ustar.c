@@ -145,6 +145,8 @@ int ustarfs_close(struct riku_mountpoint* self, struct riku_fileinfo* file)
 
 struct riku_filesystem fs_ustarfs =
 {
+    .name = "ustarfs",
+    .fullname = "ustarfs filesystem driver for Riku initial ramdisk",
     .init = ustarfs_init,
     .opendir = ustarfs_opendir,
     .readdir = ustarfs_readdir,

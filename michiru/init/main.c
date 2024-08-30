@@ -135,7 +135,7 @@ void spawn(char* name)
 
 void shell()
 {
-    char buffer[32];
+    char buffer[128];
     int idx = 0;
     while(1)
     {
@@ -150,11 +150,21 @@ void shell()
             read(0, &c, 1);
             if(c)
             {
-                printf("%c", c);
-                if(c != '\n') {
-                    buffer[idx] = c;
-                    idx++;
-                }   
+                if(c == '\b')
+                {
+                    if(idx > 0) {
+                        /* backspace */
+                        printf("\b \b");
+                        idx--;
+                        buffer[idx] = (char)0; 
+                    }
+                } else {
+                    printf("%c", c);
+                    if(c != '\n') {
+                        buffer[idx] = c;
+                        idx++;
+                    }   
+                }
             }
         }
         int i;
