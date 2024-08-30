@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define SHELL_COMMANDS 5
+#define SHELL_COMMANDS 6
 
 typedef struct {
     char name[16];
@@ -17,6 +17,7 @@ void ish_about();
 void ish_ansi();
 void ish_read();
 void ish_exit();
+void ish_crash();
 
 shell_command_t commands[SHELL_COMMANDS] =
 {
@@ -25,7 +26,14 @@ shell_command_t commands[SHELL_COMMANDS] =
     {"ansi", "Performs an ANSI test.", ish_ansi},
     {"read", "Reads a file.", ish_read},
     {"exit", "Exits shell.", ish_exit},
+    {"crash", "Crashes shell by dereferencing a bad pointer.", ish_crash }
 };
+
+void ish_crash()
+{
+    uint32_t* bad_pointer = (uint32_t*)0xDEADBEEF;
+    *bad_pointer = 0xCAFEBABE;
+}
 
 void ish_exit()
 {
@@ -129,7 +137,10 @@ void spawn(char* name)
             
     } else {
         int returncode = wait(childpid);
-        printf("process exited with return code %d\n", returncode);
+        if(returncode == -0x10) /* EBADPTR */
+            printf("process killed by kernel (-EBADPTR)\n");
+        else if(returncode > 0)
+            printf("process exited with return code %d\n", returncode);
     };
 }
 

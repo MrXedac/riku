@@ -4,6 +4,7 @@
 #include "serial.h"
 #include "mem.h"
 #include "task.h"
+#include "errno.h"
 #include <stdint.h>
 
 uintptr_t pmt; /* Page Master Table address */
@@ -443,7 +444,13 @@ void do_pagefault(registers_t* regs)
 			present?"present":"missing",
 			rw?"write":"read",
 			supervisor?"user":"kernel");
-		for(;;);
+		
+		if(supervisor)
+		{
+			/* Fault from userland : hand process carefully */
+			exit(-EBADPTR);
+			for(;;);
+		}
 	}
 }
 

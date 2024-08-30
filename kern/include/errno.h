@@ -11,4 +11,8 @@
 #define ENMFIL  8 /* No more files in directory */
 #define EWRPTR  9 /* Wrong pointer */
 #define EBINFMT 10 /* Binary format not recognized */
+
+/* Special exit codes */
+#define EBADPTR 0x10
+
 #endif
