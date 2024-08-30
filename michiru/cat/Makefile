@@ -12,7 +12,7 @@ CFLAGS=-nostdlib -nostdinc -Wall -Werror -ffreestanding -c -fno-builtin -std=gnu
 ASFLAGS=-felf64 -O0
 LDFLAGS=-Tlink.ld -z max-page-size=0x1000
 
-EXEC=lssys
+EXEC=cat
 
 $(EXEC): $(AOBJ) $(COBJ)
 	$(LD) $(LDFLAGS) $^ -o $@ -L$(LIBC)/lib/ -lc

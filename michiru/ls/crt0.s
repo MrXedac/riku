@@ -8,6 +8,8 @@ start:
 ;	mov rbx, hw
 ;	mov rax, 0x1
 ;	syscall
+	mov rdi, r12
+	mov rsi, r13
 	call main
 	jmp $
 

@@ -295,6 +295,25 @@ void late_init()
 	printk("Files descriptor opened : %d, %d, %d\n", stdin, stdout, stderr);
 	printk("Switching in userland (rip=%x) and dropping kernel boot context\n", rip);
 
+	char* debugMessage = "loading init process from ";
+	write(stdout, debugMessage, strlen(debugMessage));
+	write(stdout, CONFIG_INIT_PROCESS, strlen(CONFIG_INIT_PROCESS));
+	switch(CONFIG_INIT_PROCESS[0])
+	{
+		case 'A':
+			write(stdout, " (devfs)\n", 9);
+			break;
+		case 'B':
+			write(stdout, " (ramfs)\n", 9);
+			break;
+		case 'C':
+			write(stdout, " (ext2fs)\n", 10);
+			break;
+		default:
+			write(stdout, " (unkfs)\n", 9);
+			break;
+	} 
+
 	extern void enter_userland(uint64_t rip, uint64_t rsp);
 	enter_userland(rip, INIT_STACK + PAGE_SIZE - sizeof(uintptr_t));
 

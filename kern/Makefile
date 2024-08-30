@@ -36,7 +36,7 @@ COBJ=$(sort $(CSOURCES:.c=.o))
 AOBJ=$(sort $(ASOURCES:.s=.o))
 
 # Toolchain flags
-CFLAGS=-Wall -fcommon -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -Wno-unused-variable -mcmodel=large -g -fno-stack-protector
+CFLAGS=-Wall -fcommon -Werror -nostdlib -fno-builtin -std=gnu99 -ffreestanding -c -Wno-unused-variable -mcmodel=large -g -fno-stack-protector -mno-red-zone
 LDFLAGS=-z max-page-size=0x1000
 ASFLAGS=-felf64
 

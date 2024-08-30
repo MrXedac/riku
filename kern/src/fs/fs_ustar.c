@@ -79,7 +79,7 @@ int ustarfs_readdir(struct riku_mountpoint* self, struct riku_fileinfo* desc, ui
         result->extended = (void*)ptr;
         strcpy(result->name, name);
         result->size = oct2bin(ptr + 0x7c, 11);
-        result->type = ustarfs_identify(ptr+512); // File
+        result->type = 0x1; //ustarfs_identify(ptr+512); // File
     } else return -ENMFIL;
 
     /* If we're readdir'ing through a descriptor, increment directory offset */

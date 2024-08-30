@@ -29,24 +29,26 @@ int devfs_opendir(struct riku_mountpoint* self, const char* directory, struct ri
 }
 
 int devfs_readdir_type(struct riku_devfs_node* node)
-{
+{ 
+  // XX4 -> device
+  
   switch(node->type)
   {
     case HIDDevice:
-      return 0x1;
+      return 0x014;
       break;
     case StorageDevice:
-      return 0x2;
+      return 0x024;
       break;
     case NetworkDevice:
-      return 0x3;
+      return 0x044;
       break;
     case SpecialDevice:
-      return 0x4;
+      return 0x084;
       break;  
     case UnknownDevice:
     default:
-      return 0x5;
+      return 0x104;
       break;
   }
 }

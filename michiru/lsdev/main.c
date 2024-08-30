@@ -40,19 +40,19 @@ void main()
 
             switch(file.type)
             {
-                case 0x1:
+                case 0x014:
                     printf("hid\n");
                     break;
-                case 0x2:
+                case 0x024:
                     printf("storage\n");
                     break;
-                case 0x3:
+                case 0x044:
                     printf("network\n");
                     break;
-                case 0x4:
+                case 0x084:
                     printf("special\n");
                     break;
-                case 0x5:
+                case 0x104:
                 default:
                     printf("unknown\n");
                     break;
