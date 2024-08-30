@@ -129,6 +129,8 @@ int ustarfs_open(struct riku_mountpoint* self, const char* file, struct riku_fil
         {
             /* File found - no additional operation required. Set address of data in extended ptr, and return */
             result->extended = (void*)name; /* Base address of file in archive */
+            int filesize = oct2bin((unsigned char*)name + 0x7c, 11);
+            result->size = filesize; 
             return 0;
         }
     }

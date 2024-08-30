@@ -1,6 +1,3 @@
-user_rsp: dq
-user_rbp: dq
-
 [global enter_userland]
 ; RIP is in RDI
 ; RSP in in RSI

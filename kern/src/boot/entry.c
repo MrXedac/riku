@@ -19,6 +19,7 @@
 #include "sys.h"
 #include "vfs/openclose.h"
 #include "vfs/readwrite.h"
+#include "vfs/stat.h"
 #include "vfs/dup2.h"
 #include "fs_vfat.h"
 #include "vfs/mount.h"
@@ -27,6 +28,8 @@
 #include "kconfig.h"
 
 uintptr_t initramfs_begin = 0x0;
+
+#define VME_INIT_BINARY	0x3000000
 
 /* Early-boot console init */
 void init_terminal()
@@ -228,7 +231,33 @@ void late_init()
     uintptr_t init_addr = 0x0, init_size = 0x0;
 
     /* Find init in initramfs; TODO : use correct API instead of doing everything by hand */
-    extern struct riku_filesystem fs_ustarfs;
+	int fd_init = open(CONFIG_INIT_PROCESS, 1);
+	if(fd_init < 0) {
+		panic("unable to find init process", (void*)0);
+	}
+
+	struct riku_stat fileInfo;
+	stat(fd_init, &fileInfo);
+
+	// This is our binary - we need to map contiguous memory to store the binary 
+	int curSize = fileInfo.size;
+	int map_addr = VME_INIT_BINARY;
+	while(curSize > 0)
+	{
+		uintptr_t* page = alloc_page();
+
+		printk("vme_map: %x to %x\n",LIN((uintptr_t)page), map_addr);
+		vme_map(init_vme, LIN((uintptr_t)page), map_addr, 1);
+
+		curSize -= PAGE_SIZE;
+		map_addr += PAGE_SIZE;
+	}
+
+	read(fd_init, (char*)VME_INIT_BINARY, fileInfo.size);	
+	init_addr = VME_INIT_BINARY;
+	close(fd_init);
+	
+    /*extern struct riku_filesystem fs_ustarfs;
     struct riku_fileinfo ramfs_dir, ramfs_node;
     memset(&ramfs_dir, 0, sizeof(ramfs_dir));
     while(!fs_ustarfs.readdir(&mounts[1], &ramfs_dir, 0, &ramfs_node))
@@ -239,9 +268,14 @@ void late_init()
         init_size = (uintptr_t)oct2bin(ramfs_node.extended + 0x7c, 11);
         if(!strcmp(name, CONFIG_INIT_PROCESS))
             init_addr = (uintptr_t)ramfs_node.extended + 512;
-    }
+    }*/
 	printk("init binary at %x\n", init_addr);
     uint64_t rip = spawn_init(init_addr, init_size, init_vme);
+
+	for(int i = VME_INIT_BINARY; i < map_addr; i += PAGE_SIZE)
+	{
+		vme_unmap(init_vme, i);
+	}
 
 	/* Map user stack and kernel stack somewhere safe */
 	printk("user rsp %x, kern rsp %x\n", LIN(current_task->task_rsp), LIN(current_task->kernel_rsp));

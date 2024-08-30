@@ -19,6 +19,11 @@ struct riku_fileinfo {
   void * extended;  /* Filesystem-dependant extended information - put whatever you need in your FS driver implementation */
 };
 
+struct riku_stat {
+  char name[256];
+  uint32_t size;
+};
+
 /* File system interface
   - self : pointer to riku_mountpoint, which is a structure representing a mountpoint on the system (containing pointers to the device and FS driver)
 */
@@ -36,6 +41,8 @@ typedef int (*fs_write_t)    (struct riku_mountpoint* self, struct riku_fileinfo
 typedef int (*fs_read_t)     (struct riku_mountpoint* self, struct riku_fileinfo* file, char* buffer, uint64_t length, uint64_t offset);
 typedef int (*fs_open_t)     (struct riku_mountpoint* self, const char* file, struct riku_fileinfo* result);
 typedef int (*fs_close_t)    (struct riku_mountpoint* self, struct riku_fileinfo* file);
+typedef int (*fs_stat_t)     (struct riku_mountpoint* self, struct riku_fileinfo* file);
+
 /* rename, symlink, unlink, flush... */
 
 /* Filesystem driver interface */
@@ -47,6 +54,7 @@ struct riku_filesystem {
   fs_read_t     read;
   fs_open_t     open;
   fs_close_t    close;
+  fs_stat_t     stat;
 };
 
 #endif

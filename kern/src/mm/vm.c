@@ -108,13 +108,13 @@ uintptr_t* alloc_page()
 		*(uintptr_t*)(((uintptr_t)res + i * 0x8) | 0xFFFF800000000000) = 0x0;
 
 	allocated_pages++;
-	return res;
+	return (uintptr_t*)LIN((uintptr_t)res);
 }
 
 void free_page(uintptr_t *page)
 {
-	*page = (uintptr_t)first_free_page;
-	first_free_page = (uintptr_t*)page;
+	*page = LIN((uintptr_t)first_free_page);
+	first_free_page = (uintptr_t*)LIN((uintptr_t)page);
 
 	allocated_pages--;
 }

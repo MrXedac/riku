@@ -47,16 +47,17 @@ void tableWrite(uintptr_t table, uint32_t index, uintptr_t value)
 	tableAddr |= ((uintptr_t)index * sizeof(uint64_t));
 
 	uintptr_t flags = *(uintptr_t*)tableAddr & 0x0000000000000FFF;
-	*(uintptr_t*)tableAddr = value | flags;
+	*(uintptr_t*)tableAddr = (value | flags) & 0x00007FFFFFFFFFFF;
 
 }
 
 void tableWriteWithFlags(uintptr_t table, uint32_t index, uintptr_t value)
 {
+	
 	uintptr_t tableAddr = table | 0xFFFF800000000000; /* Always read in the physical memory section */
 	tableAddr |= ((uintptr_t)index * sizeof(uint64_t));
-
-	*(uintptr_t*)tableAddr = value;
+	//printk("value: %x at %x\n", value, tableAddr);
+	*(uintptr_t*)tableAddr = value & 0x00007FFFFFFFFFFF;
 
 }
 
@@ -171,7 +172,8 @@ void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va, uint8_t user)
 	{
 		pdpt = (uintptr_t)alloc_page();
 		memset((void*)PHYS(pdpt), 0x0, PAGE_SIZE);
-		tableWriteWithFlags(vme, pml4t_idx, (uintptr_t)pdpt | flags);
+		//printk("inserting pdpt %x at index %x\n", (uintptr_t)pdpt | flags, pml4t_idx);
+		tableWriteWithFlags(vme, pml4t_idx, LIN(((uintptr_t)pdpt | flags)));
 	}
 
 	/* Same thing with PD */
@@ -181,7 +183,8 @@ void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va, uint8_t user)
 	{
 		pd = (uintptr_t)alloc_page();
 		memset((void*)PHYS(pd), 0x0, PAGE_SIZE);
-		tableWriteWithFlags(pdpt, pdpt_idx, (uintptr_t)pd | flags);
+		//printk("inserting pd %x at index %x\n", (uintptr_t)pd | flags, pdpt_idx);
+		tableWriteWithFlags(pdpt, pdpt_idx, LIN(((uintptr_t)pd | flags)));
 	}
 
 	/* Same thing with PT */
@@ -191,12 +194,14 @@ void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va, uint8_t user)
 	{
 		pt = (uintptr_t)alloc_page();
 		memset((void*)PHYS(pt), 0x0, PAGE_SIZE);
-		tableWriteWithFlags(pd, pd_idx, (uintptr_t)pt | flags);
+		//printk("inserting pt %x at index %x\n", (uintptr_t)pt | flags, pd_idx);
+		tableWriteWithFlags(pd, pd_idx, LIN(((uintptr_t)pt | flags)));
 	}
 
 	/* Map page into PT */
 	uintptr_t pt_idx = addrIndex(1, va);
-	tableWriteWithFlags(pt, pt_idx, (uintptr_t)phys | flags);
+	//printk("inserting pt %x at index %x\n", (uintptr_t)phys | flags, pt_idx);
+	tableWriteWithFlags(pt, pt_idx, LIN(((uintptr_t)phys | flags)));
 	pmt_inc(phys);
 }
 

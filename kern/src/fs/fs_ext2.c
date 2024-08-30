@@ -80,7 +80,8 @@ int ext2fs_read(struct riku_mountpoint* self, struct riku_fileinfo* file, char* 
 }
 
 int ext2fs_open(struct riku_mountpoint* self, const char* file, struct riku_fileinfo* result)
-{
+{ 
+    struct ext2_info* info = (struct ext2_info*)self->device->extended;
     int inodeNumber = ext2_find_inode(self->device, 2, file, 0);
     if(inodeNumber == -1) return -ENOENT;
 
@@ -92,6 +93,12 @@ int ext2fs_open(struct riku_mountpoint* self, const char* file, struct riku_file
     result->extended = (void*)0;
     strcpy(result->name, file);
     result->type = 0x0;
+    
+    char* buf = (char*)kalloc(info->inode_size);
+    struct ext2_inode* inode = (struct ext2_inode*)buf;
+
+    ext2_read_inode(self->device, inodeNumber, inode);
+    result->size = inode->size_lower;
     
     return 0;
 }
