@@ -196,7 +196,7 @@ void kidle()
 {
 	for(;;)
 	{
-		__asm volatile("sti");
+		__asm volatile("sti; hlt");
 	}
 }
 

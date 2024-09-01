@@ -191,6 +191,12 @@ void ps2kb_handler(registers_t *regs)
 
 int ps2kb_getch(struct riku_devfs_node* self, char* c)
 {
+  while(ps2kb_stream->state == STREAM_EMPTY)
+  {
+    /* Wait until we have some data in the keyboard buffer */
+    wake_on_irq(1);
+  }
+  
   char buf_char = stream_read(ps2kb_stream, false);
   *c = buf_char;
   return 0;
