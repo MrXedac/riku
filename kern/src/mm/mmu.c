@@ -450,6 +450,8 @@ void do_pagefault(registers_t* regs)
 			/* Fault from userland : hand process carefully */
 			exit(-EBADPTR);
 			for(;;);
+		} else {
+			for(;;);
 		}
 	}
 }

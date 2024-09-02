@@ -32,7 +32,7 @@ uint32_t open(const char* file, uint64_t mode)
   if((!mounts[drvOffset].device) || (!mounts[drvOffset].fs)) return -ENOFILE;
 
   char* relPath = (char*)file + 3; /* Remove X:/ from path */
-  //printk("Relpath=%s\n", relPath);
+  printk("Relpath=%s\n", relPath);
 
   /* Allocate result structure */
   struct riku_fileinfo* retInfo = (struct riku_fileinfo*)kalloc(sizeof(struct riku_fileinfo));

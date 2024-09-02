@@ -8,5 +8,6 @@ char *strcpy(char* dest, const char* source);
 char *strcat(char *dest, const char *src);
 int strcmp(const char* s1, const char* s2);
 size_t strlen(const char * str);
+char *strcpy(char* dest, const char* source);
 
 #endif

@@ -11,8 +11,11 @@ void main(int argc, char** argv)
     int opendir_result;
     if(argc > 1)
         opendir_result = opendir(argv[1], &dir);
-    else 
-        opendir_result = opendir("B:/", &dir);
+    else {
+        char wdir[128];
+        gwd(wdir);
+        opendir_result = opendir(wdir, &dir);
+    }
 
     if(opendir_result == 0)
     {

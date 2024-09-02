@@ -27,3 +27,11 @@ size_t strlen(const char * str)
 	for (s = str; *s; ++s) {}
 	return(s - str);
 }
+
+char *strcpy(char* dest, const char* source) {
+    int i = 0;
+    while ((dest[i] = source[i]) != '\0') {
+        i++;
+    }
+    return dest;
+}

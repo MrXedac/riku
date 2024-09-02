@@ -1,0 +1,4 @@
+TESTKEY=testval
+PROMPT=(#PID#) [[36;40m#PATH#[0m] 
+SOMEKEY=somevalue
+BINPATH=B:/

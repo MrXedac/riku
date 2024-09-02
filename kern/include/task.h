@@ -32,6 +32,7 @@ struct riku_task {
 	struct riku_task* waiting_on; /* Task this task is waiting completion */
 	struct riku_task* irq_queue_next; /* Next task in an IRQ waiting queue */
 	int exit_code; /* Exit code of the task */
+	char cwd[128]; /* Current working directory, if any */
 };
 
 struct riku_task *current_task;
@@ -55,5 +56,7 @@ int execve(char* name, char** argv, char** env);
 int isatty(int descriptor);
 uintptr_t sbrk(int incr); /* Increases process heap */
 int wait(int pid);
+int cwd(char*);
+int gwd(char*);
 
 #endif

@@ -38,7 +38,9 @@ void *syscall_table[SYSCALL_COUNT] =
 	&wait,
 	&opendir,
 	&readdir,
-	&sbrk
+	&sbrk,
+	&cwd,
+	&gwd
 };
 
 void init_sysenter()

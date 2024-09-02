@@ -33,6 +33,10 @@ fix_tf:
 [extern fork_stack]
 [global ret_from_fork]
 ret_from_fork:
+ ; Pop R15 and R14 to preserve them
+ pop qword r15
+ pop qword r14
+
  pop qword r11
  or r11, 0x200 ; Re-enable interrupts
  pop qword rcx
@@ -75,7 +79,7 @@ syscall_ep:
   mov cx, 0x10
   mov ds, cx
 
-  cmp rax, 0x10 ; Remember to change this whenever a system call is added
+  cmp rax, 0x12 ; Remember to change this whenever a system call is added
   jle do_syscall
   ; If we end up here, we selected an invalid system call. Return -1 (-ENOSYSC)
   mov rax, -1
@@ -110,6 +114,10 @@ do_syscall:
   pop rsi
   pop rdi
 
+  ; Preserve R14 and R15
+  push r14
+  push r15 
+
   mov r14, rsp ; Keep RSP in R14, in order to have a safe fork() return
   mov r15, rbp ; Same for RBP
   
@@ -118,6 +126,9 @@ do_syscall:
  
   ; At this point we returned from the C handler and RAX contains our syscall's result
 ret_from_call:
+  pop qword r15
+  pop qword r14
+  
   pop qword r11
   or r11, 0x200 ; Re-enable interrupts
   pop qword rcx

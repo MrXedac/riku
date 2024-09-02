@@ -82,7 +82,7 @@ int ext2_find_inode(struct riku_devfs_node* device, int rootInode, const char* d
             nameBuffer[i] = '\0';
             folder = nameBuffer;
             remaining = &nameBuffer[i+1];
-            //printk("ext2_find_inode: folder %s, remaining %s\n", folder, remaining);
+            printk("ext2_find_inode: folder %s, remaining %s\n", folder, remaining);
             break;
         }
     }
@@ -93,27 +93,30 @@ int ext2_find_inode(struct riku_devfs_node* device, int rootInode, const char* d
     ext2_read_inode(device, rootInode, root);
     char* datablock = (char*)kalloc(fsinfo->sectors_per_block * 512);
     memset(datablock, 0, 512 * fsinfo->sectors_per_block);
+    printk("read block %d\n", root->direct_block_pointers[0]);
     ext2_read_block(device, root->direct_block_pointers[0], datablock);
 
     struct ext2_direntry* root_dir = (struct ext2_direntry*)datablock;
     while(root_dir->size != 0)
     {
-        char* inode_name = (char*)root_dir + sizeof(struct ext2_direntry);
-        *(inode_name + root_dir->name_length_lower) = '\0';
-        //printk("inode name: %s\n", inode_name);
-        if(strcmp(inode_name, folder) == 0 && (dirFlag == 0 || (root_dir->type & EXT2_DIRENTRY_TYPE_DIR) == EXT2_DIRENTRY_TYPE_DIR))
+        char nameBuf[32];
+        memset(nameBuf, 0, 32);
+        memcpy(nameBuf, (char*)root_dir + sizeof(struct ext2_direntry), root_dir->name_length_lower);
+        
+        printk("inode name: %s type %x\n", nameBuf, root_dir->type);
+        if(strcmp(nameBuf, folder) == 0 && (dirFlag == 0 || (root_dir->type & EXT2_DIRENTRY_TYPE_DIR) == EXT2_DIRENTRY_TYPE_DIR))
         {
             if(*remaining == '\0') // End of traversal
             {
-                //printk("found: %d\n", root_dir->inode);
+                printk("found: %d\n", root_dir->inode);
                 inode = root_dir->inode;
             } else {
                 /* Found it, recursive traversal */
-                //printk("found folder: %d\n", root_dir->inode);
+                printk("found folder: %d\n", root_dir->inode);
                 inode = ext2_find_inode(device, root_dir->inode, remaining, dirFlag);
             }
             break;
-        }
+        } 
         root_dir = (struct ext2_direntry*)((uintptr_t)root_dir + root_dir->size);
     }
 

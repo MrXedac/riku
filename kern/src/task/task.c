@@ -14,6 +14,9 @@
 #include "fs_vfat.h"
 #include "vfs/devfs.h"
 #include "vfs/fs.h"
+#include "vfs/openclose.h"
+#include "vfs/readwrite.h"
+#include "vfs/stat.h"
 #include <stdint.h>
 
 uint64_t next_pid = 0;
@@ -30,6 +33,19 @@ uint64_t getpid()
 uint64_t getppid()
 {
     return current_task->ppid;
+}
+
+int cwd(char* wd)
+{
+    memset(current_task->cwd, 0, 128);
+    strcpy(current_task->cwd, wd);
+    return 0;
+}
+
+int gwd(char* buffer)
+{
+    strcpy(buffer, current_task->cwd);
+    return 0;
 }
 
 void wake_up_tasks()
@@ -78,19 +94,37 @@ int execve(char* name, char** argv, char** env)
 {
     printk("execve: running %s\n", name);
     /* Find init in initramfs; TODO : use correct API instead of doing everything by hand */
-    extern struct riku_filesystem fs_ustarfs;
-    struct riku_fileinfo ramfs_dir, ramfs_node;
-    memset(&ramfs_dir, 0, sizeof(ramfs_dir));
-    uintptr_t init_addr = 0x0, init_size = 0x0;
-    while(!fs_ustarfs.readdir(&mounts[1], &ramfs_dir, 0, &ramfs_node))
-    {
-        char* entryname = (char*)ramfs_node.extended;
-        extern int oct2bin(unsigned char*, int);
+	int fd_init = open(name, 1);
+	if(fd_init < 0) {
+        printk("execve: not found\n");
+        return -EBINFMT;
+	}
 
-        init_size = (uintptr_t)oct2bin(ramfs_node.extended + 0x7c, 11);
-        if(!strcmp(entryname, name))
-            init_addr = (uintptr_t)ramfs_node.extended + 512;
-    }
+    printk("binary opened with fd %d\n", fd_init);
+
+    uintptr_t init_addr = 0x0, init_size = 0x0;
+	struct riku_stat fileInfo;
+	int ret = stat(fd_init, &fileInfo);
+    printk("execve: stat returned %d\n");
+
+	// This is our binary - we need to map contiguous memory to store the binary 
+	int curSize = fileInfo.size;
+    printk("execve: bin size %d\n", curSize);
+	int map_addr = 0x3000000;
+	while(curSize > 0)
+	{
+		uintptr_t* page = alloc_page();
+
+		printk("execve: vme: map %x to %x\n",LIN((uintptr_t)page), map_addr);
+		vme_map(current_task->vm_root, LIN((uintptr_t)page), map_addr, 1);
+
+		curSize -= PAGE_SIZE;
+		map_addr += PAGE_SIZE;
+	}
+
+	read(fd_init, (char*)0x3000000, fileInfo.size);	
+	init_addr = 0x3000000;
+	close(fd_init);
 
     if(init_addr == 0x0) return -1;
 

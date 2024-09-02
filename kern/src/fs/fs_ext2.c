@@ -128,6 +128,7 @@ int ext2fs_open(struct riku_mountpoint* self, const char* file, struct riku_file
     struct ext2_inode* inode = (struct ext2_inode*)buf;
 
     ext2_read_inode(self->device, inodeNumber, inode);
+    printk("ext2: inode %d size %d\n", inodeNumber, inode->size_lower);
     result->size = inode->size_lower;
     
     return 0;
