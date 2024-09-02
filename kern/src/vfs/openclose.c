@@ -18,7 +18,7 @@ uint32_t open(const char* file, uint64_t mode)
 
   /* Find drive letter and get mountpoint */
   char drvLetter = file[0];
-  printk("Attenmpting to open %c\n", drvLetter);
+  //printk("Attenmpting to open %c\n", drvLetter);
   if(drvLetter < 'A' || drvLetter > 'Z') return -ENOFILE;
 
   /* Mountpoints definition */
@@ -27,12 +27,12 @@ uint32_t open(const char* file, uint64_t mode)
   /* Find expected offset */
   int drvOffset = drvLetter - 'A';
 
-  printk("Checking for device at offset %d\n", drvOffset);
+  //printk("Checking for device at offset %d\n", drvOffset);
   /* Only continue if we have a valid device descriptor and filesystem */
   if((!mounts[drvOffset].device) || (!mounts[drvOffset].fs)) return -ENOFILE;
 
   char* relPath = (char*)file + 3; /* Remove X:/ from path */
-  printk("Relpath=%s\n", relPath);
+  //printk("Relpath=%s\n", relPath);
 
   /* Allocate result structure */
   struct riku_fileinfo* retInfo = (struct riku_fileinfo*)kalloc(sizeof(struct riku_fileinfo));

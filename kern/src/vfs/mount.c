@@ -40,7 +40,7 @@ uint32_t mount_internal(struct riku_devfs_node* device, struct riku_filesystem* 
   } else {
     /* Filesystem managed to mount device, success */
     mounts[index].state = MOUNTED;
-    printk("vfs: mounted device devfs:/%s into mountpoint %c:/ (index %d)\n", device->name, ('A' + (char)index), index);
+    printk("vfs: mounted device devfs:/%s into mountpoint %c:/ with filesystem %s\n", device->name, ('A' + (char)index), fs->name);
     return 0;
   }
 }

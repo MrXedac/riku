@@ -12,6 +12,9 @@ extern void idt_flush(uint64_t idt_ptr);
 /* IRQ handlers, better hook your drivers here */
 irq_t IRQHANDLERS[16];
 
+/* Wait queue for scheduler "wait-on-IRQ" */
+struct riku_task* IRQ_QUEUE[16];
+
 idt_entry_t idt_entries[256]; //!< Interrupt Descriptor Table
 idt_ptr_t   idt_ptr; //!< Pointer to the IDT
 
@@ -22,6 +25,37 @@ void register_irq(uint8_t int_no, irq_t handler)
 		IRQHANDLERS[int_no] = handler;
 
 	return;
+}
+
+void wake_on_irq(int irq)
+{
+	if(IRQ_QUEUE[irq] != (void*)0)
+		current_task->irq_queue_next = IRQ_QUEUE[irq];
+
+	/* Set current task as waiting on IRQ number X and yield */
+	IRQ_QUEUE[irq] = current_task;
+	current_task->state = SLEEPING;
+	switch_to_task(current_task->next); 
+}
+
+void wake_sleeping_tasks(int irq)
+{
+	if(IRQ_QUEUE[irq] != (void*)0)
+	{
+		/* Wake all tasks and clear queue */
+		struct riku_task* taskptr = IRQ_QUEUE[irq];
+		struct riku_task* buffer = taskptr;
+		while(taskptr != (void*)0)
+		{
+			printk("int: waking up task %d (%s)\n", taskptr->pid, taskptr->name);
+			taskptr->state = ACTIVABLE;
+			buffer = taskptr->irq_queue_next;
+			taskptr->irq_queue_next = (void*)0;
+			taskptr = buffer;
+		}
+
+		IRQ_QUEUE[irq] = (void*)0;
+	}
 }
 
 void enable_interrupts()
@@ -44,6 +78,9 @@ void irq_handler(registers_t* regs)
 		if(regs->int_no != 0x2E)
 			printk("WARNING: unhandled interrupt %x\n", regs->int_no);
 	}
+
+	/* Wake tasks awaiting IRQ */
+	wake_sleeping_tasks(regs->int_no - 0x20);
 
 	/* Clear master (and slave) PIC */
 	if (regs->int_no >= 40)

@@ -107,8 +107,15 @@ int execve(char* name, char** argv, char** env)
     /* Map heap, put argv in it */
     current_task->heap = INIT_HEAP + 0x1000;
     uintptr_t* argv_page = alloc_page();
+    uintptr_t* heap_initial_page = alloc_page();
+
+    /* TODO : BAD !! We map TLS at 0x0 because we didnt set up FS... */
+    uintptr_t* tls = alloc_page();
+
     vme_unmap(current_task->vm_root, INIT_HEAP);
     vme_map(current_task->vm_root, LIN((uintptr_t)argv_page), INIT_HEAP, 1);
+    vme_map(current_task->vm_root, LIN((uintptr_t)heap_initial_page), INIT_HEAP + 0x1000, 1);
+    vme_map(current_task->vm_root, LIN((uintptr_t)tls), 0x0, 1);
     printk("mapped new heap, user argv at %x\n", argv);
     int argv_index = 0;
     int offset = 0;
@@ -162,6 +169,9 @@ uintptr_t sbrk(int incr)
 {
     if(current_task->heap == 0x0) current_task->heap = INIT_HEAP;
 
+    if(incr == 0x0) return current_task->heap;
+
+    printk("sbrk: incr %x\n", incr);
     uintptr_t heap = current_task->heap;
 
     int size = incr;

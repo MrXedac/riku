@@ -4,6 +4,7 @@
 #include "serial.h"
 #include "mem.h"
 #include "task.h"
+#include "errno.h"
 #include <stdint.h>
 
 uintptr_t pmt; /* Page Master Table address */
@@ -156,7 +157,7 @@ void vme_right(uintptr_t vmet, uintptr_t va, uint8_t user, uint8_t rw)
 
 void vme_map(uintptr_t vmet, uintptr_t phys, uintptr_t va, uint8_t user)
 {
-	printk("vme: map %x to %x\n", phys, va);
+	//printk("vme: map %x to %x\n", phys, va);
 	uintptr_t flags;
 	if(user)
 		flags = FLAGS_PML4T | FLAG_USER;
@@ -242,7 +243,7 @@ void vme_unmap(uintptr_t vmet, uintptr_t va)
 
 	/* Decrease the page reference count */
 	pmt_dec(phys);
-	printk("unmapped page %x\n", va);
+	//printk("unmapped page %x\n", va);
 }
 
 /* Increase the page counter for a physical address into the Page Master Table */
@@ -285,7 +286,7 @@ void pmt_inc(uintptr_t phys)
 	uintptr_t count = tableReadWithFlags(pt, pt_idx);
 	count++;
 	tableWriteWithFlags(pt, pt_idx, (uintptr_t)count);
-	printk("PMT: increased counter of page %x to %d\n", phys, count);
+	//printk("PMT: increased counter of page %x to %d\n", phys, count);
 }
 
 /* Decrease the page counter for a physical address into the Page Master Table */
@@ -333,10 +334,10 @@ void pmt_dec(uintptr_t phys)
 
 	count--;
 	tableWriteWithFlags(pt, pt_idx, (uintptr_t)count);
-	printk("PMT: decreased counter of page %x to %d\n", phys, count);
+	//printk("PMT: decreased counter of page %x to %d\n", phys, count);
 	if(count == 0)
 	{
-		printk("PMT: counter fell to zero, freeing page\n");
+		printk("PMT: freeing page %x\n", phys);
 		free_page((uintptr_t*)(PHYS(phys)));
 	}
 }
@@ -407,7 +408,7 @@ void copy_and_remap_page(uintptr_t fault_addr)
 	/* Now that we have both physical and virtual address, copy the page into a fresh new one */
 	uintptr_t target = ((uintptr_t)alloc_page()) & 0x00007FFFFFFFFFFF; /* Ignore higher-half stuff for mapping purposes */
 	memcpy((void*)PHYS(target), (void*)PHYS(phys), PAGE_SIZE);
-	printk("mmu: copied into %x from %x\n", PHYS(target), PHYS(phys));
+	//printk("mmu: copied into %x from %x\n", PHYS(target), PHYS(phys));
 
 	/* Page has been copied. Remove the mapping in the current CR3, and remap stuff in a read-write fashion */
 	vme_unmap((uintptr_t)current_task->vm_root, fault_addr);
@@ -443,7 +444,13 @@ void do_pagefault(registers_t* regs)
 			present?"present":"missing",
 			rw?"write":"read",
 			supervisor?"user":"kernel");
-		for(;;);
+		
+		if(supervisor)
+		{
+			/* Fault from userland : hand process carefully */
+			exit(-EBADPTR);
+			for(;;);
+		}
 	}
 }
 
@@ -476,7 +483,7 @@ void set_vme_as_ro(uintptr_t vme)
 									/* We have a page mapped here */
 									if(phys) {
 										tableWriteWithFlags(pt_addr, pt_idx, phys | FLAG_PRESENT | FLAG_USER);
-										printk("physical page %x:%x written as ro (entry %x)\n", vme, phys, phys | FLAG_PRESENT | FLAG_USER);
+										//printk("physical page %x:%x written as ro (entry %x)\n", vme, phys, phys | FLAG_PRESENT | FLAG_USER);
 
 									}
 								}
@@ -494,7 +501,7 @@ uintptr_t clone_vme(uintptr_t vme)
 {
 	uintptr_t new_vme = (uintptr_t)alloc_page();
 	memset((void*)(PHYS(new_vme)), 0x0, PAGE_SIZE);
-	printk("new vme at %x\n", new_vme);
+	//printk("new vme at %x\n", new_vme);
 
 	tableWriteWithFlags(new_vme, PML4T_UPPER, (uintptr_t)masterTable | FLAGS_PML4T);
 	/* Level 4 table */
@@ -505,7 +512,7 @@ uintptr_t clone_vme(uintptr_t vme)
 		uintptr_t pdpt_flags = pdpt_entry & 0x0000000000000FFF;
 		if(pdpt_addr)
 		{
-			printk("-> Found PDPT to clone at index %x, entry %x, addr %x\n", pml4t_idx, pdpt_entry, pdpt_addr);
+			//printk("-> Found PDPT to clone at index %x, entry %x, addr %x\n", pml4t_idx, pdpt_entry, pdpt_addr);
 			/* Create new PDPT in new VME using same flags */
 			uintptr_t new_pdpt = (uintptr_t)alloc_page();
 			memset((void*)PHYS(new_pdpt), 0x0, PAGE_SIZE);
@@ -518,7 +525,7 @@ uintptr_t clone_vme(uintptr_t vme)
 				uintptr_t pd_flags = pd_entry & 0x0000000000000FFF;
 				if(pd_addr)
 				{
-					printk("\t-> Found PD to clone at index %x, addr %x\n", pdpt_idx, pd_addr);
+					//printk("\t-> Found PD to clone at index %x, addr %x\n", pdpt_idx, pd_addr);
 					/* Create new PD in new VME using same flags */
 					uintptr_t new_pd = (uintptr_t)alloc_page();
 					memset((void*)PHYS(new_pd), 0x0, PAGE_SIZE);
@@ -533,7 +540,7 @@ uintptr_t clone_vme(uintptr_t vme)
 						/* Level 1 table */
 						if(pt_addr)
 						{
-								printk("\t\t-> Found PT to clone at %x\n", pt_addr);
+								//printk("\t\t-> Found PT to clone at %x\n", pt_addr);
 								/* Create new PT in new VME using same flags */
 								uintptr_t new_pt = (uintptr_t)alloc_page();
 								memset((void*)PHYS(new_pt), 0x0, PAGE_SIZE);

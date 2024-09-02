@@ -30,6 +30,7 @@ struct riku_task {
 	struct riku_descriptor* files[MAX_FILES]; /* Pointers to descriptors associated to task (in kernel heap) */
 	uintptr_t heap; /* Heap base address */
 	struct riku_task* waiting_on; /* Task this task is waiting completion */
+	struct riku_task* irq_queue_next; /* Next task in an IRQ waiting queue */
 	int exit_code; /* Exit code of the task */
 };
 

@@ -141,6 +141,8 @@ int ext2fs_close(struct riku_mountpoint* self, struct riku_fileinfo* file)
 
 struct riku_filesystem fs_ext2fs =
 {
+    .name = "ext2fs",
+    .fullname = "ext2 filesystem driver for Riku kernel",
     .init = ext2fs_init,
     .opendir = ext2fs_opendir,
     .readdir = ext2fs_readdir,

@@ -47,6 +47,8 @@ typedef int (*fs_stat_t)     (struct riku_mountpoint* self, struct riku_fileinfo
 
 /* Filesystem driver interface */
 struct riku_filesystem {
+  char          name[16];
+  char          fullname[256];
   fs_init_t     init;
   fs_opendir_t  opendir;
   fs_readdir_t  readdir;

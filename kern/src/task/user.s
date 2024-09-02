@@ -75,7 +75,7 @@ syscall_ep:
   mov cx, 0x10
   mov ds, cx
 
-  cmp rax, 0xF ; Remember to change this whenever a system call is added
+  cmp rax, 0x10 ; Remember to change this whenever a system call is added
   jle do_syscall
   ; If we end up here, we selected an invalid system call. Return -1 (-ENOSYSC)
   mov rax, -1

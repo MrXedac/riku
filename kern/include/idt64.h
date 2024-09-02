@@ -116,5 +116,6 @@ void idt_init();
 
 void enable_interrupts();
 void disable_interrupts();
+void wake_on_irq(int irq);
 
 #endif
