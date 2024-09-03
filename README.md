@@ -7,6 +7,7 @@ It is divided into two main components :
 
 The userland stuff, such as the components of Michiru, the software stack built on top of Riku, is composed of two parts as well :
 - libc, which is the source code of rLibC, the Riku's standard library implementation
+  - rlibc is deprecated, Riku now partially supports newlib 2.5.0 as a standard library.
 - michiru, which contains the userland stuff code
 
 # Required stuff
@@ -27,6 +28,15 @@ You can compile rLibC by entering the "libc" directory and running "make".
 
 The userland can then be compiled by entering the "michiru" directory and running make in every sub-directory. 
 You can also run the `./make_world.sh` script in the "michiru" directory instead.
+
+## NEW: Userland with cross-compilation toolchain and newlib
+Clone riku-binutils, riku-gcc and riku-sysroot repositories.
+
+* First follow the instructions in the `riku-sysroot` repository to compile newlib. Use `/usr/x86_64-riku` as sysroot.
+* Then install riku-binutils.
+* Finally, install riku-gcc.
+
+Your cross-compilation toolchain should be installed in `/usr/x86_64-riku`. You can compile by running, for instance, `/usr/x86_64-riku/bin/x86_64-riku-gcc main.c -o main`.
 
 ## Kernel configuration
 Compile (only once) KConfig by running `./bootstrap`, `./configure` and `make` in the `kconfig/` subfolder.

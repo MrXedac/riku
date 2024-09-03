@@ -9,6 +9,7 @@
 #include "printk.h"
 #include "idt64.h"
 #include "stream.h"
+#include "vfs/readwrite.h"
 
 typedef enum ps2kb_state { PS2KB_STATE_NORMAL, PS2KB_STATE_SHIFTED, PS2KB_STATE_WHAT } ps2kb_state_t;
 
@@ -210,9 +211,23 @@ int ps2kb_read(struct riku_devfs_node* self, const char* buffer, uint32_t count)
   /* Oh damn */
   for(i = 0; i < count; i++) {
    ps2kb_getch(self, (thebuf + i));
+   
+   /* Sync with stdout */
+   if(*(thebuf+i) == '\b')
+   {
+    write(1, "\b", 1);
+    write(1, " ", 1);
+    write(1, "\b", 1);
+   } else write(1, (thebuf+i), 1);
+
+    /* Break input on newline */
+   if(*(thebuf+i) == '\n') 
+   {
+    break;
+   }
   }
 
-   return 0;
+   return i+1; /* include terminating byte */
 }
 
 /* Probes x86 PS/2 legacy keyboard driver, and adds corresponding devfs entry if required */

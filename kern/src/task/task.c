@@ -78,7 +78,7 @@ void exit(int exitcode)
     if(current_task->pid == 0x0)
         panic("init process exited", (void*)0);
 
-    printk("terminated task %s\n", current_task->name);
+    printk("terminated task %s with exit code %d\n", current_task->name, exitcode);
     wake_up_tasks();
     switch_to_task(current_task->next);
     return;

@@ -40,8 +40,8 @@ uint32_t read(int fd, char* buffer, uint32_t size)
   if(desc->state != OPENED)
     return -ECLOSED;
 
-  desc->fs->read(desc->mountpoint, desc->fileinfo, buffer, size, desc->offset);
+  int bytesRead = desc->fs->read(desc->mountpoint, desc->fileinfo, buffer, size, desc->offset);
   desc->offset += size;
 
-  return 0;
+  return bytesRead;
 }

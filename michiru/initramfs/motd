@@ -1,4 +1,1 @@
-last changes:
-- fork()/execve() working "as intended"
-- exit(retcode)/wait working "as intended"
-- opendir(), readdir() simple implementations for ustarfs (ramdisk)
+Welcome to Riku

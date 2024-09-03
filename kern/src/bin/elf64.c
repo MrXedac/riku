@@ -170,23 +170,30 @@ void elf64_load_segment(Elf64_Ehdr* hdr, Elf64_Phdr* pTable, uintptr_t vme)
 {
 	uintptr_t size = pTable->p_memsz, offset = pTable->p_offset, vad = pTable->p_vaddr;
 	printk("Loading segment from offset %x to vaddr %x, size %x\n", offset, vad, size);
-
+	if(pTable->p_type != 0x1) {
+		printk("\t not loadable segment, skip\n");
+		return;
+	}
 	/* Prepare VME for load */
 	uintptr_t curOffset = 0x0;
-	while(curOffset < size)
+	uint32_t pgOffset = offset & 0xFFF;
+	uint32_t szOffset = size & 0xFFF;
+	uintptr_t startPage = vad & 0xFFFFFFFFFFFFF000;
+	uintptr_t curPage = startPage;
+	uintptr_t endPage = (vad + size) & 0xFFFFFFFFFFFFF000;
+
+	while(curPage <= endPage)
 	{
 		uintptr_t pg = (uintptr_t)alloc_page();
 		memset((void*)PHYS(pg), 0x0, PAGE_SIZE);
-		vme_unmap(PHYS(vme), vad + curOffset);
-		vme_map(PHYS(vme), LIN(pg), vad + curOffset, 1);
-		memcpy((void*)PHYS(pg), (void*)((uintptr_t)hdr + offset + curOffset), PAGE_SIZE);
-		//printk("Copied section from %x to %x.\n", (uintptr_t)hdr + offset + curOffset, PHYS(pg));
-		//printk("Added mapping from %x to %x\n", pg, vad + curOffset);
-		curOffset += PAGE_SIZE;
+		vme_unmap(PHYS(vme), curPage);
+		vme_map(PHYS(vme), LIN(pg), curPage, 1);
+		printk("Added mapping from %x to %x\n", pg, curPage);
+		curPage += PAGE_SIZE;
 	}
 
 	/* Now that our VME is ready, load the section */
-	//memcpy((void*)vad, (void*)((uintptr_t)hdr + offset), size);
+	memcpy((void*)vad, (void*)((uintptr_t)hdr + offset), size);
 	
 }
 

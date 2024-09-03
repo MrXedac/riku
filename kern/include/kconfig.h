@@ -6,4 +6,4 @@
  */
 #define CONFIG_ENABLE_MBR 1
 #define CONFIG_ENABLE_ATA 1
-#define CONFIG_INIT_PROCESS "C:/bin/init"
+#define CONFIG_INIT_PROCESS "B:/init"

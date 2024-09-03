@@ -321,12 +321,11 @@ void shell()
                 {
                     if(idx > 0) {
                         /* backspace */
-                        printf("\b \b");
                         idx--;
                         buffer[idx] = (char)0; 
                     }
                 } else {
-                    printf("%c", c);
+                    // printf("%c", c);
                     if(c != '\n') {
                         buffer[idx] = c;
                         idx++;
@@ -366,6 +365,10 @@ void main()
     printf("rsh/riku shell\n");
     printf("ver0.1\n");
     printf("---\n");
+    printf("You are running a demo preversion of Riku.\n");
+    printf("Expect many things to be broken.\n");
+    printf("Though, feel free to experiment and run stuff!\n");
+    printf("\nIf you somehow downloaded and ran this from GitHub release,\nI would really appreciate if you could sent an email to\n\n\t<quentin.bergougnoux@gmail.com>\n\n to tell me you actually ran this!\nI spent a lot of time learning how to develop a kernel and how\nx86 architectures work.\nKnowing that someone really booted up this work of mine would brighten\nmy day for sure!\n\nIn the meantime, enjoy your stay!\n\n");
 
     cwd(current_dir);
     shell();

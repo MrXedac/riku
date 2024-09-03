@@ -47,7 +47,7 @@ void wake_sleeping_tasks(int irq)
 		struct riku_task* buffer = taskptr;
 		while(taskptr != (void*)0)
 		{
-			printk("int: waking up task %d (%s)\n", taskptr->pid, taskptr->name);
+			//printk("int: waking up task %d (%s)\n", taskptr->pid, taskptr->name);
 			taskptr->state = ACTIVABLE;
 			buffer = taskptr->irq_queue_next;
 			taskptr->irq_queue_next = (void*)0;

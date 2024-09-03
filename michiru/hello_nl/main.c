@@ -23,10 +23,19 @@ void fibonacci(int n)
   printf("\n");
 }
 
-void main()
+int main(int argc, char** argv)
 {
     printf("Hello world!\n");
-    printf("Doing some Fibonacci (n=10)\n");
-    fibonacci(10);
-    exit(2);
+    printf("how many fibonacci iterations? ");
+    int nbr;
+    int ret = scanf("%d", &nbr);
+    if(ret > 0) {
+    	printf("doing some Fibonacci (n=%d)\n", nbr);
+    	fibonacci(nbr);
+    } else {
+    	printf("invalid number, doing n=10\n");
+	    fibonacci(10);
+    }
+    
+    return 5;
 }
