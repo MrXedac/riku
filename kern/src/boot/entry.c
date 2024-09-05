@@ -164,6 +164,10 @@ void late_init_tasks()
 
 	/* ps2kb is responsible for default input */
 	DRIVER_INIT(ps2kb);
+
+	/* CMOS and RTC */
+	DRIVER_INIT(cmos);
+	DRIVER_INIT(rtc);
 	
 	/* ata_pio is broken yet */
 	#ifdef CONFIG_ENABLE_ATA

@@ -28,10 +28,10 @@ img:
 	qemu-img create -f raw hda.img 4G
 
 run:
-	qemu-system-x86_64 -boot d -m 4096 -cdrom riku.iso -hda hda.img -serial stdio 
+	qemu-system-x86_64 -cpu Westmere,+pdpe1gb -boot d -m 4096 -cdrom riku.iso -hda hda.img -serial stdio 
 
 debug:
-	qemu-system-x86_64 -boot d -m 4096 -cdrom riku.iso -hda hda.img -serial stdio -S -s
+	qemu-system-x86_64 -cpu Westmere,+pdpe1gb -boot d -m 4096 -cdrom riku.iso -hda hda.img -serial stdio -S -s
 
 mount:
 	sudo losetup -Pf hda.img

@@ -16,10 +16,10 @@
 #define EARLY_PDPT_KERN	0x3000
 
 /* MMU flags */
-#define FLAG_PRESENT		  0x1
-#define FLAG_RW				    0x2
-#define	FLAG_LARGE_PAGE		0x80
-#define FLAG_USER         0x4
+#define FLAG_PRESENT		0x1
+#define FLAG_RW				0x2
+#define	FLAG_LARGE_PAGE		(1 << 7)
+#define FLAG_USER           0x4
 #define FLAGS_PML4T			(FLAG_PRESENT | FLAG_RW)
 #define FLAGS_PDPT_LARGE	(FLAG_PRESENT | FLAG_RW | FLAG_LARGE_PAGE)
 

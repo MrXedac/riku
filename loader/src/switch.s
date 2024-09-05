@@ -52,6 +52,36 @@ GDT64Pointer:                  ; The GDT-pointer.
 	dw $ - GDT64 - 1
 	dd GDT64
 
+[GLOBAL long_mode_check]
+long_mode_check:
+	pusha
+	mov eax, 0x80000001
+	cpuid
+	and edx, 0x20000000
+	cmp edx, 0x20000000
+	popa
+	jz long_mode_supported
+	mov eax, 0
+	ret
+long_mode_supported:
+	mov eax, 1
+	ret
+
+[GLOBAL large_page_check]
+large_page_check:
+	pusha
+	mov eax, 0x80000001
+	cpuid
+	and edx, 0x4000000
+	cmp edx, 0x4000000
+	popa
+	jz large_page_supported
+	mov eax, 0
+	ret
+large_page_supported:
+	mov eax, 1
+	ret
+
 ; Long-mode switch
 [GLOBAL enter_long_mode]
 [EXTERN kernel]
@@ -63,7 +93,7 @@ enter_long_mode:
 	; Enable PAE
 	mov eax, cr4		; Get CR4 value
 	or eax, 1 << 5		; Set the PAE bit
-	or eax, 0x00000010	; Enable large page support
+	or eax, 1 << 4		; Enable large page support
 	mov cr4, eax		; Write back CR4
 
 	; Write long mode bit

@@ -184,6 +184,18 @@ int execve(char* name, char** argv, char** env)
 	current_task->task_rsp = INIT_STACK + PAGE_SIZE - sizeof(uintptr_t);
 	current_task->task_rbp = INIT_STACK + PAGE_SIZE - sizeof(uintptr_t);
 
+    /* Expand user stack */
+    /*uintptr_t mapAddr = INIT_STACK - PAGE_SIZE;
+    int count = 10;
+    while(count > 0)
+    {   
+        uintptr_t* expand = alloc_page();
+        vme_unmap(current_task->vm_root, mapAddr);
+        vme_map(current_task->vm_root, LIN((uintptr_t)expand), mapAddr, 1);
+        mapAddr -= PAGE_SIZE;
+        count--;
+    }*/
+
     strcpy(current_task->name, name);
 
     /* Drop kernel context, restart from userland */
